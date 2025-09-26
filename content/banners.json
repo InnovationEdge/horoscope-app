@@ -1,0 +1,42 @@
+[
+  {
+    "id": "premium_weekly",
+    "title": "✨ Unlock your Weekly Horoscope",
+    "subtitle": "Deeper guidance awaits for {PRICE}",
+    "bullets": ["See career highlights","Navigate relationships","Make smarter moves"],
+    "target": "premium",
+    "premium_required": true
+  },
+  {
+    "id": "compat_leo",
+    "title": "💖 Who's your best match?",
+    "subtitle": "Try compatibility with Leo",
+    "bullets": ["Instant chemistry score","Love, career, friendship","Actionable tips"],
+    "target": "compat:leo",
+    "premium_required": false
+  },
+  {
+    "id": "druid_intro",
+    "title": "🌳 Your Druid Sign",
+    "subtitle": "Ancient wisdom, modern insight",
+    "bullets": ["Personality sketch","Hidden strengths","Life themes"],
+    "target": "druid",
+    "premium_required": false
+  },
+  {
+    "id": "chinese_new_year",
+    "title": "🐉 Your Chinese Zodiac",
+    "subtitle": "Discover your animal spirit",
+    "bullets": ["12-year cycle wisdom","Personality traits","Fortune insights"],
+    "target": "chinese",
+    "premium_required": false
+  },
+  {
+    "id": "premium_monthly",
+    "title": "🔮 Monthly Premium Access",
+    "subtitle": "Full monthly guidance for {PRICE}",
+    "bullets": ["Detailed forecasts","Key dates & events","Strategic advice"],
+    "target": "premium",
+    "premium_required": true
+  }
+]

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Layout, Typography, Spacing } from '../constants/theme';
 
@@ -14,27 +14,36 @@ export function BottomNav({ activeTab, onTabPress }: BottomNavProps) {
   const tabs = [
     { id: 'today', label: 'Today' },
     { id: 'traits', label: 'Traits' },
-    { id: 'compat', label: '' }, // Center FAB
+    { id: 'compat', label: 'Compatibility' }, // Center FAB with label
     { id: 'druid', label: 'Druid' },
     { id: 'profile', label: 'Profile' },
   ];
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+      {/* Top hairline */}
+      <View style={styles.hairline} />
+
       <View style={styles.tabBar}>
         {tabs.map((tab, index) => {
           const isActive = activeTab === tab.id;
-          const isCenter = index === 2; // Center FAB
+          const isCenter = index === 2; // Center FAB (Compatibility)
 
           if (isCenter) {
             return (
               <View key={tab.id} style={styles.centerContainer} pointerEvents="box-none">
-                <TouchableOpacity
-                  style={styles.centerFab}
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.centerFab,
+                    pressed && styles.centerFabPressed
+                  ]}
                   onPress={() => onTabPress(tab.id)}
+                  accessibilityLabel="Compatibility"
+                  accessibilityRole="button"
                 >
-                  <Text style={styles.centerIcon}>🔮</Text>
-                </TouchableOpacity>
+                  <Text style={styles.centerIcon}>🫰🏼</Text>
+                </Pressable>
+                <Text style={styles.centerLabel}>{tab.label}</Text>
               </View>
             );
           }
@@ -44,9 +53,15 @@ export function BottomNav({ activeTab, onTabPress }: BottomNavProps) {
               key={tab.id}
               style={styles.sideTab}
               onPress={() => onTabPress(tab.id)}
+              accessibilityLabel={tab.label}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: isActive }}
             >
               {isActive && <View style={styles.activePill} />}
-              <Text style={[styles.tabLabel, { color: isActive ? Colors.primary : Colors.text.secondary }]}>
+              <Text style={[
+                styles.tabLabel,
+                { color: isActive ? Colors.primary : Colors.iconInactive }
+              ]}>
                 {tab.label}
               </Text>
             </TouchableOpacity>
@@ -65,6 +80,10 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: Colors.surface,
   },
+  hairline: {
+    height: Layout.dividerHeight,
+    backgroundColor: Colors.outline,
+  },
   tabBar: {
     flexDirection: 'row',
     height: Layout.navbarHeight,
@@ -77,12 +96,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
     height: '100%',
+    minHeight: 48, // Accessibility touch target
   },
   activePill: {
     position: 'absolute',
-    width: 56,
-    height: 32,
-    backgroundColor: Colors.primary + '20',
+    width: Layout.activePillWidth,
+    height: Layout.activePillHeight,
+    backgroundColor: Colors.activePill,
     borderRadius: 16,
     top: '50%',
     marginTop: -16,
@@ -95,26 +115,37 @@ const styles = StyleSheet.create({
   centerContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     position: 'relative',
     height: '100%',
+    paddingBottom: 8,
   },
   centerFab: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: Layout.fabSize,
+    height: Layout.fabSize,
+    borderRadius: Layout.fabSize / 2,
     backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    top: -16, // Positioned 16dp above the tab bar
+    top: -16, // Float 16dp above the tab bar
     elevation: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
   },
+  centerFabPressed: {
+    transform: [{ scale: 0.96 }],
+  },
   centerIcon: {
-    fontSize: 24,
+    fontSize: 32, // 🫰🏼 icon size
+    color: 'white',
+  },
+  centerLabel: {
+    ...Typography.labelSmall,
+    fontSize: 11,
+    color: Colors.iconInactive,
+    marginTop: 8,
   },
 });

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import { Colors, Layout, Typography, Spacing } from '../constants/theme';
 import { useSubscriptionStore } from '../store/subscription';
@@ -36,10 +36,11 @@ export interface HoroscopeData {
 interface HoroscopePagerProps {
   data: HoroscopeData[];
   onReadMore?: (timeframe: string) => void;
-  onPaywallNeeded?: () => void;
+  onPaywallNeeded?: (timeframe: string) => void;
+  onPagerSwiped?: (to: string) => void;
 }
 
-export function HoroscopePager({ data, onReadMore, onPaywallNeeded }: HoroscopePagerProps) {
+export function HoroscopePager({ data, onReadMore, onPaywallNeeded, onPagerSwiped }: HoroscopePagerProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const [expandedPages, setExpandedPages] = useState<Set<number>>(new Set());
   const pagerRef = useRef<PagerView>(null);
@@ -56,7 +57,7 @@ export function HoroscopePager({ data, onReadMore, onPaywallNeeded }: HoroscopeP
     const isPremiumContent = timeframe !== 'today';
 
     if (isPremiumContent && !isPremium()) {
-      onPaywallNeeded?.();
+      onPaywallNeeded?.(timeframe);
       return;
     }
 
@@ -70,34 +71,87 @@ export function HoroscopePager({ data, onReadMore, onPaywallNeeded }: HoroscopeP
     onReadMore?.(timeframe);
   };
 
+  const handlePagePress = (timeframe: string) => {
+    const isPremiumContent = timeframe !== 'today';
+    if (isPremiumContent && !isPremium()) {
+      onPaywallNeeded?.(timeframe);
+    }
+  };
+
+  const handlePageSelected = (e: any) => {
+    const position = e.nativeEvent.position;
+    setCurrentPage(position);
+
+    if (position > 0) { // Not Today tab
+      const timeframe = data[position]?.timeframe;
+      onPagerSwiped?.(timeframe);
+    }
+  };
+
   const renderPage = (item: HoroscopeData, index: number) => {
     const isExpanded = expandedPages.has(index);
     const content = isExpanded ? item.full : item.preview;
     const isPremiumContent = item.timeframe !== 'today';
     const canAccess = !isPremiumContent || isPremium();
+    const isToday = item.timeframe === 'today';
 
     return (
       <View key={item.timeframe} style={styles.page}>
-        <View style={styles.card}>
-          <Text style={styles.timeframeTitle}>
+        <Pressable
+          style={styles.card}
+          onPress={() => handlePagePress(item.timeframe)}
+          disabled={isToday}
+        >
+          {/* Header */}
+          <Text style={[
+            styles.timeframeTitle,
+            isPremiumContent && !canAccess && { color: Colors.secondaryBlue }
+          ]}>
             {timeframeLabels[item.timeframe]}
             {isPremiumContent && !isPremium() && (
-              <Text style={styles.premiumBadge}> ✨ Premium</Text>
+              <Text style={styles.premiumBadge}> Premium</Text>
             )}
           </Text>
 
-          <Text style={styles.contentText} numberOfLines={isExpanded ? undefined : 4}>
-            {content}
-          </Text>
+          {/* Content Container */}
+          <View style={styles.contentContainer}>
+            <Text
+              style={[
+                styles.contentText,
+                !isToday && !canAccess && styles.premiumText
+              ]}
+              numberOfLines={isExpanded ? undefined : 4}
+            >
+              {content}
+            </Text>
 
+            {/* Blur overlay for premium content */}
+            {isPremiumContent && !canAccess && (
+              <View style={styles.blurOverlay}>
+                <View style={styles.blurMask} />
+              </View>
+            )}
+          </View>
+
+          {/* Action Buttons */}
           {canAccess && (
             <TouchableOpacity
               style={styles.readMoreButton}
               onPress={() => handleReadMore(index, item.timeframe)}
             >
               <Text style={styles.readMoreText}>
-                {isExpanded ? 'Read Less' : 'Read More'}
+                {isExpanded ? 'Read Less ▴' : 'Read More ▾'}
               </Text>
+            </TouchableOpacity>
+          )}
+
+          {/* Premium CTA for gated content */}
+          {isPremiumContent && !canAccess && (
+            <TouchableOpacity
+              style={styles.upgradeButton}
+              onPress={() => onPaywallNeeded?.(item.timeframe)}
+            >
+              <Text style={styles.upgradeText}>Upgrade to Premium</Text>
             </TouchableOpacity>
           )}
 
@@ -148,7 +202,7 @@ export function HoroscopePager({ data, onReadMore, onPaywallNeeded }: HoroscopeP
               <Text style={styles.eventText}>{item.majorEvents.summer}</Text>
             </View>
           )}
-        </View>
+        </Pressable>
       </View>
     );
   };
@@ -159,7 +213,7 @@ export function HoroscopePager({ data, onReadMore, onPaywallNeeded }: HoroscopeP
         ref={pagerRef}
         style={styles.pager}
         initialPage={0}
-        onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}
+        onPageSelected={handlePageSelected}
       >
         {data.map((item, index) => renderPage(item, index))}
       </PagerView>
@@ -174,6 +228,8 @@ export function HoroscopePager({ data, onReadMore, onPaywallNeeded }: HoroscopeP
               currentPage === index && styles.activeDot
             ]}
             onPress={() => pagerRef.current?.setPage(index)}
+            accessibilityLabel={`Page ${index + 1} of ${data.length}`}
+            accessibilityRole="button"
           />
         ))}
       </View>
@@ -206,11 +262,32 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontSize: 12,
   },
+  contentContainer: {
+    flex: 1,
+    position: 'relative',
+  },
   contentText: {
     ...Typography.bodyMedium,
     color: Colors.text.primary,
     lineHeight: 24,
     flex: 1,
+  },
+  premiumText: {
+    opacity: 0.8,
+  },
+  blurOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  blurMask: {
+    flex: 1,
+    backgroundColor: 'rgba(13, 11, 26, 0.8)',
+    backdropFilter: 'blur(8px)',
   },
   readMoreButton: {
     alignSelf: 'flex-start',
@@ -222,6 +299,23 @@ const styles = StyleSheet.create({
     ...Typography.labelSmall,
     color: Colors.primary,
     fontWeight: '600',
+  },
+  upgradeButton: {
+    position: 'absolute',
+    bottom: Spacing.md,
+    right: Spacing.md,
+    backgroundColor: 'rgba(124, 77, 255, 0.1)',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+  },
+  upgradeText: {
+    ...Typography.labelSmall,
+    color: Colors.primary,
+    fontWeight: '600',
+    fontSize: 12,
   },
   luckyRow: {
     flexDirection: 'row',
@@ -300,11 +394,11 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
   },
   dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: Colors.outline,
-    marginHorizontal: 4,
+    width: Layout.dotSize,
+    height: Layout.dotSize,
+    borderRadius: Layout.dotSize / 2,
+    backgroundColor: Colors.dotInactive,
+    marginHorizontal: Layout.dotSpacing / 2,
   },
   activeDot: {
     backgroundColor: Colors.primary,

@@ -1,255 +1,130 @@
-// Mock analytics service for now - will integrate Firebase later
-interface UserProperties {
-  userId?: string;
-  sign?: string;
-  subscription_status?: 'free' | 'premium';
-  app_env: 'dev' | 'staging' | 'prod';
-  platform: 'ios' | 'android';
-  app_version: string;
-  locale: string;
+// Minimal, clean analytics with batching, offline queue, sessioning
+import * as Application from 'expo-application';
+import * as Device from 'expo-device';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
+
+type JSONObject = Record<string, any>;
+
+const STORAGE_QUEUE = 'anl_queue_v1';
+const STORAGE_SESSION = 'anl_session_v1';
+const INSTALL_ID_KEY = 'install_id_v1';
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
+
+let installId: string;
+let sessionId: string;
+let lastEventTs = 0;
+let queue: JSONObject[] = [];
+let userProps: JSONObject = {};
+let baseProps: JSONObject = {};
+
+function uuid() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = (Math.random()*16)|0, v = c === 'x' ? r : (r&0x3|0x8);
+    return v.toString(16);
+  });
 }
 
-interface EventParams {
-  [key: string]: string | number | boolean | undefined;
+async function getInstallId() {
+  const existing = await AsyncStorage.getItem(INSTALL_ID_KEY);
+  if (existing) return existing;
+  const iid = `iid_${uuid()}`;
+  await AsyncStorage.setItem(INSTALL_ID_KEY, iid);
+  return iid;
 }
 
-type OnboardingStep = 'welcome' | 'name' | 'birthdate' | 'location' | 'complete';
-type Timeframe = 'today' | 'weekly' | 'monthly' | 'yearly';
-type ZodiacSign = 'aries' | 'taurus' | 'gemini' | 'cancer' | 'leo' | 'virgo' | 'libra' | 'scorpio' | 'sagittarius' | 'capricorn' | 'aquarius' | 'pisces';
-type LifeAspect = 'love' | 'career' | 'health';
-type AuthProvider = 'google' | 'apple' | 'facebook';
-type PaywallTrigger = 'calculate' | 'read_more' | 'banner' | 'locked_content' | 'button';
-
-class AnalyticsService {
-  private isEnabled = true;
-  private userProperties: Partial<UserProperties> = {};
-
-  async initialize() {
-    console.log('Analytics initialized');
-    // Set initial user properties
-    await this.setUserProperties({
-      app_env: 'dev', // Would be set based on build environment
-      platform: 'ios', // Would be detected from Platform.OS
-      app_version: '1.0.0', // Would come from app config
-      locale: 'en-US', // Would come from device locale
-      subscription_status: 'free',
-    });
-  }
-
-  async setUserProperties(props: Partial<UserProperties>) {
-    if (!this.isEnabled) return;
-    this.userProperties = { ...this.userProperties, ...props };
-    console.log('Analytics setUserProperties:', props);
-  }
-
-  async logEvent(eventName: string, params: EventParams = {}) {
-    if (!this.isEnabled) return;
-
-    // Add universal envelope parameters
-    const enrichedParams = {
-      ...params,
-      timestamp_ms: Date.now(),
-      ...this.userProperties,
-    };
-
-    console.log('Analytics event:', eventName, enrichedParams);
-  }
-
-  // 6.1 Onboarding Events
-  async logOnboardingStepViewed(step: OnboardingStep) {
-    await this.logEvent('onboarding_step_viewed', { step });
-  }
-
-  async logOnboardingCompleted(sign: ZodiacSign, birthDate: string, birthTimeKnown: boolean) {
-    await this.logEvent('onboarding_completed', {
-      sign,
-      birth_date: birthDate,
-      birth_time_known: birthTimeKnown,
-    });
-  }
-
-  // 6.2 Auth Events
-  async logAuthStarted(provider: AuthProvider) {
-    await this.logEvent('auth_started', { provider });
-  }
-
-  async logAuthCompleted(provider: AuthProvider, success: boolean) {
-    await this.logEvent('auth_completed', { provider, success });
-  }
-
-  async logAuthFailed(provider: AuthProvider, errorCode: string) {
-    await this.logEvent('auth_failed', { provider, error_code: errorCode });
-  }
-
-  // 6.3 Today Tab Events
-  async logTodayScreenViewed(date: string) {
-    await this.logEvent('today_screen_viewed', {
-      date,
-      screen: '(tabs)/today',
-    });
-  }
-
-  async logHoroscopePagerSwiped(from: Timeframe, to: Timeframe) {
-    await this.logEvent('horoscope_pager_swiped', { from, to });
-  }
-
-  async logReadMoreClicked(timeframe: Timeframe) {
-    await this.logEvent('read_more_clicked', { timeframe });
-  }
-
-  async logLuckyRowViewed(number: number, colorName: string, mood: string) {
-    await this.logEvent('lucky_row_viewed', {
-      number,
-      color_name: colorName,
-      mood,
-    });
-  }
-
-  async logLifeAspectViewed(aspect: LifeAspect, score: number) {
-    await this.logEvent('life_aspect_viewed', { aspect, score });
-  }
-
-  async logBannerShown(bannerId: string) {
-    await this.logEvent('banner_shown', { banner_id: bannerId });
-  }
-
-  async logBannerClicked(bannerId: string) {
-    await this.logEvent('banner_clicked', { banner_id: bannerId });
-  }
-
-  // 6.4 Characteristics (Traits) Events
-  async logTraitsScreenViewed(sign: ZodiacSign) {
-    await this.logEvent('traits_screen_viewed', {
-      sign,
-      screen: '(tabs)/traits',
-    });
-  }
-
-  async logTraitsSwiped(fromSign: ZodiacSign, toSign: ZodiacSign) {
-    await this.logEvent('traits_swiped', {
-      from_sign: fromSign,
-      to_sign: toSign,
-    });
-  }
-
-  // 6.5 Compatibility Events
-  async logCompatibilityOpened() {
-    await this.logEvent('compatibility_opened', {
-      screen: '(tabs)/compat',
-    });
-  }
-
-  async logCompatibilityCalculated(
-    signA: ZodiacSign,
-    signB: ZodiacSign,
-    overallScore: number,
-    love: number,
-    career: number,
-    friendship: number
-  ) {
-    await this.logEvent('compatibility_calculated', {
-      sign_a: signA,
-      sign_b: signB,
-      overall_score: overallScore,
-      love,
-      career,
-      friendship,
-    });
-  }
-
-  async logCompatibilityPaywallShown(trigger: PaywallTrigger) {
-    await this.logEvent('compatibility_paywall_shown', { trigger });
-  }
-
-  // 6.6 Druid & Chinese Events
-  async logDruidScreenViewed(druidSign: string) {
-    await this.logEvent('druid_screen_viewed', {
-      druid_sign: druidSign,
-      screen: '(tabs)/druid',
-    });
-  }
-
-  async logChineseScreenViewed(animal: string) {
-    await this.logEvent('chinese_screen_viewed', {
-      animal,
-      screen: '(tabs)/druid',
-    });
-  }
-
-  // 6.7 Profile & Settings Events
-  async logProfileScreenViewed() {
-    await this.logEvent('profile_screen_viewed', {
-      screen: '(tabs)/profile',
-    });
-  }
-
-  async logSettingsChanged(setting: string, value: string | boolean) {
-    await this.logEvent('settings_changed', { setting, value });
-  }
-
-  async logLogoutClicked() {
-    await this.logEvent('logout_clicked');
-  }
-
-  // 6.8 Push Notification Events
-  async logPushOpened(type: string, campaignId?: string) {
-    await this.logEvent('push_opened', {
-      type,
-      campaign_id: campaignId,
-    });
-  }
-
-  async logPushDismissed(type: string, campaignId?: string) {
-    await this.logEvent('push_dismissed', {
-      type,
-      campaign_id: campaignId,
-    });
-  }
-
-  // Paywall Events
-  async logPaywallShown(trigger: PaywallTrigger) {
-    await this.logEvent('paywall_shown', { trigger });
-  }
-
-  // A/B Testing Events
-  async logABExposure(flag: string, variant: string) {
-    await this.logEvent('ab_exposure', { flag, variant });
-  }
-
-  // Deep Link Events
-  async logDeepLinkOpened(path: string, source: string, campaignId?: string) {
-    await this.logEvent('deep_link_opened', {
-      path,
-      source,
-      campaign_id: campaignId,
-    });
-  }
-
-  // Screen Navigation Events (generic)
-  async logScreenViewed(screenName: string, additionalParams?: EventParams) {
-    await this.logEvent('screen_viewed', {
-      screen: screenName,
-      ...additionalParams,
-    });
-  }
-
-  // Utility methods
-  async setEnabled(enabled: boolean) {
-    this.isEnabled = enabled;
-    console.log('Analytics collection enabled:', enabled);
-  }
-
-  async identify(userId: string) {
-    await this.setUserProperties({ userId });
-  }
-
-  async setZodiacSign(sign: ZodiacSign) {
-    await this.setUserProperties({ sign });
-  }
-
-  async setSubscriptionStatus(status: 'free' | 'premium') {
-    await this.setUserProperties({ subscription_status: status });
-  }
+async function loadQueue() {
+  try {
+    const raw = await AsyncStorage.getItem(STORAGE_QUEUE);
+    queue = raw ? JSON.parse(raw) : [];
+  } catch { queue = []; }
 }
 
-export const analyticsService = new AnalyticsService();
+async function saveQueue() {
+  try { await AsyncStorage.setItem(STORAGE_QUEUE, JSON.stringify(queue)); } catch {}
+}
+
+function newSession(): string {
+  return `s_${new Date().toISOString().slice(0,10)}_${uuid().slice(0,8)}`;
+}
+
+async function ensureSession() {
+  const now = Date.now();
+  if (!sessionId) {
+    const raw = await AsyncStorage.getItem(STORAGE_SESSION);
+    sessionId = raw || newSession();
+    await AsyncStorage.setItem(STORAGE_SESSION, sessionId);
+    lastEventTs = now;
+    return;
+  }
+  if (now - lastEventTs > SESSION_TIMEOUT_MS) {
+    sessionId = newSession();
+    await AsyncStorage.setItem(STORAGE_SESSION, sessionId);
+  }
+  lastEventTs = now;
+}
+
+export async function initAnalytics(props: Partial<typeof baseProps> = {}) {
+  installId = await getInstallId();
+  await loadQueue();
+  baseProps = {
+    app_version: Application.nativeApplicationVersion ?? '0',
+    build_number: Application.nativeBuildVersion ?? '0',
+    platform: Platform.OS,
+    locale: Device.locale ?? 'en-US',
+    tz: Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC',
+    ...props,
+  };
+  await ensureSession();
+  drain().catch(()=>{});
+}
+
+export function setUserProps(up: JSONObject) {
+  userProps = { ...userProps, ...up };
+}
+
+export async function track(event: string, params: JSONObject = {}) {
+  await ensureSession();
+  const payload = {
+    event,
+    ts: Date.now(),
+    session_id: sessionId,
+    user_id: userProps.user_id ?? null,
+    install_id: installId,
+    app_version: baseProps.app_version,
+    build_number: baseProps.build_number,
+    platform: baseProps.platform,
+    locale: baseProps.locale,
+    ab_variant: userProps.ab_variant,
+    user_props: {
+      is_premium: !!userProps.is_premium,
+      sign: userProps.sign ?? null,
+      druid_sign: userProps.druid_sign ?? null,
+      chinese_animal: userProps.chinese_animal ?? null,
+      tz: baseProps.tz,
+    },
+    params,
+  };
+  queue.push(payload);
+  if (queue.length >= 10) drain().catch(()=>{});
+  else saveQueue().catch(()=>{});
+}
+
+async function drain() {
+  if (!queue.length) return;
+  const batch = queue.slice(0, 25);
+  try {
+    const res = await fetch('/api/v1/analytics/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(batch),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    queue = queue.slice(batch.length);
+    await saveQueue();
+    // Keep draining if more remain
+    if (queue.length) setTimeout(()=> drain(), 250);
+  } catch {
+    // Retry later; keep queue
+  }
+}

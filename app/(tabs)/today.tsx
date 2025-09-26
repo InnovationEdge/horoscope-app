@@ -11,6 +11,7 @@ import { BannerCarousel, getDefaultBanners } from '../../components/BannerCarous
 import { BottomNav } from '../../components/BottomNav';
 import { useSubscriptionStore } from '../../store/subscription';
 import { router, useSegments } from 'expo-router';
+import { useAnalytics } from '../../hooks/useAnalytics';
 
 // Font clamping utility as provided by user
 export const clampFont = (w: number, max=48, min=36) => Math.max(min, Math.min(max, Math.round(w/10)));
@@ -102,12 +103,13 @@ export default function TodayScreen() {
   const currentTab = segments[1] || 'today';
 
   const { isPremium } = useSubscriptionStore();
+  const { track } = useAnalytics();
 
   const userSign = 'aries'; // Would come from user store
   const signData = ZODIAC_SIGNS[userSign];
   const accentColor = signData.accent;
 
-  const banners = getDefaultBanners(isPremium());
+  const banners = getDefaultBanners();
 
   useEffect(() => {
     const updateContent = () => {
@@ -118,26 +120,52 @@ export default function TodayScreen() {
     updateContent();
     const interval = setInterval(updateContent, 60000); // Update every minute
 
+    // Track screen view
+    track('screen_view', { name: 'today' });
+
     return () => clearInterval(interval);
-  }, []);
+  }, [track]);
 
   const handleReadMore = (timeframe: string) => {
-    console.log(`Read more for ${timeframe}`);
+    track('read_more_clicked', { timeframe });
   };
 
-  const handlePaywallNeeded = () => {
-    router.push('/paywall');
+  const handlePaywallNeeded = (timeframe: string) => {
+    track('paywall_shown', { trigger: timeframe });
+    router.push(`/paywall?src=${timeframe}`);
+  };
+
+  const handlePagerSwiped = (to: string) => {
+    track('today_pager_swiped', { to });
   };
 
   const handleBannerPress = (item: any) => {
+    track('banner_clicked', { id: item.id, target: item.target });
+
     if (item.premium_required && !isPremium()) {
-      router.push('/paywall');
+      track('paywall_shown', { trigger: `banner_${item.id}` });
+      router.push(`/paywall?src=banner_${item.id}`);
     } else {
-      router.push(item.target || '/(tabs)/compat');
+      // Handle deep link navigation based on target
+      if (item.target.startsWith('traits:')) {
+        const sign = item.target.split(':')[1];
+        router.push(`/(tabs)/traits?sign=${sign}`);
+      } else if (item.target.startsWith('compat:')) {
+        const sign = item.target.split(':')[1];
+        router.push(`/(tabs)/compat?with=${sign}`);
+      } else if (item.target === 'druid') {
+        router.push('/(tabs)/druid');
+      } else if (item.target === 'chinese') {
+        router.push('/(tabs)/druid?mode=chinese');
+      } else {
+        router.push(item.target || '/(tabs)/compat');
+      }
     }
   };
 
   const handleTabPress = (tab: string) => {
+    track('tab_selected', { tab });
+
     if (tab === 'compat') {
       router.push('/(tabs)/compat');
     } else {
@@ -198,6 +226,7 @@ export default function TodayScreen() {
             data={mockHoroscopeData}
             onReadMore={handleReadMore}
             onPaywallNeeded={handlePaywallNeeded}
+            onPagerSwiped={handlePagerSwiped}
           />
 
           {/* Life Aspects */}
@@ -252,17 +281,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: Layout.sectionSpacing,
+    height: Layout.signCardHeight,
     borderWidth: 1,
   },
   avatarContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: Layout.avatarSize,
+    height: Layout.avatarSize,
+    borderRadius: Layout.avatarSize / 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarEmoji: {
-    fontSize: 24,
+    fontSize: 32,
   },
   signInfo: {
     marginLeft: Spacing.md,
@@ -279,15 +309,19 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   premiumChip: {
-    backgroundColor: Colors.primary,
-    paddingHorizontal: Spacing.sm,
+    backgroundColor: Colors.premiumChip,
+    paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
+    height: Layout.premiumChipHeight,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   premiumChipText: {
     ...Typography.labelSmall,
-    color: Colors.text.primary,
-    fontSize: 10,
+    color: Colors.primary,
+    fontSize: 11,
+    fontWeight: '600',
   },
   bottomSpacing: {
     height: Layout.navbarHeight + 40, // Extra spacing for comfortable scrolling

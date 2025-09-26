@@ -1,10 +1,10 @@
 export const Colors = {
-  // Background gradient
+  // Background gradient (dark-first)
   bg: {
     top: '#0D0B1A',
     bottom: '#161325',
   },
-  surface: '#1E1B2E',
+  surface: '#1E1B2E', // elevation 2 cards, nav
 
   // Text
   text: {
@@ -13,12 +13,18 @@ export const Colors = {
   },
 
   // UI Elements
-  outline: '#2F2B3F',
-  primary: '#7C4DFF',
-  gold: '#F5A623',
+  primary: '#7C4DFF', // CTA/dots/active
+  secondaryBlue: '#4F7BFF', // W/M/Y headers
+  outline: '#2F2B3F', // divider/outline
   iconInactive: '#8E8E93',
+  gold: '#F5A623', // stars
+  activePill: '#2A2440', // tab bg
+  dotInactive: '#5C5C66',
 
-  // Zodiac Accents
+  // Premium chip
+  premiumChip: '#EADDFF',
+
+  // Zodiac Accents (per sign)
   zodiacAccents: {
     aries: '#FF6B6B',
     taurus: '#2ECC71',
@@ -44,13 +50,21 @@ export const Typography = {
 };
 
 export const Layout = {
-  screenPadding: 16,
-  cardRadius: 24,
-  cardPadding: 20,
-  sectionSpacing: 24,
-  aspectIconSize: 48,
-  aspectEmojiSize: 24,
-  navbarHeight: 80,
+  screenPadding: 16, // horizontal padding
+  cardRadius: 24, // corner radius
+  cardPadding: 20, // inner padding
+  sectionSpacing: 16, // block vertical gap
+  greetingOffset: 32, // top greeting offset from status bar
+  signCardHeight: 88, // exact height
+  avatarSize: 48, // 48dp circle
+  premiumChipHeight: 24, // premium chip height
+  fabSize: 64, // center FAB size
+  activePillWidth: 56, // active pill width
+  activePillHeight: 32, // active pill height
+  navbarHeight: 80, // bottom nav height
+  dotSize: 8, // pagination dots
+  dotSpacing: 6, // spacing between dots
+  dividerHeight: 1, // divider height
 };
 
 export const Spacing = {
