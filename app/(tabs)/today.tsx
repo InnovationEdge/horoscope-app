@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ScrollView, View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
@@ -10,8 +10,9 @@ import { LifeAspects, LifeAspectsData } from '../../components/LifeAspects';
 import { BannerCarousel, getDefaultBanners } from '../../components/BannerCarousel';
 import { BottomNav } from '../../components/BottomNav';
 import { useSubscriptionStore } from '../../store/subscription';
+import { useUserStore } from '../../store/user';
 import { router, useSegments } from 'expo-router';
-import { useAnalytics } from '../../hooks/useAnalytics';
+import { track } from '../../services/analytics';
 
 // Font clamping utility as provided by user
 export const clampFont = (w: number, max = 48, min = 36) => Math.max(min, Math.min(max, Math.round(w / 10)));
@@ -107,9 +108,9 @@ export default function TodayScreen() {
   const currentTab = segments[1] || 'today';
 
   const { isPremium } = useSubscriptionStore();
-  const { track } = useAnalytics();
+  const { getUserSign } = useUserStore();
 
-  const userSign = 'aries'; // Would come from user store
+  const userSign = getUserSign() || 'aries';
   const signData = ZODIAC_SIGNS[userSign];
   const accentColor = signData.accent;
 

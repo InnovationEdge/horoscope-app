@@ -66,7 +66,7 @@ export default function DruidScreen() {
   const [activeMode, setActiveMode] = useState<'druid' | 'chinese'>((mode as 'druid' | 'chinese') || 'druid');
 
   // Calculate user's signs
-  const userBirthDate = user?.birthDate ? new Date(user.birthDate) : new Date();
+  const userBirthDate = user?.birth_date ? new Date(user.birth_date) : new Date();
   const userBirthYear = userBirthDate.getFullYear();
   const userDruidSign = calculateDruidSign(userBirthDate);
   const userChineseAnimal = calculateChineseAnimal(userBirthYear);

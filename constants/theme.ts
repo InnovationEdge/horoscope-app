@@ -35,10 +35,13 @@ export const Typography = {
     lineHeight: 50, // fontSize + 8
     fontWeight: '700' as const,
   },
+  // Display text
+  displayLarge: { fontSize: 24, lineHeight: 32, fontWeight: '600' as const },
   // Section titles
   titleMedium: { fontSize: 16, lineHeight: 24, fontWeight: '600' as const },
   // Body text
   bodyMedium: { fontSize: 14, lineHeight: 24, fontWeight: '400' as const },
+  bodySmall: { fontSize: 12, lineHeight: 20, fontWeight: '400' as const },
   // Labels
   labelMedium: { fontSize: 12, lineHeight: 16, fontWeight: '500' as const },
   labelSmall: { fontSize: 11, lineHeight: 16, fontWeight: '500' as const },

@@ -16,6 +16,9 @@ export interface User {
   sign: ZodiacSign;
   subscription_status: SubscriptionStatus;
   subscription_expires_at?: string;
+  druidSign?: string;
+  chineseAnimal?: string;
+  onboarded?: boolean;
 }
 
 export interface UpdateUserRequest {

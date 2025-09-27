@@ -1,141 +1,183 @@
-import React from 'react';
-import { View, Text, StyleSheet, Platform, StatusBar, Pressable } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { Colors, Layout, Typography, Spacing } from '../../constants/theme';
+import { ProgressBarTop } from '../../components/ProgressBarTop';
+import { track } from '../../services/analytics';
 
 export default function SignIn() {
+  useEffect(() => {
+    track('onboarding_step_viewed', { step: 'signin' });
+  }, []);
+
   const handleContinueWithoutAccount = () => {
-    // Emit analytics event for tab selection
-    console.log('Analytics: tab_selected', { tab: 'today' });
-    router.replace('/(tabs)/today');
+    track('auth_completed', { provider: 'guest' });
+    router.push('/onboarding/birth-date');
   };
 
   const handleContinue = () => {
-    // Emit analytics event for tab selection
-    console.log('Analytics: tab_selected', { tab: 'today' });
-    router.replace('/(tabs)/today');
+    // For now, same as guest flow - would implement actual auth here
+    track('auth_completed', { provider: 'guest' });
+    router.push('/onboarding/birth-date');
   };
 
   return (
-    <View style={styles.container} accessibilityLabel="Salamene Sign In Screen">
-      <StatusBar barStyle="light-content" />
+    <SafeAreaProvider>
+      <View style={styles.container}>
+        <StatusBar style="light" />
+        <ProgressBarTop currentStep={1} totalSteps={5} />
 
-      {/* Top illustration */}
-      <View style={styles.imageContainer}>
-        <View style={styles.imagePlaceholder}>
-          <Text style={styles.placeholderText}>✨</Text>
-        </View>
+        <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+          <View style={styles.content}>
+            {/* Hero Image */}
+            <View style={styles.imageContainer}>
+              <Image
+                source={require('../../assets/onboarding/welcome.png')}
+                style={styles.heroImage}
+                resizeMode="contain"
+              />
+            </View>
+
+            {/* Progress Dots */}
+            <View style={styles.dotsContainer}>
+              <View style={[styles.dot, styles.activeDot]} />
+              <View style={styles.dot} />
+              <View style={styles.dot} />
+            </View>
+
+            {/* Brand and subtitle */}
+            <View style={styles.textContainer}>
+              <Text style={styles.brand}>Salamene Horoscope</Text>
+              <Text style={styles.subtitle}>Discover your zodiac journey</Text>
+            </View>
+
+            {/* Buttons */}
+            <View style={styles.buttonContainer}>
+              <Pressable
+                style={styles.primaryButton}
+                onPress={handleContinue}
+                accessibilityLabel="Continue with account"
+                accessibilityRole="button"
+              >
+                <Text style={styles.primaryButtonText}>Get Started</Text>
+              </Pressable>
+
+              <Pressable
+                style={styles.secondaryButton}
+                onPress={handleContinueWithoutAccount}
+                accessibilityLabel="Continue without account"
+                accessibilityRole="button"
+              >
+                <Text style={styles.secondaryButtonText}>Continue as Guest</Text>
+              </Pressable>
+            </View>
+
+            {/* Footer hint */}
+            <Text style={styles.footerHint}>You can add Google/Apple later</Text>
+          </View>
+        </LinearGradient>
       </View>
-
-      {/* Brand and subtitle */}
-      <View style={styles.textContainer}>
-        <Text style={styles.brand}>Salamene Onboarding</Text>
-        <Text style={styles.subtitle}>Sign in to personalize your stars</Text>
-      </View>
-
-      {/* Buttons */}
-      <View style={styles.buttonContainer}>
-        <Pressable
-          style={styles.outlineButton}
-          onPress={handleContinueWithoutAccount}
-          accessibilityLabel="Continue without account"
-          accessibilityRole="button"
-        >
-          <Text style={styles.outlineButtonText}>Continue without account</Text>
-        </Pressable>
-
-        <Pressable
-          style={styles.filledButton}
-          onPress={handleContinue}
-          accessibilityLabel="Continue with account"
-          accessibilityRole="button"
-        >
-          <Text style={styles.filledButtonText}>Continue</Text>
-        </Pressable>
-      </View>
-
-      {/* Footer hint */}
-      <Text style={styles.footerHint}>You can add Google/Apple later</Text>
-    </View>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0D0B1A',
+  },
+  gradient: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 24,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+    paddingHorizontal: Layout.screenPadding,
+    paddingTop: 60, // Account for progress bar
   },
   imageContainer: {
-    marginBottom: 32,
-  },
-  imagePlaceholder: {
-    width: 220,
-    height: 200,
-    backgroundColor: 'rgba(124, 77, 255, 0.1)',
-    borderRadius: 16,
+    marginBottom: Spacing.xl,
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  placeholderText: {
-    fontSize: 48,
-    color: '#7C4DFF',
+  heroImage: {
+    width: 220,
+    height: 180,
+  },
+  dotsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.xxxl,
+    gap: Layout.dotSpacing,
+  },
+  dot: {
+    width: Layout.dotSize,
+    height: Layout.dotSize,
+    borderRadius: Layout.dotSize / 2,
+    backgroundColor: Colors.dotInactive,
+  },
+  activeDot: {
+    backgroundColor: Colors.primary,
   },
   textContainer: {
     alignItems: 'center',
-    marginBottom: 48,
+    marginBottom: Spacing.xxxl * 2,
   },
   brand: {
-    color: 'rgba(255,255,255,0.95)',
+    ...Typography.greeting,
+    color: Colors.text.primary,
     fontSize: 28,
     fontWeight: '700',
-    letterSpacing: 0.4,
     textAlign: 'center',
+    marginBottom: Spacing.sm,
   },
   subtitle: {
-    marginTop: 8,
-    color: 'rgba(255,255,255,0.70)',
+    ...Typography.bodyMedium,
+    color: Colors.text.secondary,
     fontSize: 16,
     textAlign: 'center',
   },
   buttonContainer: {
     width: '100%',
-    gap: 16,
-    marginBottom: 32,
+    gap: Spacing.md,
+    marginBottom: Spacing.xl,
   },
-  outlineButton: {
+  primaryButton: {
     height: 48,
-    borderRadius: 24,
+    borderRadius: Layout.buttonRadius,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  primaryButtonText: {
+    ...Typography.labelMedium,
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  secondaryButton: {
+    height: 48,
+    borderRadius: Layout.buttonRadius,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderColor: Colors.outline,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
   },
-  outlineButtonText: {
-    color: 'rgba(255,255,255,0.87)',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  filledButton: {
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#7C4DFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  filledButtonText: {
-    color: 'rgba(255,255,255,0.95)',
+  secondaryButtonText: {
+    ...Typography.labelMedium,
+    color: Colors.text.primary,
     fontSize: 16,
     fontWeight: '600',
   },
   footerHint: {
-    position: 'absolute',
-    bottom: 48,
-    color: 'rgba(255,255,255,0.60)',
+    ...Typography.labelSmall,
+    color: Colors.text.secondary,
     fontSize: 12,
     textAlign: 'center',
+    position: 'absolute',
+    bottom: 48,
   },
 });
