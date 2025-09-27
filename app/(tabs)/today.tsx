@@ -163,7 +163,8 @@ export default function TodayScreen() {
       } else if (item.target === 'chinese') {
         router.push('/(tabs)/druid?mode=chinese');
       } else {
-        router.push(item.target || '/(tabs)/compat');
+        // Use type assertion for dynamic routes
+        router.push((item.target as any) || ('/(tabs)/compat' as any));
       }
     }
   };
@@ -172,9 +173,9 @@ export default function TodayScreen() {
     track('tab_selected', { tab });
 
     if (tab === 'compat') {
-      router.push('/(tabs)/compat');
+      router.push('/(tabs)/compat' as any);
     } else {
-      router.push(`/(tabs)/${tab}`);
+      router.push(`/(tabs)/${tab}` as any);
     }
   };
 

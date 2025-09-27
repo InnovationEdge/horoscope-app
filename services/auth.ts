@@ -28,6 +28,7 @@ export interface AuthUser {
   is_premium: boolean;
   created_at: string;
   last_login?: string;
+  onboarded?: boolean;
 }
 
 export interface AuthResponse {

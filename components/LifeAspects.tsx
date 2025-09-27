@@ -8,6 +8,21 @@ export interface LifeAspectsScores {
   health: number;
 }
 
+export interface LifeAspectsData {
+  love: {
+    score: number;
+    text: string;
+  };
+  career: {
+    score: number;
+    text: string;
+  };
+  health: {
+    score: number;
+    text: string;
+  };
+}
+
 interface LifeAspectsProps {
   scores: LifeAspectsScores;
 }

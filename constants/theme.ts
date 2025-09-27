@@ -83,6 +83,8 @@ export const Layout = {
   // Life aspects
   starSize: 20, // star icon size (18-20dp range)
   starSizeSmall: 18, // for small screens
+  aspectIconSize: 24, // aspect icon size
+  aspectEmojiSize: 20, // aspect emoji size
 
   // Banner carousel
   bannerHeight: 120, // banner card height

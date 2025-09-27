@@ -25,15 +25,21 @@ export default function IndexScreen() {
         };
 
         setUser(userForStore);
-        router.replace('/(tabs)/today');
+
+        // Check if user has completed onboarding
+        if (userForStore.onboarded) {
+          router.replace('/(tabs)/today');
+        } else {
+          router.replace('/onboarding/signin');
+        }
       } else {
-        // Navigate to login
-        router.replace('/auth/login');
+        // Navigate to onboarding for new users
+        router.replace('/onboarding/signin');
       }
     } catch (error) {
       console.error('Auth check failed:', error);
-      // Navigate to login on error
-      router.replace('/auth/login');
+      // Navigate to onboarding on error
+      router.replace('/onboarding/signin');
     } finally {
       setIsLoading(false);
     }
