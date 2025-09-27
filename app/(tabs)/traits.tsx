@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Colors, Layout, Typography, Spacing } from '../../constants/theme';
-import { ZODIAC_SIGNS } from '../../constants/signs';
+import { ZODIAC_SIGNS, ZodiacSign } from '../../constants/signs';
 import { BottomNav } from '../../components/BottomNav';
 import { router, useSegments, useLocalSearchParams } from 'expo-router';
 import { useUserStore } from '../../store/user';
@@ -19,21 +19,21 @@ export default function TraitsScreen() {
   const { user } = useUserStore();
 
   // Default to user sign or parameter sign, fallback to aries
-  const [selectedSign, setSelectedSign] = useState((paramSign as string) || user?.sign || 'aries');
+  const [selectedSign, setSelectedSign] = useState<ZodiacSign>((paramSign as ZodiacSign) || (user?.sign as ZodiacSign) || 'aries');
 
-  const signData = ZODIAC_SIGNS[selectedSign];
-  const characteristics = characteristicsData[selectedSign];
+  const signData = ZODIAC_SIGNS[selectedSign as ZodiacSign];
+  const characteristics = characteristicsData.signs[selectedSign as ZodiacSign];
 
   const handleTabPress = (tab: string) => {
     if (tab === 'compat') {
-      router.push('/(tabs)/compat');
+      router.push('/(tabs)/compat' as any);
     } else {
-      router.push(`/(tabs)/${tab}`);
+      router.push(`/(tabs)/${tab}` as any);
     }
   };
 
   const handleSignChange = (sign: string) => {
-    setSelectedSign(sign);
+    setSelectedSign(sign as ZodiacSign);
   };
 
   if (!signData || !characteristics) {
@@ -75,9 +75,9 @@ export default function TraitsScreen() {
                     style={[styles.signButton, selectedSign === sign && styles.selectedSignButton]}
                     onPress={() => handleSignChange(sign)}
                   >
-                    <Text style={styles.signEmoji}>{ZODIAC_SIGNS[sign].emoji}</Text>
+                    <Text style={styles.signEmoji}>{ZODIAC_SIGNS[sign as ZodiacSign].emoji}</Text>
                     <Text style={[styles.signName, selectedSign === sign && styles.selectedSignName]}>
-                      {ZODIAC_SIGNS[sign].name}
+                      {ZODIAC_SIGNS[sign as ZodiacSign].name}
                     </Text>
                   </Pressable>
                 ))}
@@ -107,7 +107,7 @@ export default function TraitsScreen() {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Key Traits</Text>
               <View style={styles.traitsContainer}>
-                {characteristics.traits.map((trait, index) => (
+                {characteristics.traits.map((trait: string, index: number) => (
                   <View key={index} style={styles.traitChip}>
                     <Text style={styles.traitText}>{trait}</Text>
                   </View>
@@ -119,10 +119,10 @@ export default function TraitsScreen() {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Strengths</Text>
               <View style={styles.listContainer}>
-                {characteristics.strengths.map((strength, index) => (
+                {characteristics.strengths.split(',').map((strength: string, index: number) => (
                   <View key={index} style={styles.listItem}>
                     <Text style={styles.bulletPoint}>+</Text>
-                    <Text style={styles.listText}>{strength}</Text>
+                    <Text style={styles.listText}>{strength.trim()}</Text>
                   </View>
                 ))}
               </View>
@@ -132,10 +132,10 @@ export default function TraitsScreen() {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Growth Areas</Text>
               <View style={styles.listContainer}>
-                {characteristics.weaknesses.map((weakness, index) => (
+                {characteristics.weaknesses.split(',').map((weakness: string, index: number) => (
                   <View key={index} style={styles.listItem}>
                     <Text style={styles.bulletPoint}>•</Text>
-                    <Text style={styles.listText}>{weakness}</Text>
+                    <Text style={styles.listText}>{weakness.trim()}</Text>
                   </View>
                 ))}
               </View>

@@ -1,4 +1,4 @@
-import { ZodiacSign } from '../types/horoscope';
+import { ZodiacSign } from '../constants/signs';
 import horoscopeData from '../content/horoscopes.json';
 
 export interface HoroscopeReading {
@@ -31,7 +31,7 @@ class HoroscopeService {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 300));
 
-      const dailyData = this.horoscopeCache.daily[sign];
+      const dailyData = (this.horoscopeCache as any).daily?.[sign];
       if (!dailyData) {
         throw new Error(`Daily horoscope not found for sign: ${sign}`);
       }
@@ -49,10 +49,10 @@ class HoroscopeService {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 400));
 
-      const weeklyData = this.horoscopeCache.weekly[sign];
+      const weeklyData = (this.horoscopeCache as any).weekly?.[sign];
       if (!weeklyData) {
         // Fallback to daily data with modified content for weekly
-        const dailyData = this.horoscopeCache.daily[sign];
+        const dailyData = (this.horoscopeCache as any).daily?.[sign];
         return {
           preview: `This week brings extended opportunities for ${sign}. ${dailyData.preview}`,
           full: `Week ahead for ${sign}: ${dailyData.full} This influence extends throughout the week, offering multiple opportunities to embrace these energies.`,

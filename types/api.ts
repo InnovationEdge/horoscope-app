@@ -1,5 +1,8 @@
 import { ZodiacSign } from '../constants/signs';
 
+// Re-export ZodiacSign for easier imports
+export { ZodiacSign };
+
 // Base types from API_CONTRACT.md
 export type SubscriptionStatus = 'free' | 'premium';
 export type Timeframe = 'daily' | 'weekly' | 'monthly' | 'yearly';
@@ -29,6 +32,20 @@ export interface UpdateUserRequest {
 }
 
 // Auth DTOs
+export interface AuthUser {
+  id: string;
+  email?: string;
+  name?: string;
+  birth_date?: string;
+  birth_time?: string;
+  birth_place?: string;
+  sign?: string;
+  is_premium?: boolean;
+  created_at?: string;
+  last_login?: string;
+  onboarded?: boolean;
+}
+
 export interface SocialAuthRequest {
   provider: Provider;
   access_token: string;

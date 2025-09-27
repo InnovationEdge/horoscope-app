@@ -34,8 +34,8 @@ interface AspectItemProps {
 }
 
 function StarRating({ score }: { score: number }) {
-  // Convert score 1-10 to stars 0-5 (rounded)
-  const stars = Math.round((score / 10) * 5);
+  // Convert score 0-100 to stars 0-5 (per DESIGN_REVIEW.md)
+  const stars = Math.round(score / 20);
 
   return (
     <View style={styles.starsContainer}>
@@ -46,7 +46,7 @@ function StarRating({ score }: { score: number }) {
           </Text>
         ))}
       </View>
-      <Text style={styles.scoreText}>{score}/10</Text>
+      <Text style={styles.scoreText}>{Math.round(score/10)}/10</Text>
     </View>
   );
 }
@@ -76,11 +76,11 @@ export function LifeAspects({ scores }: LifeAspectsProps) {
       <Text style={styles.sectionTitle}>Life Aspects</Text>
 
       <View style={styles.aspectsGrid}>
-        <AspectItem icon="💖" label="Love" score={scores.love || 0} />
+        <AspectItem icon="❤️" label="Love" score={scores.love || 0} />
 
         <AspectItem icon="💼" label="Career" score={scores.career || 0} />
 
-        <AspectItem icon="💪" label="Health" score={scores.health || 0} />
+        <AspectItem icon="🩺" label="Health" score={scores.health || 0} />
       </View>
     </View>
   );

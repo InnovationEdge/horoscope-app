@@ -26,9 +26,9 @@ export function BottomNav({ activeTab, onTabPress }: BottomNavProps) {
     { id: 'profile', label: 'Profile' },
   ];
 
-  // Calculate responsive sizes
-  const responsiveFabSize = isSmallScreen ? 56 : isLargeScreen ? 72 : 64;
-  const responsiveNavHeight = isSmallScreen ? 70 : 80;
+  // Use exact specs from DESIGN_REVIEW.md (64dp FAB, 80dp nav height)
+  const responsiveFabSize = Layout.fabSize; // 64dp
+  const responsiveNavHeight = Layout.navbarHeight; // 80dp
   const responsiveFontSize = isSmallScreen ? 10 : isLargeScreen ? 13 : 12;
   const responsiveIconSize = isSmallScreen ? 28 : isLargeScreen ? 36 : 32;
 
@@ -102,10 +102,10 @@ export function BottomNav({ activeTab, onTabPress }: BottomNavProps) {
               <Animated.View
                 style={[
                   styles.activePill,
-                  {
+                  useAnimatedStyle(() => ({
                     opacity: withTiming(isActive ? 1 : 0, { duration: 200 }),
                     transform: [{ scale: withSpring(isActive ? 1 : 0.8, { damping: 15, stiffness: 200 }) }],
-                  },
+                  })),
                 ]}
               />
 
@@ -164,12 +164,10 @@ const styles = StyleSheet.create({
   },
   activePill: {
     position: 'absolute',
-    width: 64,
-    height: 36,
+    width: Layout.activePillWidth, // 56dp
+    height: Layout.activePillHeight, // 32dp
     backgroundColor: Colors.activePill,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: 'rgba(124, 77, 255, 0.3)',
+    borderRadius: Layout.activePillHeight / 2, // 16dp
   },
   tabLabel: {
     ...Typography.labelSmall,
@@ -189,11 +187,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    top: -24,
-    elevation: 12,
+    top: Layout.fabElevation, // -16dp from theme
+    elevation: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.3,
     shadowRadius: 12,
     borderWidth: 3,
     borderColor: Colors.surface,

@@ -80,7 +80,7 @@ export function getLuckyNumber(sign: string, date: Date): number {
 
   const numbers = luckyNumbers[sign.toLowerCase()] || [7, 13, 21];
   const index = date.getDate() % numbers.length;
-  return numbers[index];
+  return numbers[index] || 7;
 }
 
 // Generate lucky color based on sign
@@ -101,7 +101,7 @@ export function getLuckyColor(sign: string): string {
   };
 
   const colors = luckyColors[sign.toLowerCase()] || ['Blue'];
-  return colors[0];
+  return colors[0] || 'Blue';
 }
 
 // Generate mood based on sign and scores
@@ -121,5 +121,5 @@ export function getLuckyMood(sign: string, aspects: { love: number; career: numb
 
   const moodList = moods[moodLevel];
   const index = sign.length % moodList.length;
-  return moodList[index];
+  return moodList[index] || 'Optimistic';
 }

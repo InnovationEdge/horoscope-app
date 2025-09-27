@@ -53,7 +53,7 @@ const calculateChineseAnimal = (birthYear: number): string => {
   ];
   const baseYear = 1900; // Year of the Rat
   const yearIndex = (birthYear - baseYear) % 12;
-  return animals[yearIndex];
+  return animals[yearIndex] || 'Rat';
 };
 
 export default function DruidScreen() {
@@ -79,9 +79,9 @@ export default function DruidScreen() {
 
   const handleTabPress = (tab: string) => {
     if (tab === 'compat') {
-      router.push('/(tabs)/compat');
+      router.push('/(tabs)/compat' as any);
     } else {
-      router.push(`/(tabs)/${tab}`);
+      router.push(`/(tabs)/${tab}` as any);
     }
   };
 
@@ -213,7 +213,7 @@ const getChineseEmoji = (animal: string): string => {
 const getChineseElement = (year: number): string => {
   const elements = ['Metal', 'Water', 'Wood', 'Fire', 'Earth'];
   const elementIndex = Math.floor(((year - 1900) % 10) / 2);
-  return elements[elementIndex];
+  return elements[elementIndex] || 'Metal';
 };
 
 const styles = StyleSheet.create({

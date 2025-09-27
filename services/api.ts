@@ -1,7 +1,28 @@
 // services/api.ts
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AuthUser, AuthResponse, LoginCredentials, RegisterData } from './auth';
+import { AuthUser } from '../types/api';
 import { getZodiacSign } from '../utils/zodiac';
+
+// Auth related types for the mock API
+interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+interface RegisterData {
+  name?: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  birth_date?: string;
+  birth_time?: string;
+  birth_place?: string;
+}
+
+interface AuthResponse {
+  user: AuthUser;
+  token: string;
+}
 
 export const defaultHeaders = async () => {
   const region = 'US'; // Default to US for now, TODO: implement region detection
@@ -42,7 +63,7 @@ class MockUserDatabase {
   }
 
   findUserByEmail(email: string): AuthUser | undefined {
-    return this.users.find(user => user.email.toLowerCase() === email.toLowerCase());
+    return this.users.find(user => user.email?.toLowerCase() === email.toLowerCase());
   }
 
   async createUser(data: RegisterData): Promise<AuthUser> {
@@ -98,9 +119,9 @@ const mockEndpoints = {
       user = await mockDB.createUser({
         email: body.email,
         password: body.password,
+        confirmPassword: body.password,
         name: 'Demo User',
         birth_date: '1990-01-15',
-        marketing_consent: false,
       });
     }
 
@@ -115,7 +136,6 @@ const mockEndpoints = {
     return {
       user,
       token: `mock_token_${user.id}_${Date.now()}`,
-      refresh_token: `mock_refresh_${user.id}_${Date.now()}`,
     };
   },
 
@@ -127,7 +147,6 @@ const mockEndpoints = {
     return {
       user,
       token: `mock_token_${user.id}_${Date.now()}`,
-      refresh_token: `mock_refresh_${user.id}_${Date.now()}`,
     };
   },
 
@@ -192,3 +211,17 @@ export async function apiRequest(endpoint: string, options: RequestInit = {}) {
 
   return response.json();
 }
+
+// Export apiClient for compatibility with predictions.ts
+export const apiClient = {
+  get: (endpoint: string) => apiRequest(endpoint, { method: 'GET' }),
+  post: (endpoint: string, data?: any) => apiRequest(endpoint, {
+    method: 'POST',
+    body: data ? JSON.stringify(data) : undefined
+  }),
+  put: (endpoint: string, data?: any) => apiRequest(endpoint, {
+    method: 'PUT',
+    body: data ? JSON.stringify(data) : undefined
+  }),
+  delete: (endpoint: string) => apiRequest(endpoint, { method: 'DELETE' }),
+};

@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Pressable, Dimensions } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import { Colors, Layout, Typography, Spacing } from '../constants/theme';
+import { BlurView } from 'expo-blur';
+import { Colors, Layout, Typography, Spacing, Blur } from '../constants/theme';
 import { useSubscriptionStore } from '../store/subscription';
 
 export interface HoroscopeData {
@@ -141,10 +142,13 @@ export function HoroscopePager({ data, onReadMore, onPaywallNeeded, onPagerSwipe
             {/* Blur overlay for premium content */}
             {isPremiumContent && !canAccess && (
               <View style={styles.blurOverlay}>
-                <View style={styles.blurMask} />
+                <BlurView
+                  intensity={Blur.intensity}
+                  style={styles.blurMask}
+                  tint="dark"
+                />
                 <View style={styles.blurContent}>
-                  <Text style={styles.blurTitle}>Premium Content</Text>
-                  <Text style={styles.blurSubtitle}>Upgrade to unlock exclusive insights</Text>
+                  <Text style={styles.upgradeText}>Upgrade to Premium</Text>
                 </View>
               </View>
             )}
@@ -344,6 +348,12 @@ const styles = StyleSheet.create({
     color: Colors.text.primary,
     fontSize: 14,
     textAlign: 'center',
+    fontWeight: '500',
+  },
+  upgradeText: {
+    ...Typography.labelSmall,
+    color: Colors.primary,
+    fontSize: 12,
     fontWeight: '500',
   },
   readMoreButton: {

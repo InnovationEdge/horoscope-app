@@ -4,7 +4,7 @@ import * as Application from 'expo-application';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
-type JSONObject = Record<string, string | number | boolean | null | undefined>;
+type JSONObject = Record<string, string | number | boolean | null | undefined | Record<string, any>>;
 
 const STORAGE_QUEUE = 'anl_queue_v1';
 const STORAGE_SESSION = 'anl_session_v1';

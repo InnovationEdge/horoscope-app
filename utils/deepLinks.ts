@@ -6,14 +6,14 @@ import { router } from 'expo-router';
 export function parseDeepLinkTarget(target: string): { route: string; params?: Record<string, string> } {
   switch (true) {
     case target.startsWith('traits:'):
-      const traitsSign = target.split(':')[1];
+      const traitsSign = target.split(':')[1] || 'aries';
       return {
         route: '/(tabs)/traits',
         params: { sign: traitsSign },
       };
 
     case target.startsWith('compat:'):
-      const compatSign = target.split(':')[1];
+      const compatSign = target.split(':')[1] || 'aries';
       return {
         route: '/(tabs)/compat',
         params: { with: compatSign },
@@ -52,7 +52,7 @@ export function navigateToTarget(target: string, source?: string) {
     finalRoute = `${route}?src=${source}`;
   }
 
-  router.push(finalRoute);
+  router.push(finalRoute as any);
 }
 
 // Check if target requires premium access

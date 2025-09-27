@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Colors, Layout, Typography, Spacing } from '../../constants/theme';
-import { ZODIAC_SIGNS } from '../../constants/signs';
+import { ZODIAC_SIGNS, ZodiacSign } from '../../constants/signs';
 import { BottomNav } from '../../components/BottomNav';
 import { router, useSegments, useLocalSearchParams } from 'expo-router';
 import { useUserStore } from '../../store/user';
@@ -25,9 +25,9 @@ export default function CompatibilityScreen() {
 
   const handleTabPress = (tab: string) => {
     if (tab === 'compat') {
-      router.push('/(tabs)/compat');
+      router.push('/(tabs)/compat' as any);
     } else {
-      router.push(`/(tabs)/${tab}`);
+      router.push(`/(tabs)/${tab}` as any);
     }
   };
 
@@ -41,9 +41,9 @@ export default function CompatibilityScreen() {
   };
 
   // Get compatibility data
-  const compatibility = compatibilityData[leftSign]?.[rightSign];
-  const leftSignData = ZODIAC_SIGNS[leftSign];
-  const rightSignData = ZODIAC_SIGNS[rightSign];
+  const compatibility = compatibilityData[leftSign as ZodiacSign]?.[rightSign as ZodiacSign];
+  const leftSignData = ZODIAC_SIGNS[leftSign as ZodiacSign];
+  const rightSignData = ZODIAC_SIGNS[rightSign as ZodiacSign];
 
   if (!compatibility || !leftSignData || !rightSignData) {
     return (
@@ -171,7 +171,7 @@ export default function CompatibilityScreen() {
                   <View style={styles.tipsSection}>
                     <Text style={styles.tipsTitle}>💡 Relationship Tips</Text>
                     <View style={styles.tipsList}>
-                      {compatibility.tips.map((tip, index) => (
+                      {compatibility.tips.map((tip: string, index: number) => (
                         <View key={index} style={styles.tipItem}>
                           <Text style={styles.tipBullet}>•</Text>
                           <Text style={styles.tipText}>{tip}</Text>
