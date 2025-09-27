@@ -1,11 +1,10 @@
 // services/api.ts
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Localization from 'expo-localization';
 import { AuthUser, AuthResponse, LoginCredentials, RegisterData } from './auth';
 import { getZodiacSign } from '../utils/zodiac';
 
 export const defaultHeaders = async () => {
-  const region = Localization.getLocales()[0]?.regionCode || 'US';
+  const region = 'US'; // Default to US for now, TODO: implement region detection
   return {
     'Content-Type': 'application/json',
     'X-Device-Region': region, // e.g., 'GE', 'US', 'DE'
