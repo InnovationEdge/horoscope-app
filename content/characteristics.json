@@ -1,110 +1,137 @@
 {
-  "aries": {
-    "traits": ["confident","direct","energetic","pioneering","brave"],
-    "strengths": "Natural leadership, initiative, and courage to take on new challenges.",
-    "weaknesses": "Impatience, impulsiveness, and tendency to rush into decisions.",
-    "lucky_color": "Red",
-    "lucky_number": "7",
-    "element": "Fire",
-    "ruling_planet": "Mars"
-  },
-  "taurus": {
-    "traits": ["reliable","patient","practical","devoted","stable"],
-    "strengths": "Determination, loyalty, and ability to create lasting foundations.",
-    "weaknesses": "Stubbornness, resistance to change, and possessiveness.",
-    "lucky_color": "Green",
-    "lucky_number": "6",
-    "element": "Earth",
-    "ruling_planet": "Venus"
-  },
-  "gemini": {
-    "traits": ["adaptable","curious","witty","communicative","versatile"],
-    "strengths": "Quick thinking, excellent communication, and adaptability.",
-    "weaknesses": "Inconsistency, restlessness, and difficulty with commitment.",
-    "lucky_color": "Yellow",
-    "lucky_number": "5",
-    "element": "Air",
-    "ruling_planet": "Mercury"
-  },
-  "cancer": {
-    "traits": ["nurturing","intuitive","protective","emotional","caring"],
-    "strengths": "Deep empathy, strong intuition, and natural caregiving abilities.",
-    "weaknesses": "Moodiness, oversensitivity, and tendency to retreat when hurt.",
-    "lucky_color": "Silver",
-    "lucky_number": "2",
-    "element": "Water",
-    "ruling_planet": "Moon"
-  },
-  "leo": {
-    "traits": ["charismatic","confident","generous","creative","dramatic"],
-    "strengths": "Natural magnetism, generosity, and ability to inspire others.",
-    "weaknesses": "Pride, ego-centeredness, and need for constant attention.",
-    "lucky_color": "Gold",
-    "lucky_number": "8",
-    "element": "Fire",
-    "ruling_planet": "Sun"
-  },
-  "virgo": {
-    "traits": ["analytical","perfectionist","helpful","practical","modest"],
-    "strengths": "Attention to detail, reliability, and desire to serve others.",
-    "weaknesses": "Overcritical nature, worry, and tendency toward perfectionism.",
-    "lucky_color": "Navy Blue",
-    "lucky_number": "3",
-    "element": "Earth",
-    "ruling_planet": "Mercury"
-  },
-  "libra": {
-    "traits": ["diplomatic","charming","balanced","artistic","social"],
-    "strengths": "Natural sense of justice, charm, and ability to create harmony.",
-    "weaknesses": "Indecisiveness, people-pleasing, and avoidance of conflict.",
-    "lucky_color": "Pink",
-    "lucky_number": "9",
-    "element": "Air",
-    "ruling_planet": "Venus"
-  },
-  "scorpio": {
-    "traits": ["intense","passionate","mysterious","loyal","transformative"],
-    "strengths": "Deep emotional intelligence, loyalty, and transformative power.",
-    "weaknesses": "Jealousy, secretiveness, and tendency toward revenge.",
-    "lucky_color": "Deep Red",
-    "lucky_number": "4",
-    "element": "Water",
-    "ruling_planet": "Pluto"
-  },
-  "sagittarius": {
-    "traits": ["optimistic","adventurous","philosophical","honest","freedom-loving"],
-    "strengths": "Natural optimism, love of adventure, and philosophical wisdom.",
-    "weaknesses": "Restlessness, tactlessness, and difficulty with routine.",
-    "lucky_color": "Purple",
-    "lucky_number": "9",
-    "element": "Fire",
-    "ruling_planet": "Jupiter"
-  },
-  "capricorn": {
-    "traits": ["ambitious","disciplined","responsible","patient","practical"],
-    "strengths": "Strong work ethic, discipline, and ability to achieve long-term goals.",
-    "weaknesses": "Pessimism, rigidity, and tendency to be overly serious.",
-    "lucky_color": "Dark Green",
-    "lucky_number": "10",
-    "element": "Earth",
-    "ruling_planet": "Saturn"
-  },
-  "aquarius": {
-    "traits": ["independent","innovative","humanitarian","eccentric","progressive"],
-    "strengths": "Original thinking, humanitarian nature, and progressive ideals.",
-    "weaknesses": "Detachment, unpredictability, and resistance to emotional intimacy.",
-    "lucky_color": "Turquoise",
-    "lucky_number": "11",
-    "element": "Air",
-    "ruling_planet": "Uranus"
-  },
-  "pisces": {
-    "traits": ["compassionate","intuitive","artistic","dreamy","empathetic"],
-    "strengths": "Deep compassion, artistic abilities, and spiritual sensitivity.",
-    "weaknesses": "Escapism, over-emotionalism, and difficulty with boundaries.",
-    "lucky_color": "Sea Green",
-    "lucky_number": "12",
-    "element": "Water",
-    "ruling_planet": "Neptune"
+  "$schema": "https://example.com/zodiac/characteristics.schema.json",
+  "signs": {
+    "aries": {
+      "emoji": "♈",
+      "date_range": "Mar 21 – Apr 19",
+      "traits": ["confident", "dynamic", "impulsive"],
+      "strengths": "Natural leadership, initiative, and courage in facing challenges.",
+      "weaknesses": "Impatience, impulsiveness, and tendency to act without thinking.",
+      "element": "Fire",
+      "planet": "Mars",
+      "lucky_color": "Red",
+      "lucky_number": 7
+    },
+    "taurus": {
+      "emoji": "♉",
+      "date_range": "Apr 20 – May 20",
+      "traits": ["reliable", "patient", "practical"],
+      "strengths": "Stability, determination, and appreciation for beauty and comfort.",
+      "weaknesses": "Stubbornness, resistance to change, and possessiveness.",
+      "element": "Earth",
+      "planet": "Venus",
+      "lucky_color": "Green",
+      "lucky_number": 6
+    },
+    "gemini": {
+      "emoji": "♊",
+      "date_range": "May 21 – Jun 20",
+      "traits": ["curious", "adaptable", "communicative"],
+      "strengths": "Quick wit, versatility, and excellent communication skills.",
+      "weaknesses": "Indecisiveness, inconsistency, and superficiality.",
+      "element": "Air",
+      "planet": "Mercury",
+      "lucky_color": "Yellow",
+      "lucky_number": 5
+    },
+    "cancer": {
+      "emoji": "♋",
+      "date_range": "Jun 21 – Jul 22",
+      "traits": ["emotional", "nurturing", "intuitive"],
+      "strengths": "Deep empathy, strong intuition, and protective nature.",
+      "weaknesses": "Moodiness, oversensitivity, and tendency to cling.",
+      "element": "Water",
+      "planet": "Moon",
+      "lucky_color": "Silver",
+      "lucky_number": 2
+    },
+    "leo": {
+      "emoji": "♌",
+      "date_range": "Jul 23 – Aug 22",
+      "traits": ["charismatic", "confident", "generous"],
+      "strengths": "Natural magnetism, creativity, and warm-hearted generosity.",
+      "weaknesses": "Pride, attention-seeking behavior, and stubbornness.",
+      "element": "Fire",
+      "planet": "Sun",
+      "lucky_color": "Gold",
+      "lucky_number": 1
+    },
+    "virgo": {
+      "emoji": "♍",
+      "date_range": "Aug 23 – Sep 22",
+      "traits": ["analytical", "practical", "helpful"],
+      "strengths": "Attention to detail, reliability, and desire to help others.",
+      "weaknesses": "Perfectionism, worry, and overly critical nature.",
+      "element": "Earth",
+      "planet": "Mercury",
+      "lucky_color": "Navy Blue",
+      "lucky_number": 6
+    },
+    "libra": {
+      "emoji": "♎",
+      "date_range": "Sep 23 – Oct 22",
+      "traits": ["diplomatic", "charming", "balanced"],
+      "strengths": "Harmony-seeking, fairness, and natural charm.",
+      "weaknesses": "Indecisiveness, people-pleasing, and avoidance of conflict.",
+      "element": "Air",
+      "planet": "Venus",
+      "lucky_color": "Pink",
+      "lucky_number": 7
+    },
+    "scorpio": {
+      "emoji": "♏",
+      "date_range": "Oct 23 – Nov 21",
+      "traits": ["intense", "passionate", "mysterious"],
+      "strengths": "Deep insight, loyalty, and transformative power.",
+      "weaknesses": "Jealousy, secretiveness, and vindictiveness.",
+      "element": "Water",
+      "planet": "Mars",
+      "lucky_color": "Dark Red",
+      "lucky_number": 8
+    },
+    "sagittarius": {
+      "emoji": "♐",
+      "date_range": "Nov 22 – Dec 21",
+      "traits": ["adventurous", "optimistic", "philosophical"],
+      "strengths": "Love of freedom, optimism, and quest for knowledge.",
+      "weaknesses": "Restlessness, tactlessness, and commitment issues.",
+      "element": "Fire",
+      "planet": "Jupiter",
+      "lucky_color": "Purple",
+      "lucky_number": 9
+    },
+    "capricorn": {
+      "emoji": "♑",
+      "date_range": "Dec 22 – Jan 19",
+      "traits": ["ambitious", "disciplined", "responsible"],
+      "strengths": "Goal-oriented nature, discipline, and practical approach.",
+      "weaknesses": "Pessimism, rigidity, and workaholic tendencies.",
+      "element": "Earth",
+      "planet": "Saturn",
+      "lucky_color": "Brown",
+      "lucky_number": 10
+    },
+    "aquarius": {
+      "emoji": "♒",
+      "date_range": "Jan 20 – Feb 18",
+      "traits": ["innovative", "independent", "humanitarian"],
+      "strengths": "Originality, independence, and humanitarian ideals.",
+      "weaknesses": "Detachment, unpredictability, and aloofness.",
+      "element": "Air",
+      "planet": "Uranus",
+      "lucky_color": "Turquoise",
+      "lucky_number": 4
+    },
+    "pisces": {
+      "emoji": "♓",
+      "date_range": "Feb 19 – Mar 20",
+      "traits": ["compassionate", "artistic", "intuitive"],
+      "strengths": "Empathy, creativity, and spiritual awareness.",
+      "weaknesses": "Escapism, overly trusting nature, and lack of boundaries.",
+      "element": "Water",
+      "planet": "Neptune",
+      "lucky_color": "Sea Green",
+      "lucky_number": 12
+    }
   }
 }

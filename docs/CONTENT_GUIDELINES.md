@@ -1,375 +1,430 @@
-# Content Guidelines — Zodiac App (FINAL, Build-Strict)
+# Content Guidelines — Zodiac App (FINAL, Build-Strict, Full)
 
-> Source of truth for **all text and data** shown in the app.  
-> **Never delete or rename** any `docs/*.md`.
-
----
-
-## 0) Principles
-- **Consistent**: same structure per sign and timeframe.
-- **Encouraging & mystical**, never deterministic medical/financial claims.
-- **Localized**: default `en` with future `ka` (Georgian). Currency: **GEL**.
-- **Separation of concerns**: Static = repo JSON; Dynamic = Gemini (server-side only).
-- **No lorem** anywhere.
+> **Purpose:** One source of truth for **all** text and static content.  
+> **Hard rules:**
+>
+> - No lorem in code. All content comes from `content/*.json` or API.
+> - Never delete/rename any `docs/*.md`.
+> - Respect `ACCEPTANCE.md` for UI behavior (blur/CTA, layouts).
+> - Region-aware pricing strings come from API (do not construct on client).
 
 ---
 
-## 1) Sources of Content
+## 0) Voice, Style, Editorial
 
-### Static (repo, versioned)
-- `content/characteristics.json` — timeless traits/strengths/weaknesses per sign.
-- `content/druid.json` — Druid tree mapping + text.
-- `content/chinese.json` — Chinese animal mapping + text.
-- `content/banners.json` — Explore banners with deep-link targets.
-- (Optional) `content/strings.<locale>.json` — common UI copy.
-
-### Dynamic (server-side only, cached)
-- Gemini-generated **Horoscopes** (Daily, Weekly, Monthly, Yearly).
-- Gemini text for **Compatibility** (preview + premium breakdown).
-- **Lucky mood** sentences and **Life Aspects** short lines (derived from horoscope).
-- Cache TTLs: **daily 24h/sign**, **weekly 7d/sign**, **monthly 30d/sign**, **yearly 365d/sign**.
+**Tone:** Warm, encouraging, grounded. No doom.  
+**POV:** Second person (“you”).  
+**Reading level:** CEFR B2 (~Grade 7–9).  
+**Formatting:** Short paragraphs (max 3 sentences each). No emoji spam (≤2 per section).  
+**Inclusivity:** Gender-neutral; culture-agnostic; avoid stereotypes.  
+**Actionability:** End each daily/weekly section with 1 actionable tip.
 
 ---
 
-## 2) Tone, Style, Guardrails
+## 1) Canonical Sign Metadata (static)
 
-**Do**  
-- Warm, empowering, poetic but **clear**.  
-- Offer choices, gentle advice (“consider…”, “you may…”).  
-- Keep previews **short** and **specific** to the sign/time.
+Source of truth for sign names, emojis, date ranges, and accent colors used in avatars and chips. Store in `constants/signs.ts` **and** duplicate the non-visual parts (emoji, date_range) in `content/characteristics.json`.
 
-**Don’t**  
-- No absolutes (“guaranteed”, “will happen”).  
-- No medical/financial prescriptions.  
-- No fear tactics, negativity, or guilt.
+| Sign        | Key           | Emoji | Date Range (inclusive) | Accent Hex |
+| ----------- | ------------- | ----: | ---------------------- | ---------- |
+| Aries       | `aries`       |    ♈ | Mar 21 – Apr 19        | `#FF6B6B`  |
+| Taurus      | `taurus`      |    ♉ | Apr 20 – May 20        | `#8BC34A`  |
+| Gemini      | `gemini`      |    ♊ | May 21 – Jun 20        | `#4DD0E1`  |
+| Cancer      | `cancer`      |    ♋ | Jun 21 – Jul 22        | `#81D4FA`  |
+| Leo         | `leo`         |    ♌ | Jul 23 – Aug 22        | `#FBC02D`  |
+| Virgo       | `virgo`       |    ♍ | Aug 23 – Sep 22        | `#A5D6A7`  |
+| Libra       | `libra`       |    ♎ | Sep 23 – Oct 22        | `#BA68C8`  |
+| Scorpio     | `scorpio`     |    ♏ | Oct 23 – Nov 21        | `#9575CD`  |
+| Sagittarius | `sagittarius` |    ♐ | Nov 22 – Dec 21        | `#FFB74D`  |
+| Capricorn   | `capricorn`   |    ♑ | Dec 22 – Jan 19        | `#90A4AE`  |
+| Aquarius    | `aquarius`    |    ♒ | Jan 20 – Feb 18        | `#4FC3F7`  |
+| Pisces      | `pisces`      |    ♓ | Feb 19 – Mar 20        | `#64B5F6`  |
 
-**Voice examples**  
-- “Your focus sharpens as distractions settle.”  
-- “Conversations feel easier if you lead with curiosity.”  
+**Usage rules**
+
+- Emoji size = 32dp inside 48dp circle with **accent @ 20% opacity** (avatar background).
+- Never hardcode dates in components; read from JSON where copy references them.
 
 ---
 
-## 3) Data Contracts (Frontend expects these shapes)
+## 2) Copy Lengths & Structures (authoritative)
 
-### 3.1 Prediction (any timeframe)
+| Type    | Free/Premium |        Length | Structure                                                 |
+| ------- | ------------ | ------------: | --------------------------------------------------------- |
+| Daily   | Free         |  80–120 words | 2–3 short paragraphs; actionable closing.                 |
+| Weekly  | Premium      | 200–300 words | 3–5 paragraphs; themes + specific tip.                    |
+| Monthly | Premium      | 250–350 words | 4–6 paragraphs; domains (love/career/health).             |
+| Yearly  | Premium      | 500–700 words | Sections: Themes, Growth, Relationships, Work, Wellbeing. |
+
+**Lucky row (Daily only):** `{ "lucky_number": int, "lucky_color": "string", "mood": "string" }`  
+**Life aspects (Daily only):** scores 0–100 for `love`, `career`, `health`.
+
+---
+
+## 3) JSON Schemas (strict)
+
+### 3.1 `content/characteristics.json`
+
 ```json
 {
-  "sign": "aries",
-  "type": "daily",
-  "period": { "start": "YYYY-MM-DD", "end": "YYYY-MM-DD" },
-  "preview": "Short <= 120 words.",
-  "full_text": null,
-  "mood_tags": ["confident","social"],
-  "lucky": { "number": 7, "color": "Crimson Red", "mood": "Optimistic" },
-  "scores": { "love": 70, "career": 85, "health": 60 }  // 0..100
+  "$schema": "https://example.com/zodiac/characteristics.schema.json",
+  "signs": [
+    {
+      "sign": "aries",
+      "emoji": "♈",
+      "date_range": "Mar 21 – Apr 19",
+      "traits": ["confident","dynamic","impulsive"],
+      "strengths": ["leadership","courage","independence"],
+      "weaknesses": ["impatience","stubbornness","restlessness"],
+      "element": "Fire",
+      "planet": "Mars",
+      "lucky_color": "Red",
+      "lucky_number": 7
+    }
+  ]
 }
-Daily includes lucky.
-
-Weekly/Monthly/Yearly: same shape; for free users full_text=null and client blurs body.
-
-3.2 Characteristics (static)
+3.2 content/compatibility.json
 json
 Copy code
 {
-  "aries": {
-    "traits": ["confident","direct","energetic"],
-    "strengths": "Leadership, initiative, courage.",
-    "weaknesses": "Impatience, impulsiveness.",
-    "lucky_color": "Red",
-    "lucky_number": "7",
-    "element": "Fire",
-    "ruling_planet": "Mars"
+  "$schema": "https://example.com/zodiac/compatibility.schema.json",
+  "pairs": [
+    {
+      "signA": "aries",
+      "signB": "leo",
+      "overall": 86,
+      "love": 90,
+      "career": 70,
+      "friendship": 80,
+      "preview": "A strong match with fiery chemistry.",
+      "premium_text": "Aries and Leo share a bold fire energy..."
+    }
+  ]
+}
+3.3 content/druid.json
+json
+Copy code
+{
+  "$schema": "https://example.com/zodiac/druid.schema.json",
+  "map": {
+    "oak": {
+      "date_range": "Jun 10 – Jun 20",
+      "text": "Oak people are grounded and resilient..."
+    }
   }
 }
-3.3 Compatibility
+3.4 content/chinese.json
 json
 Copy code
 {
-  "signA":"aries","signB":"leo",
-  "overall":86,
-  "love":88,"career":75,"friendship":82,
-  "preview":"A fiery match…",
-  "full_text": null
-}
-3.4 Druid (static)
-json
-Copy code
-{ "range": "Apr 01–Apr 10", "sign": "Willow", "text": "150–250 words…" }
-3.5 Chinese (static)
-json
-Copy code
-{ "animal":"Dragon", "years":[1964,1976,1988,2000,2012], "text":"150–250 words…" }
-3.6 Banners (Explore More)
-json
-Copy code
-{
-  "id": "premium_weekly",
-  "title": "✨ Unlock your Weekly Horoscope",
-  "subtitle": "Deeper guidance awaits",
-  "bullets": ["See career highlights","Navigate relationships","Make smarter moves"],
-  "target": "premium",                     // traits:<sign> | compat:<sign> | druid | chinese | premium
-  "premium_required": true
-}
-4) Word Counts & Structure
-Type	Preview	Full (Premium)	Notes
-Daily	100–120 words	250–400 words	Includes Lucky + mood tags
-Weekly	120–160 words	250–400 words	Gated for free (blur + Upgrade)
-Monthly	180–240 words	400–600 words	Gated for free
-Yearly	240–320 words	800–1000 words	Gated for free
-Compat	1–2 sentences	250–400 words	With per-category tips
-Druid	—	150–250 words (static)	One entry per Druid sign
-Chinese	—	150–250 words (static)	One entry per animal
-
-Mood tags: 2–3 words (e.g., “grounded”, “curious”).
-Life Aspects: scores 0–100 + short supportive sentence (20–30 words), used server-side only (client shows stars + x/10).
-
-5) Lucky System (Today page only)
-Number: rotate daily from a seeded list per sign (e.g., [3,7,9,11,5,…]).
-
-Color: rotate weekly per sign (name or hex + friendly name).
-
-Mood: single word or short phrase generated from Daily’s tone.
-
-6) Gemini Prompts (server-side)
-6.1 Horoscope Prompt (Daily/Weekly/Monthly/Yearly)
-json
-Copy code
-{
-  "task": "horoscope",
-  "sign": "<sign>",
-  "timeframe": "daily|weekly|monthly|yearly",
-  "period": { "start": "YYYY-MM-DD", "end": "YYYY-MM-DD" },
-  "language": "en",                  // later "ka"
-  "style": {
-    "tone": "encouraging, mystical, concrete examples",
-    "avoid": "medical/financial directives, determinism, fear",
-    "reading_level": "B2"
-  },
-  "structure": {
-    "preview_words": 120,
-    "full_words": 300,
-    "mood_tags": 3,
-    "life_aspects": ["love","career","health"]  // score 0..100 + 20–30 word line each
-  },
-  "output_schema": {
-    "preview": "string",
-    "full_text": "string",
-    "mood_tags": ["string"],
-    "scores": { "love": "int", "career": "int", "health": "int" }
+  "$schema": "https://example.com/zodiac/chinese.schema.json",
+  "map": {
+    "dragon": {
+      "years": [1976, 1988, 2000, 2012, 2024],
+      "text": "Dragons are ambitious, charismatic and forward-looking..."
+    }
   }
 }
-6.2 Compatibility Prompt
+3.5 content/banners.json
 json
 Copy code
 {
-  "task": "compatibility",
-  "signA": "<userSign>",
-  "signB": "<otherSign>",
-  "language": "en",
-  "style": { "tone":"supportive, realistic, strengths+frictions+tips" },
-  "structure": {
-    "preview_sentences": 2,
-    "full_words": 350,
-    "categories": ["love","career","friendship"]
-  },
-  "output_schema": {
-    "preview": "string",
-    "full_text": "string",
-    "overall": "int 0..100",
-    "scores": { "love":"int", "career":"int", "friendship":"int" }
-  }
+  "$schema": "https://example.com/zodiac/banners.schema.json",
+  "items": [
+    {
+      "id": "premium_weekly",
+      "title": "✨ Unlock your Weekly Horoscope",
+      "subtitle": "Deeper guidance awaits",
+      "bullets": ["See career highlights","Navigate relationships","Make smarter moves"],
+      "target": "premium",
+      "premium_required": true
+    },
+    {
+      "id": "compat_leo",
+      "title": "💖 Who’s your best match?",
+      "subtitle": "Try compatibility with Leo",
+      "bullets": ["Instant chemistry score","Actionable tips"],
+      "target": "compat:leo",
+      "premium_required": false
+    }
+  ]
 }
-7) Banners — Copy Rules (high-conversion)
-Title ≤ 48 chars; Subtitle ≤ 80 chars.
+4) API Contracts (copy-relevant)
+Daily /predictions/daily?sign=<sign>&date=YYYY-MM-DD
 
-Up to 3 bullets; each ≤ 40 chars; start with “• ”.
+json
+Copy code
+{
+  "sign":"aries",
+  "date":"2025-09-27",
+  "text":"Today brings powerful energy...",
+  "lucky_number":7,
+  "lucky_color":"Crimson Red",
+  "mood":"Confident",
+  "aspects":{"love":80,"career":74,"health":91}
+}
+Weekly/Monthly/Yearly include: text and premium:true. Client blurs text for non-premium.
 
-Target must map to a route (see DESIGN_REVIEW.md §3.5).
+5) Premium Gating Content Rules
+Non-premium: Weekly/Monthly/Yearly text is blurred but occupies correct height. CTA label exactly: “Upgrade to Premium”.
 
-Premium gating: If premium_required and user is not premium → route to /paywall?src=banner_<id>.
+Any interaction (tap body/read more/CTA/swipe) on W/M/Y triggers paywall route and paywall_shown.
+
+Compatibility: Free shows preview; premium reveals premium_text (250–400 words).
+
+No alternate wording—exact strings only.
+
+6) Naming & Microcopy (exact strings)
+App title: “Salamene Horoscope”
+
+Today card titles:
+
+Today: “Today’s Horoscope”
+
+Weekly: “This Week’s Horoscope”
+
+Monthly: “This Month’s Horoscope”
+
+Yearly: “Your Year Ahead”
+
+Buttons/CTAs:
+
+“Read more ▾” / “Read less ▴”
+
+“Upgrade to Premium”
+
+“Calculate Match”
+
+“Continue”, “Continue without account”
+
+Empty state: “Your horoscope will be ready soon 🌌.”
+
+7) Onboarding Content (fixed)
+Splash/Signin
+
+Title: “Salamene Horoscope”
+
+Subtitle: “Discover your zodiac journey”
+
+Buttons: Continue, Continue without account
+
+Birth Date/Time/Place
+
+Q: “When were you born?”
+
+Q: “What time were you born?” + toggle “I don’t remember” (defaults 12:00)
+
+Q: “Where were you born?” (optional)
+
+Confirm
+
+“You are a(n) <Sign> <Emoji> — ready to see your horoscope?”
+
+8) Push Notifications (templates)
+Daily reminder:
+
+Title: “Your daily insight awaits”
+
+Body: “Tap for Today’s <Sign> reading ✨”
+
+Premium nudge (weekly):
+
+Title: “Unlock your week”
+
+Body: “Full Weekly Horoscope for {PRICE} — upgrade now.”
+
+Compatibility teaser:
+
+Title: “Who matches your fire?”
+
+Body: “Try compatibility with {SignB} 💖”
+
+Replace {PRICE} with pricing.monthly_display from API.
+
+9) Pricing & Currency (region-aware)
+Source of truth: /payments/products →
+
+json
+Copy code
+{
+  "plans":[
+    {"id":"sub_monthly","name":"Monthly","pricing":{
+      "region":"GE","currency":"GEL","symbol":"₾",
+      "monthly_minor":500,"monthly_display":"5 GEL"
+    }}
+  ]
+}
+Client rules
+
+Always display monthly_display.
+
+Replace banner {PRICE} placeholders at render time.
+
+Fallback if missing: “from 5 USD/month” + fire api_error.
+
+10) LLM Content (Gemini) — Prompt Templates
+Daily (free)
+System: “You are an astrologer writing concise, supportive daily horoscopes.”
+User:
+
+pgsql
+Copy code
+Write a daily horoscope for {SIGN} for {DATE}.
+Constraints: 80–120 words, 2–3 paragraphs, positive tone, second person, 1 actionable tip at end.
+Output JSON with keys: text, lucky_number (int), lucky_color (string), mood (string),
+aspects { love:0..100, career:0..100, health:0..100 }.
+Weekly/Monthly/Yearly (premium)
+System: “You write premium, insightful forecasts with clear structure.”
+User:
+
+css
+Copy code
+Write a {TIMEFRAME} horoscope for {SIGN} covering themes in love, career, and wellbeing.
+Length: {LENGTH_WORDS} words. Second person. 1–2 subtle emojis max.
+Return JSON: { "text": "<string>" }.
+Compatibility (premium_text)
+
+arduino
+Copy code
+Generate a 250–400 word compatibility analysis for {SIGN_A} and {SIGN_B}.
+Sections: chemistry, strengths, friction, tips. Second person, supportive tone.
+Return { "premium_text": "<string>" }.
+Validation (client/server)
+
+Enforce length bounds; strip unsafe HTML; collapse whitespace.
+
+Clamp aspects to 0–100; re-calc stars client-side.
+
+11) Caching & Freshness
+Daily: cache 24h per sign.
+
+Weekly: per ISO week (e.g., 2025-W39), cache 7d.
+
+Monthly: per YYYY-MM, cache 30d.
+
+Yearly: per YYYY, cache 365d.
+
+Traits/Druid/Chinese/Banners: static bundle (version with app).
+
+If cache expired and API fails → show last cached + “Updated earlier • May differ”.
+
+12) Banners (Explore More) — Craft rules
+Title ≤ 40 chars, subtitle ≤ 60 chars, ≤3 bullets (≤40 chars each).
+
+Must have target mapping to a valid deep link (see ACCEPTANCE.md).
+
+If premium_required and user not premium → deep link to paywall.
+
+Avoid clickbait; promise what is delivered.
+
+Visual order: premium upsell first, then compatibility, then druid/chinese.
 
 Examples
 
-Premium upsell:
-
-Title: “✨ Unlock your Weekly Horoscope”
-
-Subtitle: “Deeper guidance awaits”
-
-Bullets: “• See career highlights”, “• Navigate relationships”, “• Make smarter moves”
-
-Target: premium, premium_required: true.
-
-Feature deep link (compat):
-
-Title: “💖 Best zodiac matches”
-
-Subtitle: “See who vibes with you”
-
-Target: compat:leo, premium_required: false.
-
-8) Traits / Characteristics (static)
-3–5 traits (single words).
-
-Strengths/Weaknesses: 1–2 sentences each, timeless.
-
-Element, Ruling planet, Lucky color/number present.
-
-No dates or transient claims.
-
-9) Druid & Chinese (static)
-Druid: 21 tree signs by date ranges; each 150–250 words.
-
-Chinese: 12 animals by year; each 150–250 words.
-
-Respect cultural context; avoid stereotypes.
-
-Keep content timeless.
-
-10) Localization
-Base en. Prepare for ka (Georgian):
-
-Keep sign names, banners, headings externalizable (future content/strings.ka.json).
-
-Avoid idioms that don’t translate.
-
-Numbers: plain integers; currency GEL for pricing copy.
-
-11) Quality Checklist (content PRs must pass)
- Meets word counts (table §4).
-
- No determinism/medical/financial advice.
-
- Mood tags ≤ 3; lowercase; comma-separated.
-
- Lucky number/color present for Daily.
-
- Life Aspects scores 0–100 only.
-
- Traits 3–5; strengths/weaknesses concise.
-
- Banner targets map to valid routes.
-
- JSON valid (run a linter/validator).
-
-12) Example Entries (ready to paste)
-12.1 content/banners.json
-json
-Copy code
-[
-  {
-    "id": "premium_weekly",
-    "title": "✨ Unlock your Weekly Horoscope",
-    "subtitle": "Deeper guidance awaits",
-    "bullets": ["See career highlights","Navigate relationships","Make smarter moves"],
-    "target": "premium",
-    "premium_required": true
-  },
-  {
-    "id": "compat_leo",
-    "title": "💖 Who’s your best match?",
-    "subtitle": "Try compatibility with Leo",
-    "bullets": ["Instant chemistry score","Love, career, friendship","Actionable tips"],
-    "target": "compat:leo",
-    "premium_required": false
-  },
-  {
-    "id": "druid_intro",
-    "title": "🌳 Your Druid Sign",
-    "subtitle": "Ancient wisdom, modern insight",
-    "bullets": ["Personality sketch","Hidden strengths","Life themes"],
-    "target": "druid",
-    "premium_required": false
-  }
-]
-12.2 content/characteristics.json (partial)
 json
 Copy code
 {
-  "aries": {
-    "traits": ["confident","direct","energetic"],
-    "strengths": "Leadership, initiative, courage.",
-    "weaknesses": "Impatience, impulsiveness.",
-    "lucky_color": "Red",
-    "lucky_number": "7",
-    "element": "Fire",
-    "ruling_planet": "Mars"
-  },
-  "leo": {
-    "traits": ["charismatic","loyal","creative"],
-    "strengths": "Generosity and stage presence.",
-    "weaknesses": "Pride and stubborn streaks.",
-    "lucky_color": "Gold",
-    "lucky_number": "5",
-    "element": "Fire",
-    "ruling_planet": "Sun"
-  }
+  "id":"premium_monthly",
+  "title":"🌙 See your month in focus",
+  "subtitle":"Detailed guidance for what’s ahead",
+  "bullets":["Career turns","Love highlights","Health rhythms"],
+  "target":"premium",
+  "premium_required":true
 }
-12.3 content/druid.json (skeleton)
+13) Error & Offline Copy
+Network error (Today): “We can’t reach your stars right now. Check your connection and try again.”
+
+Retry button: “Retry”.
+
+Empty: “Your horoscope will be ready soon 🌌.”
+
+Paywall down: “Upgrades are temporarily unavailable. Please try again shortly.”
+
+14) Accessibility Copy
+Banner pressable labels: “Open {title}”.
+
+Pager page labels: “Today”, “Weekly”, “Monthly”, “Yearly”.
+
+FAB label: “Compatibility”.
+
+Upgrade CTA: “Upgrade to Premium”.
+
+15) QA Checklist (content)
+ All daily entries within 80–120 words and end with a tip.
+
+ Weekly/Monthly/Yearly within length bands and gated for free.
+
+ Aspects in 0–100; stars derived correctly (0–5).
+
+ Traits render from content/characteristics.json (no inline code copy).
+
+ Compatibility previews ≤2 sentences; premium_text 250–400 words.
+
+ Banners resolve to valid deep links; {PRICE} replaced correctly.
+
+ Onboarding strings match exactly (Continue/Continue without account).
+
+ Pricing shows 5 GEL in GE, 5 EUR in EU, 5 USD in US/Other.
+
+ No typos; no multiple emojis per sentence; consistent capitalization.
+
+16) Editorial Safety & Moderation
+No medical/financial advice; use soft guidance (“consider”, “might”).
+
+Avoid sensitive topics: health diagnoses, politics, explicit content.
+
+Remove personally identifying info from user-generated prompts (N/A).
+
+Keep cultural references generic unless regionally localized.
+
+17) File Locations & Naming
+content/characteristics.json — traits, strengths, weaknesses per sign.
+
+content/compatibility.json — pairs with preview + premium_text.
+
+content/druid.json, content/chinese.json — static maps.
+
+content/banners.json — carousel items with targets.
+
+assets/zodiac/ — optional SVG/PNGs named {sign}.svg/png (emoji still canonical).
+
+assets/onboarding/ — welcome.png, birth.png, insights.png.
+
+18) Localization Readiness
+All user-visible UI labels must route through i18n (except horoscope texts).
+
+Content JSON supports language keys in future:
+
 json
 Copy code
-[
-  { "range": "Dec 24–Jan 20", "sign": "Birch", "text": "150–250 words…" },
-  { "range": "Jan 21–Feb 17", "sign": "Rowan", "text": "…" }
-]
-12.4 content/chinese.json (skeleton)
-json
-Copy code
-[
-  { "animal":"Rat", "years":[1960,1972,1984,1996,2008,2020], "text":"150–250 words…" },
-  { "animal":"Ox",  "years":[1961,1973,1985,1997,2009,2021], "text":"…" }
-]
-13) Gating Copy (blur pages W/M/Y)
-CTA label: “Upgrade to Premium”
+{ "text": { "en": "…", "ka": "…" } }
+Dates: device locale; 24h/12h time from OS.
 
-Helper line (optional): “Unlock full {timeframe} guidance.”
+19) Legal & Attribution
+Disclaimer (settings): “For guidance and entertainment only.”
 
-Paywall route: /paywall?src=<timeframe> or banner_<id>
+If using LLM content, include: “AI-assisted content reviewed for quality.”
 
-14) Push Notifications (library)
-Morning (Daily ready):
+Copyright: © Salamene {YEAR}.
 
-“✨ Your stars are ready. Check today’s {sign} horoscope.”
-
-Premium upsell (Free):
-
-“🔒 Weekly guidance awaits — upgrade to unlock.”
-
-Compatibility nudge:
-
-“💖 Curious who matches you best? Try Compatibility now.”
-
-Seasonal (Chinese New Year):
-
-“🐉 Discover your Chinese Zodiac path this year.”
-
-15) Compliance & Safety
-Avoid health/finance absolutes; use supportive guidance.
-
-No demographic targeting by sensitive attributes.
-
-No references to personal tragedies or fear.
-
-16) Versioning & Review
-Each content change = PR with:
-
-Diff of JSON entries.
-
-Preview screenshots if applicable.
-
-Checklist (§11) completed.
-
-Tag releases when updating large sets (e.g., yearly texts).
-
-17) Non-Deletion Rule
+20) Non-Deletion Rule
 Never delete/rename docs/CONTENT_GUIDELINES.md.
 
 If missing, recreate before coding.
 
-pgsql
+markdown
 Copy code
 
-If you want, I can generate a **starter pack** for `content/characteristics.json` (all 12 signs), `druid.json` (full ranges), and `chinese.json` (all animals) so your app instantly shows **real static content**.
+---
+
+### Want starter files too?
+If you want, I can generate **empty but schema-shaped**:
+- `content/characteristics.json` (12 signs scaffold)
+- `content/compatibility.json` (a few pair stubs)
+- `content/druid.json`, `content/chinese.json`
+- `content/banners.json` (3 ready banners with `{PRICE}` placeholder)
+
+Say the word and I’ll output them ready to paste.
 ::contentReference[oaicite:0]{index=0}
 
 
@@ -377,215 +432,4 @@ If you want, I can generate a **starter pack** for `content/characteristics.json
 
 
 Sources
-You said:
-but add currency should be based on region of acces, if Accessiong from Europe the currency should be 5 Euros per month , IF US and other regions  5 USD per month , if from Georgia 5 GEL, 
-
-
-Concrete Code Engine said:
-
-Thought for 12s
-Got it. Here’s a drop-in patch to make pricing currency region-based. It includes what to paste into docs/CONTENT_GUIDELINES.md, plus tiny, clean code stubs for client (Expo) and server (Django) so it actually works.
-
-Paste into docs/CONTENT_GUIDELINES.md (add/replace a new section)
-markdown
-Copy code
-## 18) Regional Pricing & Currency (NON-NEGOTIABLE)
-
-**Goal:** Show correct price/currency per user region, and charge accordingly.
-
-### 18.1 Pricing Matrix (v1)
-| Region (detected)                 | Currency | Monthly price | Code |
-|----------------------------------|----------|---------------|------|
-| **Georgia** (country = `GE`)     | **GEL**  | **5**         | `GEL`|
-| **European Union** (EU member)   | **EUR**  | **5**         | `EUR`|
-| **United States** (country=`US`) | **USD**  | **5**         | `USD`|
-| **Other** (fallback)             | **USD**  | **5**         | `USD`|
-
-> Detection priority (server-side): **IP geolocation → user profile country → device locale region → fallback `US`**.  
-> Client **must not** hardcode prices; fetch from API.
-
-### 18.2 API Contract (adds pricing object)
-All paywall/plan endpoints MUST return a `pricing` object:
-```json
-{
-  "pricing": {
-    "region": "GE",
-    "currency": "GEL",
-    "symbol": "₾",
-    "monthly_minor": 500,           // integer minor units
-    "monthly_display": "5 GEL"      // preformatted string for UI
-  }
-}
-Example: GET /api/v1/payments/products
-
-json
-Copy code
-{
-  "plans": [
-    {
-      "id": "sub_monthly",
-      "name": "Monthly",
-      "pricing": {
-        "region":"GE","currency":"GEL","symbol":"₾",
-        "monthly_minor":500,
-        "monthly_display":"5 GEL"
-      }
-    }
-  ]
-}
-18.3 UI Rules
-Paywall and any banner copy with price must use pricing.monthly_display.
-
-Do not concatenate symbols manually; respect monthly_display.
-
-If pricing missing → render “from 5 USD/month” (fallback) and log api_error.
-
-18.4 Banners / Copy Placeholders
-In content/banners.json, use {PRICE} placeholder; client replaces it with pricing.monthly_display.
-
-Example banner:
-
-json
-Copy code
-{
-  "id":"premium_weekly",
-  "title":"✨ Unlock your Weekly Horoscope",
-  "subtitle":"All access for {PRICE}",
-  "target":"premium",
-  "premium_required": true
-}
-18.5 Analytics
-Emit paywall_shown { region, currency, price_minor }
-
-Emit purchase_initiated / purchase_success with currency & price_minor.
-
-18.6 QA Checklist
- Georgia IP → “5 GEL” shown/charged.
-
- EU IP (e.g., DE/FR/IT/ES) → “5 EUR”.
-
- US IP → “5 USD”.
-
- VPN region switch updates price after app restart.
-
- Banners’ {PRICE} replaced correctly everywhere.
-
-python
-Copy code
-
----
-
-## Minimal server code (Django) — put in `payments/pricing.py`
-
-```python
-# payments/pricing.py
-EU_COUNTRIES = {
-    "AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT",
-    "LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE"
-}
-
-def detect_country(request) -> str:
-    # 1) IP geolocation via your middleware or CDN header like Cloudflare CF-IPCountry
-    c = (request.META.get('HTTP_CF_IPCOUNTRY') or '').upper()
-    if len(c) == 2:
-        return c
-    # 2) User profile country (if authenticated)
-    try:
-        if request.user and request.user.profile.country:
-            return request.user.profile.country.upper()
-    except Exception:
-        pass
-    # 3) Device locale region (optional header from client)
-    lc = (request.META.get('HTTP_X_DEVICE_REGION') or '').upper()
-    if len(lc) == 2:
-        return lc
-    # 4) Fallback
-    return "US"
-
-def pricing_for_country(country: str) -> dict:
-    if country == "GE":
-        return dict(region="GE", currency="GEL", symbol="₾", monthly_minor=500, monthly_display="5 GEL")
-    if country == "US":
-        return dict(region="US", currency="USD", symbol="$", monthly_minor=500, monthly_display="5 USD")
-    if country in EU_COUNTRIES:
-        return dict(region=country, currency="EUR", symbol="€", monthly_minor=500, monthly_display="5 EUR")
-    return dict(region=country, currency="USD", symbol="$", monthly_minor=500, monthly_display="5 USD")
-Example view GET /api/v1/payments/products
-python
-Copy code
-# payments/views.py
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from .pricing import detect_country, pricing_for_country
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def products(request):
-    country = detect_country(request)
-    p = pricing_for_country(country)
-    return Response({
-        "plans": [
-            {"id":"sub_monthly","name":"Monthly","pricing": p}
-        ]
-    })
-Minimal client code (Expo) — services/pricing.ts
-ts
-Copy code
-// services/pricing.ts
-export type Pricing = {
-  region: string;
-  currency: 'USD'|'EUR'|'GEL'|string;
-  symbol: string;
-  monthly_minor: number;      // 500 = 5.00
-  monthly_display: string;    // "5 USD"
-};
-
-export async function fetchPricing(): Promise<Pricing> {
-  const res = await fetch('/api/v1/payments/products');
-  if (!res.ok) throw new Error('pricing_fetch_failed');
-  const data = await res.json();
-  const p = data?.plans?.[0]?.pricing;
-  if (!p) throw new Error('pricing_missing');
-  return p as Pricing;
-}
-Replace {PRICE} in banners at render time
-ts
-Copy code
-// BannerCarousel usage
-const text = banner.subtitle?.replace('{PRICE}', pricing.monthly_display);
-Paywall render
-tsx
-Copy code
-<Text style={s.price}>{pricing.monthly_display}</Text>
-Client header (optional) to help server detection
-When initializing the API client, add a region hint header (non-authoritative):
-
-ts
-Copy code
-// services/api.ts
-import * as Localization from 'expo-localization';
-
-export const defaultHeaders = async () => {
-  const region = Localization.region ?? '';
-  return {
-    'Content-Type': 'application/json',
-    'X-Device-Region': region,   // e.g., 'GE', 'US', 'DE'
-  };
-};
-Acceptance additions (you can append to docs/ACCEPTANCE.md)
-markdown
-Copy code
-## Paywall & Pricing
-- [ ] API returns pricing object with { region, currency, monthly_display }.
-- [ ] Georgia → shows “5 GEL”; EU → “5 EUR”; US → “5 USD”.
-- [ ] Banners replace {PRICE} dynamically with monthly_display.
-- [ ] Analytics include currency & price_minor on paywall and purchase events.
-Notes
-Server detection by IP is the source of truth; client’s locale only hints.
-
-Prices are stored and charged in the server-selected currency (Flitt session creation should use pricing.currency + monthly_minor).
-
-If you need additional regions later, extend EU_COUNTRIES and pricing_for_country() only. No client changes needed.
-
-This keeps it scalable, clean, and deterministic—and your UI copy stays simple: just print monthly_display.
+```

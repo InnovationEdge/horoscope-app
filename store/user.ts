@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { User, UpdateUserRequest, ZodiacSign } from '../types/api';
-import { apiClient } from '../services/api';
+import { User, UpdateUserRequest } from '../types/api';
+import { ZodiacSign } from '../constants/signs';
+import { apiRequest } from '../services/api';
 import { calculateZodiacSign } from '../utils/zodiac';
 
 interface UserState {
@@ -29,24 +30,26 @@ export const useUserStore = create<UserState>()(
       isLoading: false,
 
       // Actions
-      setUser: (user) => {
+      setUser: user => {
         set({
           user,
           isAuthenticated: user !== null,
         });
 
-        // Update API client auth token
-        apiClient.setAuthToken(user ? 'jwt_token_here' : null);
+        // Update API client auth token (would integrate with API service)
       },
 
-      updateUser: async (updates) => {
+      updateUser: async updates => {
         const { user } = get();
         if (!user) return;
 
         set({ isLoading: true });
 
         try {
-          const updatedUser = await apiClient.put<User>('/users/me', updates);
+          const updatedUser = (await apiRequest('/users/me', {
+            method: 'PUT',
+            body: JSON.stringify(updates),
+          })) as User;
           set({
             user: updatedUser,
             isLoading: false,
@@ -62,7 +65,7 @@ export const useUserStore = create<UserState>()(
           user: null,
           isAuthenticated: false,
         });
-        apiClient.setAuthToken(null);
+        // Clear auth token (would integrate with API service)
       },
 
       // Computed
@@ -84,7 +87,7 @@ export const useUserStore = create<UserState>()(
     {
       name: 'user-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (state) => ({
+      partialize: state => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),

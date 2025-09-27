@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Platform, StatusBar, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Platform, StatusBar, Pressable } from 'react-native';
 import { router } from 'expo-router';
 
 export default function SignIn() {
@@ -21,12 +21,9 @@ export default function SignIn() {
 
       {/* Top illustration */}
       <View style={styles.imageContainer}>
-        <Image
-          source={require('../../assets/onboarding/welcome.png')}
-          style={styles.image}
-          resizeMode="contain"
-          onError={() => {}}
-        />
+        <View style={styles.imagePlaceholder}>
+          <Text style={styles.placeholderText}>✨</Text>
+        </View>
       </View>
 
       {/* Brand and subtitle */}
@@ -69,14 +66,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
-    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) : 0,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
   },
   imageContainer: {
     marginBottom: 32,
   },
-  image: {
+  imagePlaceholder: {
     width: 220,
     height: 200,
+    backgroundColor: 'rgba(124, 77, 255, 0.1)',
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  placeholderText: {
+    fontSize: 48,
+    color: '#7C4DFF',
   },
   textContainer: {
     alignItems: 'center',

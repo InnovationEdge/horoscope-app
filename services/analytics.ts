@@ -1,10 +1,10 @@
 // Minimal, clean analytics with batching, offline queue, sessioning
 import * as Application from 'expo-application';
-import * as Device from 'expo-device';
+// import * as Device from 'expo-device';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
-type JSONObject = Record<string, any>;
+type JSONObject = Record<string, string | number | boolean | null | undefined>;
 
 const STORAGE_QUEUE = 'anl_queue_v1';
 const STORAGE_SESSION = 'anl_session_v1';
@@ -20,7 +20,8 @@ let baseProps: JSONObject = {};
 
 function uuid() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    const r = (Math.random()*16)|0, v = c === 'x' ? r : (r&0x3|0x8);
+    const r = (Math.random() * 16) | 0,
+      v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -37,15 +38,19 @@ async function loadQueue() {
   try {
     const raw = await AsyncStorage.getItem(STORAGE_QUEUE);
     queue = raw ? JSON.parse(raw) : [];
-  } catch { queue = []; }
+  } catch {
+    queue = [];
+  }
 }
 
 async function saveQueue() {
-  try { await AsyncStorage.setItem(STORAGE_QUEUE, JSON.stringify(queue)); } catch {}
+  try {
+    await AsyncStorage.setItem(STORAGE_QUEUE, JSON.stringify(queue));
+  } catch {}
 }
 
 function newSession(): string {
-  return `s_${new Date().toISOString().slice(0,10)}_${uuid().slice(0,8)}`;
+  return `s_${new Date().toISOString().slice(0, 10)}_${uuid().slice(0, 8)}`;
 }
 
 async function ensureSession() {
@@ -71,12 +76,12 @@ export async function initAnalytics(props: Partial<typeof baseProps> = {}) {
     app_version: Application.nativeApplicationVersion ?? '0',
     build_number: Application.nativeBuildVersion ?? '0',
     platform: Platform.OS,
-    locale: Device.locale ?? 'en-US',
+    locale: 'en-US', // Device.locale ?? 'en-US',
     tz: Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC',
     ...props,
   };
   await ensureSession();
-  drain().catch(()=>{});
+  drain().catch(() => {});
 }
 
 export function setUserProps(up: JSONObject) {
@@ -106,8 +111,8 @@ export async function track(event: string, params: JSONObject = {}) {
     params,
   };
   queue.push(payload);
-  if (queue.length >= 10) drain().catch(()=>{});
-  else saveQueue().catch(()=>{});
+  if (queue.length >= 10) drain().catch(() => {});
+  else saveQueue().catch(() => {});
 }
 
 async function drain() {
@@ -123,7 +128,7 @@ async function drain() {
     queue = queue.slice(batch.length);
     await saveQueue();
     // Keep draining if more remain
-    if (queue.length) setTimeout(()=> drain(), 250);
+    if (queue.length) setTimeout(() => drain(), 250);
   } catch {
     // Retry later; keep queue
   }

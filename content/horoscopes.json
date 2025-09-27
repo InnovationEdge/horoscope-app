@@ -1,0 +1,188 @@
+{
+  "daily": {
+    "aries": {
+      "preview": "Your fiery energy is at its peak today. Focus on new beginnings and take initiative in personal matters.",
+      "full": "Today brings a surge of dynamic energy that's perfectly aligned with your natural Aries spirit. The cosmos encourages you to embrace your leadership qualities and step forward confidently into new ventures. Your ruling planet Mars is sending positive vibrations that enhance your courage and determination. This is an excellent day for starting new projects, having important conversations, or making decisions you've been postponing. In relationships, your magnetic personality draws others to you, but be mindful not to be too impulsive with your words. Career opportunities may present themselves unexpectedly, so stay alert and ready to act. Trust your instincts - they're particularly sharp today.",
+      "lucky": {
+        "number": 7,
+        "color": "#FF6B6B",
+        "mood": "Energetic"
+      },
+      "scores": {
+        "love": 8,
+        "career": 9,
+        "health": 7
+      }
+    },
+    "taurus": {
+      "preview": "Stability and comfort are your themes today. Focus on building solid foundations in all areas of life.",
+      "full": "The celestial energies today favor your natural Taurus inclination toward stability and security. Venus, your ruling planet, is highlighting your appreciation for beauty, comfort, and lasting value. This is an ideal time to focus on financial planning, home improvements, or any project that requires patience and persistence. Your practical approach to problem-solving will be particularly effective today. In relationships, you're radiating warmth and reliability, making you a source of comfort for loved ones. Take time to enjoy simple pleasures - a good meal, beautiful music, or time in nature. Your methodical approach to tasks will yield excellent results, but avoid rushing into decisions. Trust in your ability to create lasting positive change through steady, consistent effort.",
+      "lucky": {
+        "number": 4,
+        "color": "#2ECC71",
+        "mood": "Grounded"
+      },
+      "scores": {
+        "love": 7,
+        "career": 8,
+        "health": 9
+      }
+    },
+    "gemini": {
+      "preview": "Communication and learning are highlighted. Your curiosity leads to exciting discoveries and connections.",
+      "full": "Your natural Gemini gift for communication is especially powerful today. Mercury, your ruling planet, is enhancing your ability to connect with others through words, ideas, and shared experiences. This is an excellent day for networking, learning something new, or engaging in stimulating conversations that broaden your perspective. Your mind is particularly sharp and adaptable, allowing you to see multiple sides of any situation. In professional settings, your versatility and quick thinking will be highly valued. Socially, you're magnetic and charming, drawing interesting people into your orbit. However, be careful not to scatter your energy across too many different projects. Focus on the most promising opportunities and give them your full attention. Your natural curiosity may lead to a breakthrough or important insight today.",
+      "lucky": {
+        "number": 3,
+        "color": "#F1C40F",
+        "mood": "Curious"
+      },
+      "scores": {
+        "love": 9,
+        "career": 7,
+        "health": 6
+      }
+    },
+    "cancer": {
+      "preview": "Emotions run deep today. Trust your intuition and nurture important relationships in your life.",
+      "full": "The Moon, your ruling celestial body, is casting a particularly nurturing glow on your emotional landscape today. Your intuitive abilities are heightened, giving you profound insights into the feelings and motivations of those around you. This is a powerful day for deepening family bonds, caring for loved ones, and creating a sense of security in your personal space. Your empathetic nature is a gift that others desperately need right now. In professional matters, trust your gut feelings about people and situations - your emotional intelligence is your greatest asset. Consider spending time at home or in familiar surroundings where you feel most comfortable and secure. Your caring nature may inspire you to help someone in need, and this act of kindness will bring unexpected rewards. Pay attention to your dreams and inner voice; they contain important messages.",
+      "lucky": {
+        "number": 2,
+        "color": "#3498DB",
+        "mood": "Nurturing"
+      },
+      "scores": {
+        "love": 9,
+        "career": 6,
+        "health": 8
+      }
+    },
+    "leo": {
+      "preview": "Your natural charisma shines brightly. Take center stage and share your creative gifts with the world.",
+      "full": "The Sun, your ruling star, is illuminating your path with golden opportunities for self-expression and recognition. Today is your day to shine, Leo! Your natural magnetism and creative energy are at their peak, making this an ideal time to showcase your talents and pursue your passions. Whether it's in your career, creative projects, or personal relationships, your authentic self is your greatest strength. Others are drawn to your confidence and warmth, so don't be afraid to take center stage. In matters of the heart, your generous spirit and loyalty make you irresistible. Professional opportunities may arise that allow you to lead or mentor others. Your dramatic flair and natural leadership abilities will be particularly appreciated today. Remember to balance your desire for attention with genuine care for others. Your positive energy has the power to inspire and uplift everyone around you.",
+      "lucky": {
+        "number": 1,
+        "color": "#F39C12",
+        "mood": "Radiant"
+      },
+      "scores": {
+        "love": 8,
+        "career": 9,
+        "health": 7
+      }
+    },
+    "virgo": {
+      "preview": "Attention to detail pays off. Your methodical approach brings order to chaos and impressive results.",
+      "full": "Mercury's influence enhances your natural Virgo precision and analytical abilities today. Your talent for seeing what others miss and your methodical approach to problem-solving will be invaluable in both personal and professional situations. This is an excellent day for organizing, planning, and paying attention to details that others might overlook. Your practical wisdom and helpful nature make you the person others turn to for advice and assistance. In health matters, your body is telling you to pay attention to the small signals it's sending. Your work ethic and reliability will be noticed and appreciated by superiors or clients. Take time to review and refine your goals and plans - your careful analysis will reveal important adjustments that need to be made. Your desire to serve and improve situations around you will lead to meaningful contributions and personal satisfaction.",
+      "lucky": {
+        "number": 6,
+        "color": "#27AE60",
+        "mood": "Precise"
+      },
+      "scores": {
+        "love": 6,
+        "career": 9,
+        "health": 8
+      }
+    },
+    "libra": {
+      "preview": "Balance and harmony are your superpowers today. Seek fairness in all dealings and beautiful experiences.",
+      "full": "Venus blesses your natural Libra sense of balance and appreciation for beauty today. Your diplomatic skills and natural charm are particularly powerful, making this an ideal day for resolving conflicts, strengthening partnerships, and creating harmony in your environment. Your aesthetic sense is heightened, inspiring you to surround yourself with beauty in all its forms. In relationships, your ability to see all sides of a situation helps you mediate disputes and bring people together. Your sense of justice and fairness will guide you toward making decisions that benefit everyone involved. This is also a favorable day for creative pursuits, social gatherings, and romantic encounters. Your refined taste and graceful manner open doors and win hearts. Consider investing in something beautiful for your home or wardrobe. Your natural ability to create balance and harmony will be a source of peace and stability for others.",
+      "lucky": {
+        "number": 9,
+        "color": "#9B59B6",
+        "mood": "Harmonious"
+      },
+      "scores": {
+        "love": 9,
+        "career": 7,
+        "health": 7
+      }
+    },
+    "scorpio": {
+      "preview": "Deep transformations are possible. Trust your powerful intuition and embrace meaningful change.",
+      "full": "Pluto's transformative energy aligns perfectly with your Scorpio nature today, opening doors to profound personal growth and meaningful change. Your intuitive powers are exceptionally strong, allowing you to see beneath the surface of situations and people. This is a powerful day for psychological insights, research, and uncovering hidden truths. Your ability to transform challenges into opportunities is highlighted, making this an ideal time to tackle difficult projects or address long-standing issues. In relationships, your intensity and passion create deep, meaningful connections. Your mysterious magnetism draws others to share their secrets and seek your counsel. Financial matters may require your investigative skills to uncover the best opportunities. Trust your instincts about people's motivations - your psychological radar is particularly accurate today. Embrace change rather than resist it; transformation leads to empowerment.",
+      "lucky": {
+        "number": 8,
+        "color": "#E74C3C",
+        "mood": "Intense"
+      },
+      "scores": {
+        "love": 8,
+        "career": 8,
+        "health": 6
+      }
+    },
+    "sagittarius": {
+      "preview": "Adventure calls your name. Expand your horizons through learning, travel, or philosophical exploration.",
+      "full": "Jupiter's expansive energy perfectly complements your natural Sagittarius love of adventure and learning today. This is an ideal time to broaden your horizons through travel, education, or exploring new philosophical or spiritual concepts. Your optimistic outlook and enthusiasm for life are contagious, inspiring others to join you on your journey of discovery. Your natural teaching ability and love of sharing knowledge make you a sought-after mentor or guide. In professional matters, think big and don't be afraid to take calculated risks. Your international connections or foreign interests may play an important role in your success today. Your honest, straightforward communication style wins respect and opens doors. Consider planning a trip, enrolling in a course, or engaging with people from different cultures or backgrounds. Your adventurous spirit and open mind lead to exciting opportunities and meaningful experiences.",
+      "lucky": {
+        "number": 5,
+        "color": "#E67E22",
+        "mood": "Adventurous"
+      },
+      "scores": {
+        "love": 7,
+        "career": 8,
+        "health": 9
+      }
+    },
+    "capricorn": {
+      "preview": "Your ambition and discipline create lasting success. Focus on long-term goals and steady progress.",
+      "full": "Saturn's steady influence aligns beautifully with your natural Capricorn determination and ambition today. Your ability to set realistic goals and work systematically toward them is your greatest strength. This is an excellent day for career advancement, financial planning, and building the solid foundations necessary for long-term success. Your reputation for reliability and competence opens doors to new opportunities and increased responsibilities. Others respect your practical wisdom and turn to you for guidance in achieving their own goals. Your disciplined approach to health, work, and relationships creates stability and security. While others may seek quick fixes, your patient, methodical approach ensures lasting results. Consider taking on additional responsibilities or leadership roles that showcase your natural managerial abilities. Your conservative approach to risk and careful attention to details protect you from potential setbacks while positioning you for steady growth.",
+      "lucky": {
+        "number": 10,
+        "color": "#34495E",
+        "mood": "Determined"
+      },
+      "scores": {
+        "love": 6,
+        "career": 10,
+        "health": 8
+      }
+    },
+    "aquarius": {
+      "preview": "Innovation and friendship take center stage. Your unique perspective brings fresh solutions to old problems.",
+      "full": "Uranus sends electric energy that perfectly matches your innovative Aquarius spirit today. Your unique perspective and humanitarian instincts guide you toward solutions that benefit not just yourself, but your entire community. This is an ideal day for teamwork, social causes, and technological innovations. Your forward-thinking approach and ability to see the big picture make you a valuable asset in group projects. Friends and social networks play an important role in your success today. Your eccentric charm and intellectual depth attract like-minded individuals who share your vision for a better future. In professional matters, your unconventional approach may initially surprise others, but your results speak for themselves. Consider getting involved in social causes, community projects, or initiatives that promote equality and progress. Your ability to think outside the box and challenge conventional wisdom leads to breakthrough moments.",
+      "lucky": {
+        "number": 11,
+        "color": "#1ABC9C",
+        "mood": "Progressive"
+      },
+      "scores": {
+        "love": 8,
+        "career": 7,
+        "health": 7
+      }
+    },
+    "pisces": {
+      "preview": "Your compassion and creativity flow freely. Trust your dreams and artistic inspirations today.",
+      "full": "Neptune's mystical influence enhances your natural Pisces intuition and creative abilities today. Your compassionate nature and psychic sensitivity allow you to understand others on a soul level, making you a healing presence in their lives. This is a powerful day for artistic expression, spiritual practices, and acts of service. Your imagination is particularly vivid, and your dreams may contain important messages or inspiration for creative projects. In relationships, your empathetic nature and unconditional love create deep emotional bonds. Your intuitive understanding of others' needs makes you an invaluable friend and confidant. Consider exploring meditation, artistic pursuits, or volunteer work that allows you to channel your compassionate energy constructively. Your ability to see beyond surface appearances helps you recognize the hidden potential in people and situations. Trust your inner voice and follow your heart - your spiritual wisdom guides you toward meaningful experiences.",
+      "lucky": {
+        "number": 12,
+        "color": "#8E44AD",
+        "mood": "Compassionate"
+      },
+      "scores": {
+        "love": 9,
+        "career": 6,
+        "health": 7
+      }
+    }
+  },
+  "weekly": {
+    "aries": {
+      "preview": "A week of dynamic energy and new opportunities. Your leadership skills will be tested and rewarded.",
+      "full": "This week brings a powerful surge of Martian energy that aligns perfectly with your pioneering Aries spirit. Monday starts with a bang as new opportunities present themselves in your professional sphere. Your natural leadership abilities will be called upon to guide a project or team through uncharted territory. Mid-week, a surprise encounter could lead to a significant partnership or collaboration that accelerates your progress toward important goals. Your competitive nature serves you well in negotiations or challenges, but remember to balance assertiveness with diplomacy. The weekend promises excitement in your personal life, possibly through adventure or social gatherings where you'll meet influential people. Financial matters require careful attention around Thursday - avoid impulsive purchases and focus on long-term investment strategies. Your energy levels are high throughout the week, making this an ideal time for physical activities and tackling demanding projects. Trust your instincts and don't hesitate to take calculated risks."
+    },
+    "taurus": {
+      "preview": "Steady progress and material security take focus. Your patient approach yields substantial rewards.",
+      "full": "Venus blesses your week with opportunities for financial growth and material stability. The beginning of the week finds you reassessing your resources and making practical decisions about your future security. Your methodical approach to problem-solving proves invaluable when colleagues seek your advice on complex issues. Wednesday brings potential for a significant purchase or investment opportunity - trust your instincts about value and quality. Your relationships deepen as others appreciate your loyalty and dependability. A creative project that you've been nurturing slowly begins to show promising results around Thursday. The weekend is perfect for indulging in simple pleasures: good food, beautiful surroundings, and quality time with loved ones. Your natural resistance to change serves you well this week, as rushing into new situations could prove costly. Focus on building solid foundations rather than seeking quick fixes. Your persistence and practical wisdom create lasting positive changes in both personal and professional areas."
+    }
+  },
+  "monthly": {
+    "aries": {
+      "preview": "March brings transformation and new beginnings. Your pioneering spirit leads to significant breakthroughs.",
+      "full": "This month marks a pivotal period in your personal evolution, dear Aries. The spring equinox amplifies your natural energy, creating perfect conditions for launching ambitious projects and pursuing long-held dreams. The first week focuses on clearing away obstacles that have been holding you back. Your ruling planet Mars forms powerful aspects that enhance your courage and determination. Professional opportunities multiply around the middle of the month, with potential for promotion or recognition of your leadership skills. A significant relationship may undergo positive transformation, deepening your connection with someone special. Financial planets suggest unexpected income or profitable ventures, but avoid impulsive spending on luxury items. Your health benefits from increased physical activity and competitive sports. The final week brings completion of a major project and celebration of your achievements. Trust your pioneering instincts and don't be afraid to venture into unexplored territory. Your natural magnetism attracts supportive allies and beneficial partnerships."
+    }
+  }
+}

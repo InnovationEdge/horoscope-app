@@ -1,80 +1,209 @@
-# Code Review — Zodiac App (FINAL, Build-Strict)
+# Code Review — Zodiac App (FINAL, Build-Strict, Full Blueprint)
 
-> Goal: production-grade, readable, testable code that exactly matches DESIGN_REVIEW.md and ACCEPTANCE.md.  
-> **Never delete or rename any `docs/*.md`.**
+> **Goal**: Ensure every commit results in production-grade, pixel-perfect, testable, and scalable code.  
+> **Alignment**: All code must follow these documents exactly:
+>
+> - `docs/ACCEPTANCE.md`
+> - `docs/DESIGN_REVIEW.md`
+> - `docs/ANALYTICS.md`
+> - `docs/API_CONTRACT.md`
+> - `docs/CONTENT_GUIDELINES.md`
+>
+> **Rules**:
+>
+> - Never delete or rename any `docs/*.md`.
+> - No hardcoded hex/sizes. Use tokens from `constants/theme.ts` and `constants/signs.ts`.
+> - No lorem or filler text in code (all static text must come from `content/*.json`).
+> - TypeScript strict mode required. No `any`.
+> - No TODOs, no placeholders left behind.
 
 ---
 
-## 0) Golden Rules
-- **Do not improvise UI or copy.** Follow `docs/DESIGN_REVIEW.md` + `docs/ACCEPTANCE.md`.
-- **No hardcoded hex/sizes.** Use tokens from `constants/theme.ts` and `constants/signs.ts`.
-- **Static content only from `content/*.json`.** No lorem in code.
-- **TypeScript strict.** No `any`, no implicit `any`, no `// @ts-ignore` unless justified in PR.
-- **Never delete/rename** `docs/*.md`. If missing, stop and recreate.
+## 0) Repo Hygiene
+
+**Required in root:**
+
+- `.editorconfig`
+- `.gitattributes`
+- `.gitignore`
+- `eslint.config.js`
+- `.prettierrc`
+- `tsconfig.json`
+- `jest.config.ts` or `vitest.config.ts`
+- `.husky/` pre-commit hook (lint, typecheck, tests)
+- `.github/workflows/ci.yml` (lint + test in CI)
+
+**Commits & Branching**
+
+- Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).  
+  Examples: `feat: add horoscope pager`, `fix: banner deep link nav`.
+- No direct pushes to `main`. PRs only.
+- Small, atomic commits. PRs must be reviewable in <500 LOC.
 
 ---
 
 ## 1) Project Architecture
-- **Expo Router** with tabs and stacks:
-  - Tabs: `app/(tabs)/today.tsx`, `traits.tsx`, `compat.tsx`, `druid.tsx`, `profile.tsx`
-  - Onboarding stack: `app/onboarding/*`
-  - Custom bottom bar: `components/BottomNav.tsx`
-- **State**:
-  - `store/user.ts` → auth, birth info, computed zodiac sign, onboarding.
-  - `store/subscription.ts` → `isPremium`.
-- **Data fetching**: `react-query` per endpoint, cache TTLs match backend.
-- **Services**: `services/*` (api, predictions, compatibility, payments, analytics).
-- **UI**: `components/*` (pure, reusable).
-- **Utils**: `utils/*` (pure, no side effects).
-- **Assets**: `assets/onboarding/*`, `assets/banners/*`, `assets/zodiac/*`.
+
+**File tree (core):**
+app/
+(tabs)/
+today.tsx
+traits.tsx
+compat.tsx
+druid.tsx
+profile.tsx
+onboarding/
+splash.tsx
+signin.tsx
+birth-date.tsx
+birth-time.tsx
+birth-place.tsx
+confirm.tsx
+paywall.tsx
+components/
+BottomNav.tsx
+HoroscopePager.tsx
+LifeAspects.tsx
+BannerCarousel.tsx
+SignCard.tsx
+ProgressBarTop.tsx
+constants/
+theme.ts
+signs.ts
+content/
+characteristics.json
+druid.json
+chinese.json
+banners.json
+services/
+api.ts
+analytics.ts
+predictions.ts
+compatibility.ts
+payments.ts
+pricing.ts
+store/
+user.ts
+subscription.ts
+utils/
+zodiac.ts
+format.ts
+metrics.ts
+hooks/
+useAnalytics.ts
+usePremiumGate.ts
+assets/
+onboarding/ (welcome.png, birth.png, insights.png)
+icon.png
+tests/
+unit/
+snapshot/
+docs/
+\*.md (never delete/rename)
+
+markdown
+Copy code
+
+**Responsibilities**
+
+- **Screens (app/)**: orchestrate data + render components.
+- **Components (components/)**: pure UI, no side effects.
+- **Services (services/)**: network, payments, analytics.
+- **Store (store/)**: user state, premium status.
+- **Utils (utils/)**: pure helpers.
+- **Content (content/)**: static JSON (traits, druid, banners).
 
 ---
 
-## 2) Styling & Theming
-- Import tokens only:
-  ```ts
-  import { Colors, Sizes } from '@/constants/theme';
-  import { SIGNS } from '@/constants/signs';
-Forbidden: inline hex colors (except temporary debug), magic numbers for spacing, ad-hoc radii.
+## 2) Theming & Tokens
 
-Shapes: radius 24dp; card padding 20dp; screen pad 16dp.
+```ts
+import { Colors, Sizes, Radii, Typography } from '@/constants/theme';
+Never inline values like #fff, margin: 17.
 
-Typography: Greeting clamp 36–48sp; titles 16sp; body 14sp/24; labels 11sp.
+Card radius: 24dp
 
-3) Components & Patterns
-3.1 Required components (do not duplicate)
-BottomNav.tsx — center FAB 🫰🏼 64dp; active pill; flex:1 side tabs.
+Card padding: 20dp
 
-HoroscopePager.tsx — react-native-pager-view, 4 pages, dots, blur + Upgrade CTA for W/M/Y when not premium, Today has LuckyRow.
+Screen padding: 16dp
 
-LifeAspects.tsx — 3 columns with stars (0–5) and x/10.
+Nav bar height: 80dp
 
-BannerCarousel.tsx — pressable cards, optional bullet list, dots, deep links.
+FAB size: 64dp
 
-SignCard.tsx — 88dp card with 48dp avatar and 24dp premium chip.
+Dots: 8dp
 
-ProgressBarTop.tsx — onboarding 4dp progress.
+Typography
 
-3.2 Do
-Keep components pure (props in, render out).
+Greeting: clamp 36–48sp, single line.
 
-Hoist API calls to screens or services/* with react-query.
+Title: 16sp / 24 line height.
 
-Memoize large lists; use React.memo only when measured.
+Body: 14sp / 24 line height.
 
-Use Pressable/TouchableOpacity with accessibilityLabel.
+Label: 11sp / 16 line height.
 
-3.3 Don’t
-Don’t fetch in component bodies without cache.
+3) Components (must exist and behave as specified)
+3.1 BottomNav.tsx
+5 tabs: Today, Traits, FAB Compatibility 🫰🏼, Druid, Profile.
 
-Don’t duplicate button/row layouts—extract to shared components.
+FAB: 64dp, bg purple, elevated −16dp, spring scale on press.
 
-Don’t mix business logic with view code.
+Side tabs: flex:1, active pill 56×32dp behind icon.
+
+Labels visible, no overlap.
+
+3.2 HoroscopePager.tsx
+Built with react-native-pager-view.
+
+Pages: Today, Weekly, Monthly, Yearly.
+
+Dots centered.
+
+Today:
+
+4-line preview + “Read more ▾” expands smoothly.
+
+Lucky row (number, color, mood).
+
+Weekly/Monthly/Yearly:
+
+Free → blurred text (Gaussian 8–12), sticky Upgrade to Premium CTA.
+
+Premium → full text, expandable.
+
+3.3 LifeAspects.tsx
+3 columns: Love ❤️, Career 💼, Health 🩺.
+
+Score 0–100 → stars 0–5 (Math.round(score/20)).
+
+Show x/10 under stars.
+
+Always visible, no overflow.
+
+3.4 BannerCarousel.tsx
+Cards: 120dp tall, radius 24, full-card pressable.
+
+Left-aligned text + optional bullet list.
+
+Dots centered below.
+
+Auto-scroll every 5s.
+
+Navigate per content/banners.json.
+
+3.5 SignCard.tsx
+88dp tall, avatar 48dp circle with emoji.
+
+Premium chip top-right if user is premium.
+
+3.6 ProgressBarTop.tsx
+Onboarding progress indicator. 4dp tall, animates between steps.
 
 4) Navigation & Deep Links
-Tabs order fixed: Today · Traits · (Center) Compatibility · Druid · Profile.
+Tab order fixed.
 
-Deep link mapping (must use):
+Deep links:
 
 traits:<sign> → /(tabs)/traits?sign=<sign>
 
@@ -86,176 +215,217 @@ chinese → /(tabs)/druid?mode=chinese
 
 premium → /paywall?src=banner_<id>
 
-Traits default = user.sign. Respect ?sign= override.
+5) Premium Gating
+W/M/Y pages:
 
-Compatibility default left sign = user.sign; right sign selectable; ?with= prefilled.
+Free → blurred + CTA. Any interaction opens /paywall.
 
-5) Premium Gating (Exact Behavior)
-Weekly/Monthly/Yearly pages: if !isPremium:
+Premium → full text visible.
 
-Body text blurred (radius ~8–12) or masked gradient so unreadable.
+Compatibility:
 
-Show sticky “Upgrade to Premium” CTA (Label 12sp, purple) inside card bottom-right.
+Free → show % + short preview.
 
-Any interaction (swipe to page, tap body, tap Read more, tap CTA) → navigate /paywall?src=<timeframe>.
+Premium → add long breakdown.
 
-When isPremium, remove blur and show full text + Read more.
-
-6) Data Contracts (Frontend expectations)
-Predictions (all timeframes):
-
+6) Data Contracts (strict)
 ts
 Copy code
+// Predictions
 type Prediction = {
   sign: string;
   type: 'daily'|'weekly'|'monthly'|'yearly';
   period: { start: string; end: string };
   preview: string;
-  full_text?: string | null; // null for free daily; present for premium and daily "read more"
-  mood_tags: string[];
+  full_text?: string | null;
   lucky?: { number: number; color: string; mood: string };
-  scores: { love: number; career: number; health: number }; // 0..100
+  scores: { love: number; career: number; health: number };
 };
-Characteristics from content/characteristics.json (static).
 
-Compatibility:
-
-ts
-Copy code
+// Compatibility
 type Compat = {
-  signA: string; signB: string;
+  signA: string;
+  signB: string;
   overall: number;
-  love: number; career: number; friendship: number;
-  preview: string; full_text?: string | null;
+  love: number;
+  career: number;
+  friendship: number;
+  preview: string;
+  full_text?: string | null;
 };
+Static JSON: traits, druid, chinese, banners. Never hardcode.
+
 7) Accessibility
-Min touch size 48×48dp.
+Minimum 48×48dp touch targets.
 
-All interactive elements have accessibilityLabel.
+All pressables labeled.
 
-Pager pages have labels: “Today”, “Weekly”, “Monthly”, “Yearly”.
+Pager pages labeled.
 
-Maintain contrast (text ≥ 4.5:1 on surfaces).
+Contrast ≥ 4.5:1.
+
+Supports Dynamic Type for body text.
 
 8) Performance
-Avoid re-render storms: keep state local to screens or Zustand stores.
+60fps scrolling/swiping on mid Android.
 
-Use react-native-pager-view (not DIY scroll) for horoscope pages.
+Use react-native-pager-view (not ScrollView hacks).
 
-Cache images (banners, onboarding) with expo-image if available.
+Memoize heavy components.
 
-Keep bundle clean: no unused libraries.
+Image cache enabled.
 
-9) Analytics (must fire)
-Use services/analytics.ts (track) from docs/ANALYTICS.md.
+9) Motion
+Tab transitions: fade-through (250ms).
 
-Pager: today_pager_swiped, read_more_clicked
+Pager dots animate ≤120ms.
 
-Gating: paywall_shown, upgrade_cta_clicked
+Read more expands ≤300ms.
 
-Banners: banner_clicked (fire before navigation)
+FAB spring scale 0.96→1.0.
 
-Tabs: tab_selected
+Banner auto-scroll 5s.
 
-Compat: compatibility_calculated
+10) Analytics (must follow docs/ANALYTICS.md)
+Tabs: tab_selected, screen_view.
 
-10) Testing
-Unit:
+Pager: today_pager_swiped, read_more_clicked.
 
-utils/zodiac.ts (date → sign) with edge dates.
+Paywall: paywall_shown, upgrade_cta_clicked.
 
-Score → stars conversion (0..100 → 0..5).
+Banners: banner_clicked before nav.
 
-Snapshot:
+Compat: compatibility_calculated.
 
-app/(tabs)/today.tsx with mock data (free vs premium states).
+Purchases: purchase_initiated, purchase_success, purchase_failed.
 
-components/BottomNav.tsx active pill and FAB.
+11) Error & Loading States
+Use skeletons for loading (no spinners).
 
-Smoke:
+Friendly inline errors.
 
-Pager swipes & dots update.
+402 → open paywall.
 
-Blur + CTA shows for free users.
-
-Banners navigate to mapped routes.
-
-11) Linting & Formatting
-ESLint (RN + TS), Prettier (120 cols, single quotes).
-
-Sample tsconfig.json flags:
-
-json
-Copy code
-{
-  "compilerOptions": {
-    "strict": true,
-    "noImplicitAny": true,
-    "noUncheckedIndexedAccess": true,
-    "noFallthroughCasesInSwitch": true,
-    "jsx": "react-jsx"
-  }
-}
-Import order: react/react-native → expo/router → third-party → local (constants, services, store,components).
+Analytics transport never throws; queue offline.
 
 12) Security & Privacy
+No secrets in client.
 
-No secrets in code. Use env/Secret Manager on backend.
+Payments: Flitt handled server-side; client only gets checkout URL.
 
-Don’t log PII to analytics. Use pseudo IDs per docs/ANALYTICS.md.
+Analytics: no PII, only pseudo IDs.
 
-Payment flows (Flitt): handle only session URL on client; verify on server via webhook.
+13) Regional Pricing
+Pricing always comes from server /payments/products.
 
-13) Error Handling
+Client replaces {PRICE} placeholders in banners with localized pricing.
 
-UI: show inline friendly errors (no raw stack).
+Fallback if missing → “from 5 USD/month”.
 
-API: central services/api.ts with interceptors; map 402 to paywall gating.
+14) Testing
+Unit tests: zodiac sign calc, score→stars, deep link parsing.
 
-Analytics: never throw; queue offline.
+Snapshot: Today (free vs premium), BottomNav with FAB.
 
-14) PR Checklist (Reviewer must tick all)
+Integration/Smoke:
 
- Matches DESIGN_REVIEW.md visuals (sizes, colors, spacing, motion).
+Pager swipe updates dots.
 
- Passes docs/ACCEPTANCE.md for the touched screens.
+Blur + CTA for free users.
 
- No hardcoded hex/sizes; tokens only.
+Banner click navigates properly.
 
- TS strict, no any/@ts-ignore.
+Compat calculation works with deep link prefill.
 
- Components are pure; no duplicate UI.
+Coverage: ≥80% statements/lines.
 
- Premium gating implemented (blur + Upgrade CTA) for W/M/Y when !isPremium.
+15) Lint, Type, Format
+ESLint (strict TS + React Native rules).
 
- Banners use deep link mapping and are fully pressable.
+Prettier (width 120, single quotes).
 
- Required analytics events fired.
+TSConfig strict (noImplicitAny, noUncheckedIndexedAccess).
 
- Unit + snapshot tests added/updated.
+Imports ordered: react → expo/router → 3rd party → constants/services/store/utils → components → relative.
 
- No docs/*.md deleted/renamed.
+16) CI/CD
+GitHub Actions (.github/workflows/ci.yml): lint + typecheck + tests.
 
-15) Anti-Patterns (auto-reject)
+Husky pre-commit: lint-staged runs eslint + prettier + tests on staged files.
 
-❌ Hardcoded colors/sizes (e.g., #fff, margin: 17)
+Main branch protected (PRs only).
 
-❌ Rebuilding pager with ScrollView instead of react-native-pager-view
+17) Review Checklist (must tick all)
+ Matches DESIGN_REVIEW.md pixel-for-pixel.
 
-❌ Pulling traits/druid/chinese text from code constants (must read content/*.json)
+ Passes all acceptance criteria.
 
-❌ Mixed responsibilities (network calls inside dumb UI components)
+ No hardcoded hex/sizes.
 
-❌ Creating new routes/tabs not in spec
+ Traits/druid/chinese pulled from JSON only.
 
-❌ Deleting or renaming any docs/*.md
+ Regional pricing from API.
 
-16) Notes for Onboarding (Salamene Onboarding)
+ Analytics events fired correctly.
 
-Splash: fade 2.5s → /onboarding/signin.
+ Tests added/updated; coverage ≥80%.
 
-Sign-in: uses assets/onboarding/welcome.png; two buttons (outlined “Continue without account”, filled “Continue”) route to /(tabs)/today until real auth is wired.
+ Lint/type/format clean.
 
-Future steps (birth-date/time/place/confirm) must follow progress bar and image indicators per design.
+ Friendly error + offline safe.
 
-::contentReference[oaicite:0]{index=0}
+ No docs/*.md removed or renamed.
+
+18) Anti-Patterns (Reject Immediately)
+❌ ScrollView “pager” implementation.
+
+❌ Premium text visible to free users.
+
+❌ Inline zodiac texts in components.
+
+❌ Missing analytics events.
+
+❌ Flat nav bar with broken FAB.
+
+❌ Hardcoded pricing/currency.
+
+❌ Docs deleted or renamed.
+
+19) Onboarding (Salamene)
+Splash → fade 2.5s → /onboarding/signin.
+
+Signin: assets/onboarding/welcome.png; two buttons:
+
+Outlined: Continue without account → Today tab.
+
+Filled: Continue (auth) → Today tab.
+
+Birth-date/time/place with progress bar + indicator dots.
+
+“I don’t remember” time → defaults 12:00.
+
+Confirm computes sign, saves to store, sets onboarded flag.
+
+20) Change Control
+Any deviations → docs/DELTA.md with:
+
+Rationale
+
+Impacted files
+
+Plan to converge
+
+yaml
+Copy code
+
+---
+
+✅ This file is now the **master code review bible**.
+No dev can merge code unless it passes this document **and** the other `.md` specs.
+
+
+
+
+
+
+```

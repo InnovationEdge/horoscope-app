@@ -1,188 +1,118 @@
-# Project Docs — Zodiac App (FINAL)
+# README — Zodiac App (FINAL)
 
-> **Single source of truth** for design, content, contracts, and acceptance.  
-> **Do not** delete or rename any file under `docs/*.md`.
-
----
-
-## 1) What these docs control
-
-- **Visuals & behavior** → `DESIGN_REVIEW.md`
-- **Must-have checks** → `ACCEPTANCE.md`
-- **API shapes** → `API_CONTRACT.md`
-- **Coding rules** → `CODE_REVIEW.md`
-- **Content rules & data shapes** → `CONTENT_GUIDELINES.md`
-- **Analytics events** → `ANALYTICS.md`
-- **Build flow** → `PROJECT_FLOW.md`
-- **Screen mockups** → `docs/screens/*.png` (visual truth)
-
-If any are missing, stop and recreate before coding.
+> **Complete horoscope app with monetization** — React Native + Django.
+> **Never delete or rename** any `docs/*.md`.
 
 ---
 
-## 2) Quick start (dev)
+## Quick Start
 
 ```bash
-# 1) install
-npm i
-
-# 2) run
+# Frontend (Expo)
+npm install
 npm start
-# press "a" (Android) or "i" (iOS)
+# press "i" (iOS) or "a" (Android)
 
-# 3) optional: create placeholders if missing
-# (images & content)
-Minimum files required to begin:
+# Backend (Django)
+cd api
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
 
-docs/DESIGN_REVIEW.md, docs/ACCEPTANCE.md (already present)
+---
 
-docs/screens/today.png (and other screens when available)
+## Project Structure
 
-assets/onboarding/welcome.png, birth.png, insights.png
+- **Frontend**: React Native with Expo Router, TypeScript
+- **Backend**: Django REST Framework with JWT auth
+- **Content**: Static JSON files + dynamic API predictions
+- **Monetization**: Premium subscriptions with regional pricing (GEL/EUR/USD)
 
-content/characteristics.json, druid.json, chinese.json, banners.json (can start empty)
+---
 
-3) Build order (never skip)
-Design — Update/confirm DESIGN_REVIEW.md + docs/screens/*.png.
+## Key Features
 
-Content — Fill content/*.json (traits, druid, chinese, banners).
+- **Daily Horoscopes**: Free daily + premium weekly/monthly/yearly
+- **Compatibility**: Zodiac sign matching with detailed breakdown
+- **Traits**: Static characteristics for all 12 signs
+- **Druid & Chinese**: Ancient wisdom systems tied to birth data
+- **Premium Gating**: Blur + upgrade CTA for premium content
+- **Regional Pricing**: Auto-detect country → GEL/EUR/USD pricing
+- **Analytics**: Event tracking for usage and monetization
 
-API — Match API_CONTRACT.md (predictions, compatibility, pricing).
+---
 
-Code — Implement one screen/component at a time.
+## Documentation
 
-Validate — Tick every box in ACCEPTANCE.md for changed screens.
+All specs are in `docs/`:
 
-Review — Enforce CODE_REVIEW.md and run tests.
+- `DESIGN_REVIEW.md` — Visual specs, components, tokens
+- `ACCEPTANCE.md` — Required functionality checklist
+- `API_CONTRACT.md` — Backend endpoint contracts
+- `CODE_REVIEW.md` — Development standards
+- `CONTENT_GUIDELINES.md` — Copy, data shapes, regional pricing
+- `ANALYTICS.md` — Event tracking specification
+- `PROJECT_FLOW.md` — Build process and folder structure
 
-Release — Tag & attach screenshots.
+---
 
-PRs that fail acceptance or code review are auto-rejected.
+## Commands
 
-4) Folder map (frontend)
-pgsql
-Copy code
-app/
-  (tabs)/
-    today.tsx
-    traits.tsx
-    compat.tsx
-    druid.tsx
-    profile.tsx
-  onboarding/
-    _layout.tsx
-    splash.tsx
-    signin.tsx
-components/
-  BottomNav.tsx
-  HoroscopePager.tsx
-  LifeAspects.tsx
-  BannerCarousel.tsx
-  SignCard.tsx
-  ProgressBarTop.tsx
-constants/
-  theme.ts
-  signs.ts
-content/
-  characteristics.json
-  druid.json
-  chinese.json
-  banners.json
-  sample_horoscope.json
-docs/
-  DESIGN_REVIEW.md
-  ACCEPTANCE.md
-  API_CONTRACT.md
-  CODE_REVIEW.md
-  CONTENT_GUIDELINES.md
-  ANALYTICS.md
-  PROJECT_FLOW.md
-  screens/
-    today.png
-    traits.png
-    compat.png
-    druid.png
-    profile.png
-assets/
-  onboarding/
-    welcome.png
-    birth.png
-    insights.png
-5) Non-negotiables (summary)
-Blur + “Upgrade to Premium” on Weekly/Monthly/Yearly when not premium.
+```bash
+# Development
+npm start                # Start Expo dev server
+npm run ios             # Run on iOS simulator
+npm run android         # Run on Android emulator
+npm run web             # Run on web
 
-Banners are pressable and deep-link via mapping (traits, compat, druid, chinese, premium).
+# Quality
+npm run lint            # ESLint check
+npm run typecheck       # TypeScript check
+npm test               # Run tests
 
-Bottom nav: center FAB (🫰🏼) 64dp, floating −16dp, active pill on side tabs.
+# Backend
+cd api
+python manage.py runserver    # Start Django server
+python manage.py test         # Run backend tests
+```
 
-Traits defaults to user.sign but can switch; reads static JSON.
+---
 
-Druid/Chinese are static JSON; tied to user birth data.
+## Deployment
 
-Regional pricing (server-driven): GE→“5 GEL”, EU→“5 EUR”, US/other→“5 USD”.
+- **Frontend**: EAS Build → App Store/Google Play
+- **Backend**: Gunicorn + PostgreSQL on cloud platform
+- **Content**: Static JSON served via CDN
+- **Analytics**: BigQuery/GA4 integration
 
-Analytics: emit events defined in ANALYTICS.md.
+---
 
-No hardcoded colors/sizes; use constants/theme.ts & constants/signs.ts.
+## Non-Negotiables
 
-6) Acceptance gate (how to pass)
-Before merging any PR:
+- Follow `docs/DESIGN_REVIEW.md` exactly (no improvisation)
+- Use only tokens from `constants/theme.ts` and `constants/signs.ts`
+- Premium content must be blurred for free users
+- Banners must deep-link per routing table
+- Regional pricing must be server-driven
+- Analytics events must fire per `ANALYTICS.md`
 
-Open every changed screen and tick corresponding items in ACCEPTANCE.md.
+---
 
-Confirm navigation & deep links behave exactly as specified.
+## Contributing
 
-Verify premium gating (blur + CTA) and banner routing.
+1. Read all `docs/*.md` files before coding
+2. Never delete or rename documentation files
+3. Pass all acceptance criteria before merge
+4. Follow TypeScript strict mode
+5. Add tests for new functionality
 
-Run unit/snapshot tests (zodiac calc, Today, BottomNav).
+---
 
-Confirm required analytics events fire (see ANALYTICS.md).
+## Support
 
-7) Backend notes (summary)
-Endpoints and payloads in API_CONTRACT.md.
+For technical issues, check:
 
-Pricing object must be returned by paywall/product endpoint (regional currency).
-
-Cache TTLs: daily 24h, weekly 7d, monthly 30d, yearly 365d.
-
-Webhook (Flitt) sets is_premium=true.
-
-8) Contributor rules
-Don’t add routes/tabs not in DESIGN_REVIEW.md.
-
-Don’t inline copy; use content files or server responses.
-
-Don’t modify or delete docs/*.md. If a change is needed, propose it in a PR that updates docs first, then code.
-
-9) Common commands
-bash
-Copy code
-# lint & typecheck (example)
-npm run lint
-npm run typecheck
-
-# run tests (example)
-npm test
-10) Troubleshooting
-Looks “flat” → card elevation/shadow missing (see Design §0).
-
-Pager not swiping → must use react-native-pager-view.
-
-Weekly/Monthly/Yearly readable on free → blur not applied; fix per Design §3.3.
-
-Banners don’t navigate → ensure target maps to routes in Design §3.5.
-
-Wrong currency → backend must return pricing object; see Content §18.
-
-11) Contact / Ownership
-Product & UX: follows DESIGN_REVIEW.md + docs/screens/*.
-
-Tech Lead: enforces CODE_REVIEW.md.
-
-Content Owner: enforces CONTENT_GUIDELINES.md.
-
-When in doubt: update docs first, then code.
-
-makefile
-Copy code
-::contentReference[oaicite:0]{index=0}
+- `docs/PROJECT_FLOW.md` for troubleshooting
+- `docs/ACCEPTANCE.md` for feature requirements
+- `docs/API_CONTRACT.md` for backend integration

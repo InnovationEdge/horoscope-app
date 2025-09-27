@@ -1,0 +1,278 @@
+{
+  "aries": {
+    "aries": {
+      "overall_score": 85,
+      "love": 90,
+      "friendship": 85,
+      "work": 80,
+      "description": "Two Aries together create an explosive and passionate connection. You both share the same drive, ambition, and love for adventure. However, your similar temperaments can sometimes lead to power struggles.",
+      "tips": [
+        "Take turns being the leader",
+        "Channel competitive energy into shared goals",
+        "Give each other space to shine"
+      ]
+    },
+    "taurus": {
+      "overall_score": 65,
+      "love": 70,
+      "friendship": 65,
+      "work": 60,
+      "description": "Aries and Taurus bring different energies to the relationship. Aries' spontaneity meets Taurus' stability, creating a balanced but sometimes challenging dynamic.",
+      "tips": [
+        "Respect each other's pace",
+        "Find compromise between adventure and routine",
+        "Appreciate your different strengths"
+      ]
+    },
+    "gemini": {
+      "overall_score": 80,
+      "love": 85,
+      "friendship": 90,
+      "work": 75,
+      "description": "Aries and Gemini share a love for excitement and new experiences. Your mental and physical energies complement each other beautifully, creating a dynamic and stimulating partnership.",
+      "tips": [
+        "Keep conversations lively and engaging",
+        "Embrace spontaneous adventures together",
+        "Balance action with intellectual pursuits"
+      ]
+    },
+    "cancer": {
+      "overall_score": 60,
+      "love": 65,
+      "friendship": 60,
+      "work": 55,
+      "description": "Aries and Cancer have different approaches to life and emotions. Aries' directness meets Cancer's sensitivity, requiring patience and understanding from both sides.",
+      "tips": [
+        "Practice gentle communication",
+        "Create emotional safety together",
+        "Balance independence with nurturing"
+      ]
+    },
+    "leo": {
+      "overall_score": 90,
+      "love": 95,
+      "friendship": 90,
+      "work": 85,
+      "description": "Aries and Leo create a powerhouse combination filled with passion, creativity, and mutual admiration. Both fire signs understand each other's need for excitement and recognition.",
+      "tips": ["Share the spotlight equally", "Support each other's ambitions", "Keep the romance and adventure alive"]
+    },
+    "virgo": {
+      "overall_score": 55,
+      "love": 60,
+      "friendship": 55,
+      "work": 50,
+      "description": "Aries and Virgo have complementary qualities but very different approaches. Aries' impulsiveness contrasts with Virgo's careful planning, requiring compromise and patience.",
+      "tips": [
+        "Appreciate different problem-solving styles",
+        "Learn from each other's strengths",
+        "Find balance between spontaneity and planning"
+      ]
+    },
+    "libra": {
+      "overall_score": 75,
+      "love": 80,
+      "friendship": 75,
+      "work": 70,
+      "description": "Aries and Libra are opposite signs that can create a beautiful balance. Aries brings passion and decisiveness while Libra brings harmony and diplomacy to the relationship.",
+      "tips": [
+        "Balance independence with partnership",
+        "Appreciate each other's different approaches",
+        "Create harmony while maintaining individuality"
+      ]
+    },
+    "scorpio": {
+      "overall_score": 70,
+      "love": 85,
+      "friendship": 65,
+      "work": 60,
+      "description": "Aries and Scorpio create an intense and passionate connection. Both signs are strong-willed and determined, which can lead to either powerful chemistry or challenging conflicts.",
+      "tips": [
+        "Respect each other's intensity",
+        "Channel passion constructively",
+        "Practice honest and direct communication"
+      ]
+    },
+    "sagittarius": {
+      "overall_score": 85,
+      "love": 90,
+      "friendship": 85,
+      "work": 80,
+      "description": "Aries and Sagittarius share a love for adventure, freedom, and new experiences. This combination brings out the best in both signs, creating an exciting and dynamic partnership.",
+      "tips": [
+        "Plan adventures together",
+        "Respect each other's need for freedom",
+        "Keep life exciting and spontaneous"
+      ]
+    },
+    "capricorn": {
+      "overall_score": 60,
+      "love": 65,
+      "friendship": 60,
+      "work": 55,
+      "description": "Aries and Capricorn have different approaches to achieving goals. Aries prefers quick action while Capricorn values steady progress, requiring understanding and compromise.",
+      "tips": ["Combine spontaneity with planning", "Respect different work styles", "Support each other's ambitions"]
+    },
+    "aquarius": {
+      "overall_score": 75,
+      "love": 80,
+      "friendship": 85,
+      "work": 70,
+      "description": "Aries and Aquarius share a love for independence and innovation. Both signs value freedom and are drawn to unique experiences and progressive ideas.",
+      "tips": [
+        "Maintain individual independence",
+        "Support each other's unique perspectives",
+        "Embrace unconventional approaches together"
+      ]
+    },
+    "pisces": {
+      "overall_score": 65,
+      "love": 70,
+      "friendship": 65,
+      "work": 60,
+      "description": "Aries and Pisces bring fire and water together. Aries' directness can help Pisces be more assertive, while Pisces can teach Aries about empathy and intuition.",
+      "tips": [
+        "Practice patience with different communication styles",
+        "Balance action with reflection",
+        "Create a safe emotional space"
+      ]
+    }
+  },
+  "taurus": {
+    "aries": {
+      "overall_score": 65,
+      "love": 70,
+      "friendship": 65,
+      "work": 60,
+      "description": "Taurus and Aries bring stability and excitement together. While Taurus values security and routine, Aries brings spontaneity and adventure to the relationship.",
+      "tips": [
+        "Find balance between routine and adventure",
+        "Respect each other's different paces",
+        "Appreciate complementary strengths"
+      ]
+    },
+    "taurus": {
+      "overall_score": 80,
+      "love": 85,
+      "friendship": 80,
+      "work": 75,
+      "description": "Two Taurus individuals create a stable, comfortable, and sensual partnership. You both value security, loyalty, and the finer things in life, creating a harmonious connection.",
+      "tips": [
+        "Avoid becoming too set in routines",
+        "Encourage each other to try new things",
+        "Enjoy life's pleasures together"
+      ]
+    },
+    "gemini": {
+      "overall_score": 60,
+      "love": 65,
+      "friendship": 70,
+      "work": 55,
+      "description": "Taurus and Gemini have different approaches to life. Taurus values stability while Gemini craves variety and change, requiring patience and understanding from both sides.",
+      "tips": [
+        "Find compromise between stability and variety",
+        "Appreciate different communication styles",
+        "Create space for both routine and spontaneity"
+      ]
+    },
+    "cancer": {
+      "overall_score": 85,
+      "love": 90,
+      "friendship": 85,
+      "work": 80,
+      "description": "Taurus and Cancer create a nurturing and secure partnership. Both signs value home, family, and emotional security, making this a naturally compatible combination.",
+      "tips": [
+        "Build a beautiful home together",
+        "Support each other's emotional needs",
+        "Create lasting traditions and memories"
+      ]
+    },
+    "leo": {
+      "overall_score": 70,
+      "love": 75,
+      "friendship": 70,
+      "work": 65,
+      "description": "Taurus and Leo both appreciate luxury and quality, but have different ways of expressing themselves. Taurus is more subdued while Leo loves to be in the spotlight.",
+      "tips": [
+        "Appreciate each other's different styles",
+        "Support Leo's need for recognition",
+        "Enjoy luxury and quality experiences together"
+      ]
+    },
+    "virgo": {
+      "overall_score": 85,
+      "love": 85,
+      "friendship": 90,
+      "work": 85,
+      "description": "Taurus and Virgo are both earth signs that understand each other's practical nature. This creates a stable, reliable, and mutually supportive partnership.",
+      "tips": [
+        "Work together on practical goals",
+        "Appreciate each other's reliability",
+        "Build something lasting together"
+      ]
+    },
+    "libra": {
+      "overall_score": 75,
+      "love": 80,
+      "friendship": 75,
+      "work": 70,
+      "description": "Taurus and Libra are both ruled by Venus, sharing an appreciation for beauty, harmony, and the finer things in life. This creates a naturally aesthetic and pleasant partnership.",
+      "tips": [
+        "Surround yourselves with beauty",
+        "Avoid being too indecisive together",
+        "Appreciate art and culture together"
+      ]
+    },
+    "scorpio": {
+      "overall_score": 75,
+      "love": 85,
+      "friendship": 70,
+      "work": 70,
+      "description": "Taurus and Scorpio are opposite signs that can create a powerful magnetic attraction. Both are loyal and determined, but express their intensity in different ways.",
+      "tips": ["Respect each other's depth", "Build trust slowly and steadily", "Embrace the passionate connection"]
+    },
+    "sagittarius": {
+      "overall_score": 55,
+      "love": 60,
+      "friendship": 65,
+      "work": 50,
+      "description": "Taurus and Sagittarius have different approaches to life. Taurus values stability while Sagittarius craves freedom and adventure, requiring compromise and understanding.",
+      "tips": ["Balance security with adventure", "Respect each other's different needs", "Find ways to grow together"]
+    },
+    "capricorn": {
+      "overall_score": 85,
+      "love": 85,
+      "friendship": 85,
+      "work": 90,
+      "description": "Taurus and Capricorn are both earth signs that share similar values around security, hard work, and building for the future. This creates a stable and ambitious partnership.",
+      "tips": [
+        "Work together toward common goals",
+        "Build financial security together",
+        "Support each other's ambitions"
+      ]
+    },
+    "aquarius": {
+      "overall_score": 55,
+      "love": 60,
+      "friendship": 65,
+      "work": 50,
+      "description": "Taurus and Aquarius have very different approaches to life. Taurus values tradition while Aquarius embraces innovation, creating an interesting but challenging dynamic.",
+      "tips": [
+        "Learn from each other's perspectives",
+        "Find balance between tradition and innovation",
+        "Respect each other's different needs"
+      ]
+    },
+    "pisces": {
+      "overall_score": 75,
+      "love": 80,
+      "friendship": 75,
+      "work": 70,
+      "description": "Taurus and Pisces create a gentle and nurturing partnership. Taurus provides stability for Pisces' emotional nature, while Pisces brings creativity and intuition to Taurus' practical world.",
+      "tips": [
+        "Create a peaceful environment together",
+        "Support each other's dreams",
+        "Balance practicality with imagination"
+      ]
+    }
+  }
+}

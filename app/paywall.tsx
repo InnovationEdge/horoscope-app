@@ -1,16 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Colors, Layout, Typography, Spacing } from '../constants/theme';
-import { router } from 'expo-router';
+import { Colors, Layout, Typography } from '../constants/theme';
 
 export default function PaywallScreen() {
+  const { src } = useLocalSearchParams();
+
   const handleUpgrade = () => {
-    // Handle premium upgrade
-    console.log('Premium upgrade');
-    router.back();
+    // Handle subscription logic here
+    console.log('Upgrade triggered from:', src);
   };
 
   const handleClose = () => {
@@ -19,35 +19,29 @@ export default function PaywallScreen() {
 
   return (
     <SafeAreaProvider>
-      <View style={styles.container}>
-        <StatusBar style="light" />
-        <LinearGradient
-          colors={[Colors.bg.top, Colors.bg.bottom]}
-          style={styles.gradient}
-        >
-          <View style={styles.content}>
-            <Text style={styles.title}>Unlock Premium ✨</Text>
-            <Text style={styles.subtitle}>
-              Get full horoscope readings, detailed compatibility reports, and exclusive insights.
-            </Text>
+      <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.container}>
+        <View style={styles.content}>
+          <Text style={styles.title}>✨ Unlock Premium</Text>
+          <Text style={styles.subtitle}>
+            Get unlimited access to detailed horoscopes, compatibility reports, and exclusive insights
+          </Text>
 
-            <View style={styles.features}>
-              <Text style={styles.feature}>• Full horoscope readings</Text>
-              <Text style={styles.feature}>• Weekly & monthly forecasts</Text>
-              <Text style={styles.feature}>• Detailed compatibility reports</Text>
-              <Text style={styles.feature}>• Exclusive premium insights</Text>
-            </View>
-
-            <TouchableOpacity style={styles.upgradeButton} onPress={handleUpgrade}>
-              <Text style={styles.upgradeButtonText}>Upgrade to Premium</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-              <Text style={styles.closeButtonText}>Maybe Later</Text>
-            </TouchableOpacity>
+          <View style={styles.features}>
+            <Text style={styles.feature}>📅 Weekly & Monthly Forecasts</Text>
+            <Text style={styles.feature}>💖 Advanced Compatibility Analysis</Text>
+            <Text style={styles.feature}>🔮 Personalized Birth Chart</Text>
+            <Text style={styles.feature}>🌟 Premium Daily Insights</Text>
           </View>
-        </LinearGradient>
-      </View>
+
+          <TouchableOpacity style={styles.upgradeButton} onPress={handleUpgrade}>
+            <Text style={styles.upgradeText}>Start Premium - $5/month</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
+            <Text style={styles.closeText}>Maybe Later</Text>
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
     </SafeAreaProvider>
   );
 }
@@ -56,55 +50,52 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  gradient: {
-    flex: 1,
-  },
   content: {
     flex: 1,
-    alignItems: 'center',
+    padding: Layout.screenPadding,
     justifyContent: 'center',
-    paddingHorizontal: Layout.screenPadding,
+    alignItems: 'center',
   },
   title: {
     ...Typography.displayLarge,
-    color: Colors.text.primary,
     fontSize: 32,
+    color: Colors.text.primary,
     textAlign: 'center',
-    marginBottom: Spacing.lg,
+    marginBottom: 16,
   },
   subtitle: {
     ...Typography.bodyMedium,
     color: Colors.text.secondary,
     textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: Spacing.xl,
+    marginBottom: 40,
+    lineHeight: 24,
   },
   features: {
     alignSelf: 'stretch',
-    marginBottom: Spacing.xl,
+    marginBottom: 40,
   },
   feature: {
     ...Typography.bodyMedium,
     color: Colors.text.primary,
-    marginBottom: Spacing.sm,
-    paddingLeft: Spacing.md,
+    marginBottom: 12,
+    textAlign: 'center',
   },
   upgradeButton: {
     backgroundColor: Colors.primary,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
-    borderRadius: 20,
-    marginBottom: Spacing.lg,
+    paddingHorizontal: 40,
+    paddingVertical: 16,
+    borderRadius: Layout.cardRadius,
+    marginBottom: 16,
   },
-  upgradeButtonText: {
-    ...Typography.bodyMedium,
-    color: Colors.text.primary,
+  upgradeText: {
+    ...Typography.titleMedium,
+    color: 'white',
     fontWeight: '600',
   },
   closeButton: {
-    paddingVertical: Spacing.sm,
+    padding: 16,
   },
-  closeButtonText: {
+  closeText: {
     ...Typography.bodyMedium,
     color: Colors.text.secondary,
   },

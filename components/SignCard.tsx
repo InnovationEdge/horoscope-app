@@ -73,12 +73,15 @@ const styles = StyleSheet.create({
   signName: {
     ...Typography.titleMedium,
     color: Colors.text.primary,
+    fontSize: 18,
+    fontWeight: '700',
   },
   dateRange: {
     ...Typography.labelSmall,
     color: Colors.text.secondary,
-    opacity: 0.7,
-    marginTop: 2,
+    fontSize: 14,
+    fontWeight: '500',
+    marginTop: 4,
   },
   premiumChip: {
     position: 'absolute',
@@ -87,12 +90,15 @@ const styles = StyleSheet.create({
     height: Layout.premiumChipHeight,
     borderRadius: Layout.premiumChipRadius,
     paddingHorizontal: Layout.premiumChipPadding,
-    backgroundColor: '#EADDFF',
+    backgroundColor: Colors.premiumChip,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: Colors.primary,
   },
   premiumText: {
     ...Typography.labelSmall,
-    color: '#21005D',
+    color: Colors.primary,
+    fontWeight: '600',
   },
 });

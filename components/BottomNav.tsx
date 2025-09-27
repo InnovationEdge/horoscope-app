@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Pressable } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 import { Colors, Layout, Typography, Spacing } from '../constants/theme';
 
 interface BottomNavProps {
@@ -10,44 +11,83 @@ interface BottomNavProps {
 
 export function BottomNav({ activeTab, onTabPress }: BottomNavProps) {
   const insets = useSafeAreaInsets();
+  const fabScale = useSharedValue(1);
+
+  // Get screen dimensions for responsive design
+  const { width: screenWidth } = Dimensions.get('window');
+  const isSmallScreen = screenWidth < 375; // iPhone SE and similar
+  const isLargeScreen = screenWidth > 414; // iPhone Pro Max and similar
 
   const tabs = [
     { id: 'today', label: 'Today' },
     { id: 'traits', label: 'Traits' },
-    { id: 'compat', label: 'Compatibility' }, // Center FAB with label
+    { id: 'compat', label: isSmallScreen ? 'Match' : 'Compatibility' },
     { id: 'druid', label: 'Druid' },
     { id: 'profile', label: 'Profile' },
   ];
+
+  // Calculate responsive sizes
+  const responsiveFabSize = isSmallScreen ? 56 : isLargeScreen ? 72 : 64;
+  const responsiveNavHeight = isSmallScreen ? 70 : 80;
+  const responsiveFontSize = isSmallScreen ? 10 : isLargeScreen ? 13 : 12;
+  const responsiveIconSize = isSmallScreen ? 28 : isLargeScreen ? 36 : 32;
+
+  const centerFabAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: fabScale.value }],
+  }));
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       {/* Top hairline */}
       <View style={styles.hairline} />
 
-      <View style={styles.tabBar}>
+      <View style={[styles.tabBar, { height: responsiveNavHeight }]}>
         {tabs.map((tab, index) => {
           const isActive = activeTab === tab.id;
           const isCenter = index === 2; // Center FAB (Compatibility)
 
           if (isCenter) {
             return (
-              <View key={tab.id} style={styles.centerContainer} pointerEvents="box-none">
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.centerFab,
-                    pressed && styles.centerFabPressed
+              <View key={tab.id} style={styles.centerContainer}>
+                <Animated.View style={centerFabAnimatedStyle}>
+                  <Pressable
+                    style={[
+                      styles.centerFab,
+                      {
+                        width: responsiveFabSize,
+                        height: responsiveFabSize,
+                        borderRadius: responsiveFabSize / 2,
+                      },
+                    ]}
+                    onPressIn={() => {
+                      fabScale.value = withSpring(0.92, { damping: 15, stiffness: 400 });
+                    }}
+                    onPressOut={() => {
+                      fabScale.value = withSpring(1, { damping: 15, stiffness: 400 });
+                    }}
+                    onPress={() => onTabPress(tab.id)}
+                    accessibilityLabel="Compatibility"
+                    accessibilityRole="button"
+                  >
+                    <Text style={[styles.centerIcon, { fontSize: responsiveIconSize }]}>🫰🏼</Text>
+                  </Pressable>
+                </Animated.View>
+                <Text
+                  style={[
+                    styles.centerLabel,
+                    {
+                      color: isActive ? Colors.primary : Colors.iconInactive,
+                      fontSize: responsiveFontSize,
+                    },
                   ]}
-                  onPress={() => onTabPress(tab.id)}
-                  accessibilityLabel="Compatibility"
-                  accessibilityRole="button"
                 >
-                  <Text style={styles.centerIcon}>🫰🏼</Text>
-                </Pressable>
-                <Text style={styles.centerLabel}>{tab.label}</Text>
+                  {tab.label}
+                </Text>
               </View>
             );
           }
 
+          // Side tabs with proper animations
           return (
             <TouchableOpacity
               key={tab.id}
@@ -56,14 +96,32 @@ export function BottomNav({ activeTab, onTabPress }: BottomNavProps) {
               accessibilityLabel={tab.label}
               accessibilityRole="tab"
               accessibilityState={{ selected: isActive }}
+              activeOpacity={0.7}
             >
-              {isActive && <View style={styles.activePill} />}
-              <Text style={[
-                styles.tabLabel,
-                { color: isActive ? Colors.primary : Colors.iconInactive }
-              ]}>
+              {/* Active pill background */}
+              <Animated.View
+                style={[
+                  styles.activePill,
+                  {
+                    opacity: withTiming(isActive ? 1 : 0, { duration: 200 }),
+                    transform: [{ scale: withSpring(isActive ? 1 : 0.8, { damping: 15, stiffness: 200 }) }],
+                  },
+                ]}
+              />
+
+              {/* Tab label */}
+              <Animated.Text
+                style={[
+                  styles.tabLabel,
+                  { fontSize: responsiveFontSize },
+                  {
+                    color: isActive ? Colors.primary : Colors.iconInactive,
+                    transform: [{ scale: withSpring(isActive ? 1.05 : 1, { damping: 15, stiffness: 300 }) }],
+                  },
+                ]}
+              >
                 {tab.label}
-              </Text>
+              </Animated.Text>
             </TouchableOpacity>
           );
         })}
@@ -79,6 +137,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: Colors.surface,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 12,
   },
   hairline: {
     height: Layout.dividerHeight,
@@ -86,9 +149,9 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     flexDirection: 'row',
-    height: Layout.navbarHeight,
     alignItems: 'center',
     paddingHorizontal: Spacing.md,
+    justifyContent: 'space-between',
   },
   sideTab: {
     flex: 1,
@@ -96,56 +159,54 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
     height: '100%',
-    minHeight: 48, // Accessibility touch target
+    minHeight: 48,
+    paddingVertical: Spacing.sm,
   },
   activePill: {
     position: 'absolute',
-    width: Layout.activePillWidth,
-    height: Layout.activePillHeight,
+    width: 64,
+    height: 36,
     backgroundColor: Colors.activePill,
-    borderRadius: 16,
-    top: '50%',
-    marginTop: -16,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(124, 77, 255, 0.3)',
   },
   tabLabel: {
     ...Typography.labelSmall,
-    fontSize: 11,
+    fontWeight: '600',
     zIndex: 1,
+    textAlign: 'center',
   },
   centerContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     position: 'relative',
     height: '100%',
-    paddingBottom: 8,
   },
   centerFab: {
-    width: Layout.fabSize,
-    height: Layout.fabSize,
-    borderRadius: Layout.fabSize / 2,
     backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    top: -16, // Float 16dp above the tab bar
-    elevation: 8,
+    top: -24,
+    elevation: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-  },
-  centerFabPressed: {
-    transform: [{ scale: 0.96 }],
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    borderWidth: 3,
+    borderColor: Colors.surface,
   },
   centerIcon: {
-    fontSize: 32, // 🫰🏼 icon size
     color: 'white',
   },
   centerLabel: {
     ...Typography.labelSmall,
-    fontSize: 11,
-    color: Colors.iconInactive,
-    marginTop: 8,
+    fontWeight: '600',
+    marginTop: 16,
+    textAlign: 'center',
+    position: 'absolute',
+    bottom: Spacing.sm,
   },
 });

@@ -1,76 +1,58 @@
-import { ZodiacSign } from '../constants/signs';
+import { ZodiacSign, getSignByDate } from '@/constants/signs';
 
-interface ZodiacDateRange {
-  sign: ZodiacSign;
-  startMonth: number;
-  startDay: number;
-  endMonth: number;
-  endDay: number;
+export function getZodiacSign(birthDate: Date): ZodiacSign {
+  const month = birthDate.getMonth() + 1;
+  const day = birthDate.getDate();
+  return getSignByDate(month, day);
 }
 
-const ZODIAC_RANGES: ZodiacDateRange[] = [
-  { sign: 'aries', startMonth: 3, startDay: 21, endMonth: 4, endDay: 19 },
-  { sign: 'taurus', startMonth: 4, startDay: 20, endMonth: 5, endDay: 20 },
-  { sign: 'gemini', startMonth: 5, startDay: 21, endMonth: 6, endDay: 20 },
-  { sign: 'cancer', startMonth: 6, startDay: 21, endMonth: 7, endDay: 22 },
-  { sign: 'leo', startMonth: 7, startDay: 23, endMonth: 8, endDay: 22 },
-  { sign: 'virgo', startMonth: 8, startDay: 23, endMonth: 9, endDay: 22 },
-  { sign: 'libra', startMonth: 9, startDay: 23, endMonth: 10, endDay: 22 },
-  { sign: 'scorpio', startMonth: 10, startDay: 23, endMonth: 11, endDay: 21 },
-  { sign: 'sagittarius', startMonth: 11, startDay: 22, endMonth: 12, endDay: 21 },
-  { sign: 'capricorn', startMonth: 12, startDay: 22, endMonth: 1, endDay: 19 },
-  { sign: 'aquarius', startMonth: 1, startDay: 20, endMonth: 2, endDay: 18 },
-  { sign: 'pisces', startMonth: 2, startDay: 19, endMonth: 3, endDay: 20 },
-];
+// Alias for compatibility
+export const calculateZodiacSign = getZodiacSign;
 
-export function calculateZodiacSign(birthDate: Date): ZodiacSign {
-  const month = birthDate.getMonth() + 1; // getMonth() returns 0-11
+// Druid tree sign calculation
+export function getDruidSign(birthDate: Date): string {
+  const month = birthDate.getMonth() + 1;
   const day = birthDate.getDate();
 
-  for (const range of ZODIAC_RANGES) {
-    const { sign, startMonth, startDay, endMonth, endDay } = range;
-
-    if (startMonth === endMonth) {
-      // Same month range
-      if (month === startMonth && day >= startDay && day <= endDay) {
-        return sign;
-      }
-    } else if (startMonth < endMonth) {
-      // Normal range (e.g., March 21 - April 19)
-      if (
-        (month === startMonth && day >= startDay) ||
-        (month === endMonth && day <= endDay)
-      ) {
-        return sign;
-      }
-    } else {
-      // Year-crossing range (e.g., December 22 - January 19)
-      if (
-        (month === startMonth && day >= startDay) ||
-        (month === endMonth && day <= endDay)
-      ) {
-        return sign;
-      }
-    }
-  }
-
-  // Fallback (should never reach here with valid date)
-  return 'aries';
+  // Simplified Druid calendar (21 trees based on Celtic calendar)
+  if ((month === 12 && day >= 24) || (month === 1 && day <= 20)) return 'birch';
+  if ((month === 1 && day >= 21) || (month === 2 && day <= 17)) return 'rowan';
+  if ((month === 2 && day >= 18) || (month === 3 && day <= 17)) return 'ash';
+  if ((month === 3 && day >= 18) || (month === 4 && day <= 14)) return 'alder';
+  if ((month === 4 && day >= 15) || (month === 5 && day <= 12)) return 'willow';
+  if ((month === 5 && day >= 13) || (month === 6 && day <= 9)) return 'hawthorn';
+  if ((month === 6 && day >= 10) || (month === 7 && day <= 7)) return 'oak';
+  if ((month === 7 && day >= 8) || (month === 8 && day <= 4)) return 'holly';
+  if ((month === 8 && day >= 5) || (month === 9 && day <= 1)) return 'hazel';
+  if ((month === 9 && day >= 2) || (month === 9 && day <= 29)) return 'vine';
+  if ((month === 9 && day >= 30) || (month === 10 && day <= 27)) return 'ivy';
+  if ((month === 10 && day >= 28) || (month === 11 && day <= 24)) return 'reed';
+  return 'elder'; // Nov 25 - Dec 23
 }
 
-export function getTimeBasedGreeting(): string {
-  const hour = new Date().getHours();
-
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
+// Chinese zodiac animal calculation
+export function getChineseAnimal(birthYear: number): string {
+  const animals = [
+    'rat',
+    'ox',
+    'tiger',
+    'rabbit',
+    'dragon',
+    'snake',
+    'horse',
+    'goat',
+    'monkey',
+    'rooster',
+    'dog',
+    'pig',
+  ];
+  // Chinese zodiac starts from 1900 = Rat (index 0)
+  const index = (birthYear - 1900) % 12;
+  const adjustedIndex = index < 0 ? index + 12 : index;
+  return animals[adjustedIndex] || 'rat';
 }
 
-export function formatCurrentDate(): string {
-  return new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
+// Convert score (0-100) to stars (0-5)
+export function scoreToStars(score: number): number {
+  return Math.round(Math.max(0, Math.min(100, score)) / 20);
 }

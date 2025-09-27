@@ -1,375 +1,469 @@
-# Content Guidelines — Zodiac App (FINAL, Build-Strict)
+# Project Flow — Zodiac App (FINAL, Build-Strict, Working Blueprint)
 
-> Source of truth for **all text and data** shown in the app.  
-> **Never delete or rename** any `docs/*.md`.
-
----
-
-## 0) Principles
-- **Consistent**: same structure per sign and timeframe.
-- **Encouraging & mystical**, never deterministic medical/financial claims.
-- **Localized**: default `en` with future `ka` (Georgian). Currency: **GEL**.
-- **Separation of concerns**: Static = repo JSON; Dynamic = Gemini (server-side only).
-- **No lorem** anywhere.
+> **Purpose:** One operational playbook for planning → coding → testing → shipping.  
+> **Source of truth:** `docs/*.md` (NEVER delete/rename). Code must match them exactly.  
+> **Stack:** React Native (Expo) + Django API. GitHub for VCS. Flitt PSP for payments.
 
 ---
 
-## 1) Sources of Content
+## 0) Roles, Tools, Environments
 
-### Static (repo, versioned)
-- `content/characteristics.json` — timeless traits/strengths/weaknesses per sign.
-- `content/druid.json` — Druid tree mapping + text.
-- `content/chinese.json` — Chinese animal mapping + text.
-- `content/banners.json` — Explore banners with deep-link targets.
-- (Optional) `content/strings.<locale>.json` — common UI copy.
+**Roles**
 
-### Dynamic (server-side only, cached)
-- Gemini-generated **Horoscopes** (Daily, Weekly, Monthly, Yearly).
-- Gemini text for **Compatibility** (preview + premium breakdown).
-- **Lucky mood** sentences and **Life Aspects** short lines (derived from horoscope).
-- Cache TTLs: **daily 24h/sign**, **weekly 7d/sign**, **monthly 30d/sign**, **yearly 365d/sign**.
+- Product/Owner: maintains `docs/*.md`, signs off releases.
+- Dev (Claude Code + human): implements strictly per docs.
+- Reviewer: checks PRs against `CODE_REVIEW.md`, `ACCEPTANCE.md`, `DESIGN_REVIEW.md`.
 
----
+**Tools**
 
-## 2) Tone, Style, Guardrails
+- VS Code, Node 20 LTS, Expo SDK (RN), Python 3.11, Django + DRF.
+- GitHub, GitHub Actions CI, Husky + lint-staged.
+- Optional: EAS (later), Sentry/Crashlytics (later).
 
-**Do**  
-- Warm, empowering, poetic but **clear**.  
-- Offer choices, gentle advice (“consider…”, “you may…”).  
-- Keep previews **short** and **specific** to the sign/time.
+**Environments**
 
-**Don’t**  
-- No absolutes (“guaranteed”, “will happen”).  
-- No medical/financial prescriptions.  
-- No fear tactics, negativity, or guilt.
-
-**Voice examples**  
-- “Your focus sharpens as distractions settle.”  
-- “Conversations feel easier if you lead with curiosity.”  
+- **dev**: local devices (Expo), Django `localhost:8000`
+- **staging**: `api-staging.salamene.app`, Expo build profile `staging`
+- **prod**: `api.salamene.app`, App Store / Play Store
 
 ---
 
-## 3) Data Contracts (Frontend expects these shapes)
+## 1) Golden Rules (applies to EVERY task)
 
-### 3.1 Prediction (any timeframe)
-```json
-{
-  "sign": "aries",
-  "type": "daily",
-  "period": { "start": "YYYY-MM-DD", "end": "YYYY-MM-DD" },
-  "preview": "Short <= 120 words.",
-  "full_text": null,
-  "mood_tags": ["confident","social"],
-  "lucky": { "number": 7, "color": "Crimson Red", "mood": "Optimistic" },
-  "scores": { "love": 70, "career": 85, "health": 60 }  // 0..100
-}
-Daily includes lucky.
+1. Update **docs first** (acceptance/design/content/analytics/api).
+2. Implement **exactly** per docs. **No improvisation**.
+3. Keep code **tokenized** (no hex, no magic sizes).
+4. **Static** copy comes from `content/*.json`.
+5. **Never** delete/rename any `docs/*.md`. If missing, recreate, then proceed.
+6. Every change ends with: **save → commit → push → PR → CI green → review → merge**.
 
-Weekly/Monthly/Yearly: same shape; for free users full_text=null and client blurs body.
+---
 
-3.2 Characteristics (static)
-json
+## 2) Branching & Git (copy/paste)
+
+**Branching**
+
+- `main` = protected.
+- `feat/<scope>` e.g. `feat/today-pager`, `fix/life-aspects-stars`.
+
+**Daily basics (PowerShell/Terminal)**
+
+```bash
+git checkout -b feat/today-pager
+# ... edit files ...
+git add -A
+git commit -m "feat(today): pager with premium blur + CTA"
+git push -u origin feat/today-pager
+# open PR to main
+Sync with main
+
+bash
 Copy code
-{
-  "aries": {
-    "traits": ["confident","direct","energetic"],
-    "strengths": "Leadership, initiative, courage.",
-    "weaknesses": "Impatience, impulsiveness.",
-    "lucky_color": "Red",
-    "lucky_number": "7",
-    "element": "Fire",
-    "ruling_planet": "Mars"
-  }
-}
-3.3 Compatibility
-json
+git fetch origin
+git rebase origin/main
+# fix conflicts if any
+git push --force-with-lease
+Hotfix
+
+bash
 Copy code
-{
-  "signA":"aries","signB":"leo",
-  "overall":86,
-  "love":88,"career":75,"friendship":82,
-  "preview":"A fiery match…",
-  "full_text": null
-}
-3.4 Druid (static)
-json
+git checkout -b hotfix/nav-fab-overlap
+# fix, test
+git commit -m "fix(nav): center FAB overlap and labels"
+git push -u origin hotfix/nav-fab-overlap
+Rollback (local):
+
+bash
 Copy code
-{ "range": "Apr 01–Apr 10", "sign": "Willow", "text": "150–250 words…" }
-3.5 Chinese (static)
-json
-Copy code
-{ "animal":"Dragon", "years":[1964,1976,1988,2000,2012], "text":"150–250 words…" }
-3.6 Banners (Explore More)
-json
-Copy code
-{
-  "id": "premium_weekly",
-  "title": "✨ Unlock your Weekly Horoscope",
-  "subtitle": "Deeper guidance awaits",
-  "bullets": ["See career highlights","Navigate relationships","Make smarter moves"],
-  "target": "premium",                     // traits:<sign> | compat:<sign> | druid | chinese | premium
-  "premium_required": true
-}
-4) Word Counts & Structure
-Type	Preview	Full (Premium)	Notes
-Daily	100–120 words	250–400 words	Includes Lucky + mood tags
-Weekly	120–160 words	250–400 words	Gated for free (blur + Upgrade)
-Monthly	180–240 words	400–600 words	Gated for free
-Yearly	240–320 words	800–1000 words	Gated for free
-Compat	1–2 sentences	250–400 words	With per-category tips
-Druid	—	150–250 words (static)	One entry per Druid sign
-Chinese	—	150–250 words (static)	One entry per animal
-
-Mood tags: 2–3 words (e.g., “grounded”, “curious”).
-Life Aspects: scores 0–100 + short supportive sentence (20–30 words), used server-side only (client shows stars + x/10).
-
-5) Lucky System (Today page only)
-Number: rotate daily from a seeded list per sign (e.g., [3,7,9,11,5,…]).
-
-Color: rotate weekly per sign (name or hex + friendly name).
-
-Mood: single word or short phrase generated from Daily’s tone.
-
-6) Gemini Prompts (server-side)
-6.1 Horoscope Prompt (Daily/Weekly/Monthly/Yearly)
-json
-Copy code
-{
-  "task": "horoscope",
-  "sign": "<sign>",
-  "timeframe": "daily|weekly|monthly|yearly",
-  "period": { "start": "YYYY-MM-DD", "end": "YYYY-MM-DD" },
-  "language": "en",                  // later "ka"
-  "style": {
-    "tone": "encouraging, mystical, concrete examples",
-    "avoid": "medical/financial directives, determinism, fear",
-    "reading_level": "B2"
-  },
-  "structure": {
-    "preview_words": 120,
-    "full_words": 300,
-    "mood_tags": 3,
-    "life_aspects": ["love","career","health"]  // score 0..100 + 20–30 word line each
-  },
-  "output_schema": {
-    "preview": "string",
-    "full_text": "string",
-    "mood_tags": ["string"],
-    "scores": { "love": "int", "career": "int", "health": "int" }
-  }
-}
-6.2 Compatibility Prompt
-json
-Copy code
-{
-  "task": "compatibility",
-  "signA": "<userSign>",
-  "signB": "<otherSign>",
-  "language": "en",
-  "style": { "tone":"supportive, realistic, strengths+frictions+tips" },
-  "structure": {
-    "preview_sentences": 2,
-    "full_words": 350,
-    "categories": ["love","career","friendship"]
-  },
-  "output_schema": {
-    "preview": "string",
-    "full_text": "string",
-    "overall": "int 0..100",
-    "scores": { "love":"int", "career":"int", "friendship":"int" }
-  }
-}
-7) Banners — Copy Rules (high-conversion)
-Title ≤ 48 chars; Subtitle ≤ 80 chars.
-
-Up to 3 bullets; each ≤ 40 chars; start with “• ”.
-
-Target must map to a route (see DESIGN_REVIEW.md §3.5).
-
-Premium gating: If premium_required and user is not premium → route to /paywall?src=banner_<id>.
-
-Examples
-
-Premium upsell:
-
-Title: “✨ Unlock your Weekly Horoscope”
-
-Subtitle: “Deeper guidance awaits”
-
-Bullets: “• See career highlights”, “• Navigate relationships”, “• Make smarter moves”
-
-Target: premium, premium_required: true.
-
-Feature deep link (compat):
-
-Title: “💖 Best zodiac matches”
-
-Subtitle: “See who vibes with you”
-
-Target: compat:leo, premium_required: false.
-
-8) Traits / Characteristics (static)
-3–5 traits (single words).
-
-Strengths/Weaknesses: 1–2 sentences each, timeless.
-
-Element, Ruling planet, Lucky color/number present.
-
-No dates or transient claims.
-
-9) Druid & Chinese (static)
-Druid: 21 tree signs by date ranges; each 150–250 words.
-
-Chinese: 12 animals by year; each 150–250 words.
-
-Respect cultural context; avoid stereotypes.
-
-Keep content timeless.
-
-10) Localization
-Base en. Prepare for ka (Georgian):
-
-Keep sign names, banners, headings externalizable (future content/strings.ka.json).
-
-Avoid idioms that don’t translate.
-
-Numbers: plain integers; currency GEL for pricing copy.
-
-11) Quality Checklist (content PRs must pass)
- Meets word counts (table §4).
-
- No determinism/medical/financial advice.
-
- Mood tags ≤ 3; lowercase; comma-separated.
-
- Lucky number/color present for Daily.
-
- Life Aspects scores 0–100 only.
-
- Traits 3–5; strengths/weaknesses concise.
-
- Banner targets map to valid routes.
-
- JSON valid (run a linter/validator).
-
-12) Example Entries (ready to paste)
-12.1 content/banners.json
-json
-Copy code
-[
-  {
-    "id": "premium_weekly",
-    "title": "✨ Unlock your Weekly Horoscope",
-    "subtitle": "Deeper guidance awaits",
-    "bullets": ["See career highlights","Navigate relationships","Make smarter moves"],
-    "target": "premium",
-    "premium_required": true
-  },
-  {
-    "id": "compat_leo",
-    "title": "💖 Who’s your best match?",
-    "subtitle": "Try compatibility with Leo",
-    "bullets": ["Instant chemistry score","Love, career, friendship","Actionable tips"],
-    "target": "compat:leo",
-    "premium_required": false
-  },
-  {
-    "id": "druid_intro",
-    "title": "🌳 Your Druid Sign",
-    "subtitle": "Ancient wisdom, modern insight",
-    "bullets": ["Personality sketch","Hidden strengths","Life themes"],
-    "target": "druid",
-    "premium_required": false
-  }
-]
-12.2 content/characteristics.json (partial)
-json
-Copy code
-{
-  "aries": {
-    "traits": ["confident","direct","energetic"],
-    "strengths": "Leadership, initiative, courage.",
-    "weaknesses": "Impatience, impulsiveness.",
-    "lucky_color": "Red",
-    "lucky_number": "7",
-    "element": "Fire",
-    "ruling_planet": "Mars"
-  },
-  "leo": {
-    "traits": ["charismatic","loyal","creative"],
-    "strengths": "Generosity and stage presence.",
-    "weaknesses": "Pride and stubborn streaks.",
-    "lucky_color": "Gold",
-    "lucky_number": "5",
-    "element": "Fire",
-    "ruling_planet": "Sun"
-  }
-}
-12.3 content/druid.json (skeleton)
-json
-Copy code
-[
-  { "range": "Dec 24–Jan 20", "sign": "Birch", "text": "150–250 words…" },
-  { "range": "Jan 21–Feb 17", "sign": "Rowan", "text": "…" }
-]
-12.4 content/chinese.json (skeleton)
-json
-Copy code
-[
-  { "animal":"Rat", "years":[1960,1972,1984,1996,2008,2020], "text":"150–250 words…" },
-  { "animal":"Ox",  "years":[1961,1973,1985,1997,2009,2021], "text":"…" }
-]
-13) Gating Copy (blur pages W/M/Y)
-CTA label: “Upgrade to Premium”
-
-Helper line (optional): “Unlock full {timeframe} guidance.”
-
-Paywall route: /paywall?src=<timeframe> or banner_<id>
-
-14) Push Notifications (library)
-Morning (Daily ready):
-
-“✨ Your stars are ready. Check today’s {sign} horoscope.”
-
-Premium upsell (Free):
-
-“🔒 Weekly guidance awaits — upgrade to unlock.”
-
-Compatibility nudge:
-
-“💖 Curious who matches you best? Try Compatibility now.”
-
-Seasonal (Chinese New Year):
-
-“🐉 Discover your Chinese Zodiac path this year.”
-
-15) Compliance & Safety
-Avoid health/finance absolutes; use supportive guidance.
-
-No demographic targeting by sensitive attributes.
-
-No references to personal tragedies or fear.
-
-16) Versioning & Review
-Each content change = PR with:
-
-Diff of JSON entries.
-
-Preview screenshots if applicable.
-
-Checklist (§11) completed.
-
-Tag releases when updating large sets (e.g., yearly texts).
-
-17) Non-Deletion Rule
-Never delete/rename docs/CONTENT_GUIDELINES.md.
-
-If missing, recreate before coding.
-
+git checkout -- <file>
+git revert HEAD
+git push
+3) Repository Layout (must exist)
 pgsql
 Copy code
+app/
+  (tabs)/today.tsx, traits.tsx, compat.tsx, druid.tsx, profile.tsx
+  onboarding/ splash.tsx, signin.tsx, birth-date.tsx, birth-time.tsx, birth-place.tsx, confirm.tsx
+  paywall.tsx
+components/
+  BottomNav.tsx, HoroscopePager.tsx, LifeAspects.tsx, BannerCarousel.tsx, SignCard.tsx, ProgressBarTop.tsx
+constants/
+  theme.ts, signs.ts
+content/
+  characteristics.json, druid.json, chinese.json, banners.json, compatibility.json
+services/
+  api.ts, predictions.ts, compatibility.ts, analytics.ts, payments.ts, pricing.ts
+store/
+  user.ts, subscription.ts
+utils/
+  zodiac.ts, format.ts, metrics.ts, deepLinks.ts
+hooks/
+  useAnalytics.ts, usePremiumGate.ts
+assets/
+  onboarding/welcome.png, birth.png, insights.png
+  icon.png
+docs/
+  ACCEPTANCE.md, DESIGN_REVIEW.md, CONTENT_GUIDELINES.md, ANALYTICS.md, API_CONTRACT.md, CODE_REVIEW.md, PROJECT_FLOW.md
+.github/workflows/ci.yml
+4) Configuration & Env
+Frontend .env
 
-If you want, I can generate a **starter pack** for `content/characteristics.json` (all 12 signs), `druid.json` (full ranges), and `chinese.json` (all animals) so your app instantly shows **real static content**.
+ini
+Copy code
+API_BASE_URL=http://10.0.2.2:8000        # Android emulator
+API_BASE_URL_IOS=http://localhost:8000   # iOS simulator
+Backend .env
+
+ini
+Copy code
+DJANGO_SETTINGS_MODULE=config.settings
+DATABASE_URL=postgres://user:pass@localhost:5432/zodiac
+SECRET_KEY=replace-me
+ALLOWED_HOSTS=localhost,127.0.0.1
+Region-Based Pricing (server)
+
+Country detection priority: IP → profile → device-region header → fallback US.
+
+Pricing: GE = 5 GEL, EU = 5 EUR, US/Other = 5 USD.
+
+API returns:
+
+json
+Copy code
+{
+  "plans":[{"id":"sub_monthly","name":"Monthly","pricing":{
+    "region":"GE","currency":"GEL","symbol":"₾","monthly_minor":500,"monthly_display":"5 GEL"
+  }}]
+}
+5) Daily Developer Cycle (Claude + you)
+Refine docs
+
+Update ACCEPTANCE.md, DESIGN_REVIEW.md, CONTENT_GUIDELINES.md, etc.
+
+Be pixel-exact: sizes, blur, labels, routes.
+
+Claude Code prompt (paste each time)
+
+cpp
+Copy code
+Follow /docs/*.md strictly. Never delete docs.
+Implement the next task and save files. Then run:
+git add -A && git commit -m "<message>" && git push
+Report CHANGED/CREATED files. If a file is missing, create it empty and continue.
+Implement feature → run locally
+
+bash
+Copy code
+# backend
+python manage.py runserver
+# frontend
+npm start
+npm run ios   # or android
+Self-check using §10 Feature QA checklists below.
+
+Commit & push; open PR; ensure CI green; merge.
+
+6) Feature Implementation Flows (end-to-end)
+6.1 Today (Home) — pager, read-more, lucky, blur/CTA
+Backend
+
+/predictions/daily?sign=&date= → daily JSON (free).
+
+/predictions/weekly|monthly|yearly → text; mark premium on server OR let client gate; cache per TTL.
+
+Frontend
+
+components/HoroscopePager.tsx:
+
+react-native-pager-view, 4 pages, dots.
+
+Today: 4-line preview; Read more expands card height (no clipping); lucky row visible.
+
+W/M/Y (free): blur text; inline CTA bottom-right; any tap → /paywall?src=<timeframe>.
+
+W/M/Y (premium): no blur; expandable.
+
+Analytics
+
+today_pager_swiped, read_more_clicked, paywall_shown.
+
+QA
+
+Small devices: no overflow.
+
+Blur makes text unreadable; CTA visible.
+
+Swipe feels native.
+
+6.2 Life Aspects — stars only
+Frontend
+
+components/LifeAspects.tsx: 3 columns (Love, Career, Health).
+
+Compute stars = Math.round(score/20); show x/10 beneath.
+
+QA
+
+No broken 87/10 values.
+
+Fully visible on small screens.
+
+6.3 Banner Carousel — deep links + dots + bullets
+Content
+
+content/banners.json items with id,title,subtitle,bullets,target,premium_required.
+
+Use {PRICE} in subtitle if upsell (client replaces from pricing API).
+
+Frontend
+
+components/BannerCarousel.tsx: 120dp height, radius 24, full Pressable, dots, auto-scroll 5s; map target to route.
+
+Analytics
+
+banner_clicked before navigation; gate → paywall_shown.
+
+QA
+
+Whole card clickable; bullets ≤3; dot indicators visible; deep links correct.
+
+6.4 Traits (Characteristics) — static
+Content
+
+content/characteristics.json with emoji, date_range, traits, strengths, weaknesses, element, planet, lucky.
+
+Frontend
+
+/(tabs)/traits.tsx: default = user.sign; dropdown to switch; render chips + two cards.
+
+QA
+
+Zero spinners; instant; correct override via ?sign= deep link.
+
+6.5 Compatibility — calc + preview + premium text
+Backend
+
+POST /compatibility { signA, signB } → overall, category scores, preview, optional premium_text.
+
+Frontend
+
+/(tabs)/compat.tsx: left = user.sign (locked), right = selector; “Calculate Match”; animated dial + bars; preview always; premium adds long text.
+
+Analytics
+
+compatibility_calculated { signA, signB, overall }; upsell click → upgrade_cta_clicked { source:'compat' }.
+
+QA
+
+Deep link ?with=<sign> preselects and scrolls to result.
+
+6.6 Druid & Chinese — static, user-tied
+Content
+
+content/druid.json, content/chinese.json (150–250 words each).
+
+Frontend
+
+/(tabs)/druid.tsx: toggle “Druid | Chinese”, default Druid; compute sign once and persist.
+
+QA
+
+?mode=chinese opens Chinese; no network.
+
+6.7 Onboarding — images + dots + progress bar
+Frontend
+
+Route: /onboarding/splash → signin → birth-date → birth-time → birth-place → confirm
+
+Images from assets/onboarding/.
+
+Birth time: “I don’t remember” → defaults 12:00.
+
+Confirm: compute zodiac with utils/zodiac.ts, persist, router.replace('/(tabs)/today').
+
+QA
+
+Progress bar 4dp; 3 dots; images scaled; safe-area respected.
+
+6.8 Paywall & Pricing — regional
+Backend
+
+GET /payments/products returns pricing per §4.
+
+Frontend
+
+services/pricing.ts: fetch pricing; display monthly_display.
+
+Replace {PRICE} in banners; show blur CTA → /paywall?src=<context>.
+
+QA
+
+VPN GE/EU/US show 5 GEL/EUR/USD respectively; analytics carries currency.
+
+7) Claude Code Scripts (use verbatim)
+General work instruction (paste before each task)
+
+swift
+Copy code
+Follow /docs/*.md exactly. Never delete or rename docs.
+If a required file/folder is missing, create it empty and continue.
+After saving files, run:
+git add -A && git commit -m "<scoped message>" && git push
+Report delta as:
+CREATED: <files>
+CHANGED: <files>
+Task queue prompt (example)
+
+sql
+Copy code
+Implement:
+1) Fix Today read-more: card expands height and allows screen scroll, no clipping.
+2) Replace pager with react-native-pager-view + dots.
+3) LifeAspects stars: 0..5 + x/10, remove numeric 87/10 bugs.
+4) BannerCarousel: auto-scroll 5s, full-card pressable, deep links per content/banners.json.
+5) BottomNav: center 64dp FAB 🫰🏼, active pill 56x32dp, safe-area.
+8) Backlog Buckets (prioritized)
+P0: Today pager native swipe, blur/CTA, read-more expansion; nav FAB; banners deep-link; pricing.
+
+P1: Traits full, Compatibility calc + preview, Druid/Chinese static.
+
+P2: Paywall polish, analytics coverage, unit+snapshot tests.
+
+P3: Push notifications, Sentry/Crashlytics, EAS build profiles.
+
+9) Commands (quick runbook)
+Frontend
+
+bash
+Copy code
+npm i
+npm start
+npm run ios   # or: npm run android
+npm run lint
+npm run typecheck
+npm test
+Backend
+
+bash
+Copy code
+python -m venv .venv && . .venv/Scripts/activate  # Windows PowerShell: .\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+GitHub Actions CI (runs on PR):
+
+npm ci
+
+npm run lint
+
+npm run typecheck
+
+npm test -- --coverage
+
+10) Feature QA Checklists (copy into PR description)
+Today / Pager
+
+ Swipe native; dots update ≤120ms.
+
+ Read-more expands smoothly; no clipping; long text scrolls.
+
+ W/M/Y blurred for free; one inline “Upgrade to Premium” CTA.
+
+Life Aspects
+
+ 3 columns visible on small devices.
+
+ Stars 0–5 based on 0..100; x/10 sane.
+
+Banners
+
+ Cards 120dp; full pressable; bullets ≤3.
+
+ Deep links map exactly; {PRICE} replaced.
+
+Nav
+
+ FAB 64dp 🫰🏼 centered, float −16dp; labels not overlapped.
+
+ Pill under active tab; one active at a time.
+
+Traits
+
+ Defaults to user.sign; dropdown switches; static JSON only.
+
+Compatibility
+
+ Calculates; shows dial + bars; preview always; premium text gated.
+
+Druid/Chinese
+
+ Static; toggle works; persists computed sign/animal.
+
+Paywall/Pricing
+
+ GE/EU/US show 5 GEL/EUR/USD; analytics includes currency.
+
+Analytics
+
+ tab_selected, today_pager_swiped, read_more_clicked, banner_clicked, paywall_shown, compatibility_calculated.
+
+11) CI Gates & PR Review
+CI green (lint, typecheck, tests).
+
+Reviewer validates against Design/Acceptance pixel sizes & copy strings.
+
+Coverage ≥ 80% statements/lines.
+
+No hardcoded hex/sizes; tokens only.
+
+No docs deleted/renamed.
+
+12) Release Flow (staging → prod)
+Tag release branch
+
+bash
+Copy code
+git checkout -b release/v1.0.0
+git push -u origin release/v1.0.0
+Bump versions (app.json & Android/iOS if needed).
+
+Merge PRs into release/*, QA on real devices.
+
+Merge to main with tag v1.0.0.
+
+Build & submit (later with EAS).
+
+Rollback: revert tag commit → hotfix branch → retag.
+
+13) Incident & Hotfix
+Create hotfix/<issue> branch.
+
+Write failing test first if possible.
+
+Fix, QA, merge, tag vX.Y.Z.
+
+Post-mortem: add to docs/DELTA.md (root cause, fix, prevention).
+
+14) Content Lifecycle
+Static JSON edits: PR with diffs; run JSON lint; update screenshots if visuals affected.
+
+LLM (Gemini) content: server-side generation; validate lengths & fields; cache with TTLs.
+
+Banners: may include {PRICE} placeholder—client replaces with pricing.monthly_display.
+
+15) Non-Deletion Rule
+NEVER delete or rename any docs/*.md.
+
+If any doc is missing, stop, recreate from history/spec, then continue.
+
+bash
+Copy code
+
+If you want, I can also generate a **one-shot Claude task script** that will:
+1) create any missing folders/files,
+2) scaffold the components/services we listed,
+3) wire up the pager + banners + nav FAB exactly to spec,
+4) save + commit + push in one pass.
 ::contentReference[oaicite:0]{index=0}
 
 
@@ -377,215 +471,4 @@ If you want, I can generate a **starter pack** for `content/characteristics.json
 
 
 Sources
-You said:
-but add currency should be based on region of acces, if Accessiong from Europe the currency should be 5 Euros per month , IF US and other regions  5 USD per month , if from Georgia 5 GEL, 
-
-
-Concrete Code Engine said:
-
-Thought for 12s
-Got it. Here’s a drop-in patch to make pricing currency region-based. It includes what to paste into docs/CONTENT_GUIDELINES.md, plus tiny, clean code stubs for client (Expo) and server (Django) so it actually works.
-
-Paste into docs/CONTENT_GUIDELINES.md (add/replace a new section)
-markdown
-Copy code
-## 18) Regional Pricing & Currency (NON-NEGOTIABLE)
-
-**Goal:** Show correct price/currency per user region, and charge accordingly.
-
-### 18.1 Pricing Matrix (v1)
-| Region (detected)                 | Currency | Monthly price | Code |
-|----------------------------------|----------|---------------|------|
-| **Georgia** (country = `GE`)     | **GEL**  | **5**         | `GEL`|
-| **European Union** (EU member)   | **EUR**  | **5**         | `EUR`|
-| **United States** (country=`US`) | **USD**  | **5**         | `USD`|
-| **Other** (fallback)             | **USD**  | **5**         | `USD`|
-
-> Detection priority (server-side): **IP geolocation → user profile country → device locale region → fallback `US`**.  
-> Client **must not** hardcode prices; fetch from API.
-
-### 18.2 API Contract (adds pricing object)
-All paywall/plan endpoints MUST return a `pricing` object:
-```json
-{
-  "pricing": {
-    "region": "GE",
-    "currency": "GEL",
-    "symbol": "₾",
-    "monthly_minor": 500,           // integer minor units
-    "monthly_display": "5 GEL"      // preformatted string for UI
-  }
-}
-Example: GET /api/v1/payments/products
-
-json
-Copy code
-{
-  "plans": [
-    {
-      "id": "sub_monthly",
-      "name": "Monthly",
-      "pricing": {
-        "region":"GE","currency":"GEL","symbol":"₾",
-        "monthly_minor":500,
-        "monthly_display":"5 GEL"
-      }
-    }
-  ]
-}
-18.3 UI Rules
-Paywall and any banner copy with price must use pricing.monthly_display.
-
-Do not concatenate symbols manually; respect monthly_display.
-
-If pricing missing → render “from 5 USD/month” (fallback) and log api_error.
-
-18.4 Banners / Copy Placeholders
-In content/banners.json, use {PRICE} placeholder; client replaces it with pricing.monthly_display.
-
-Example banner:
-
-json
-Copy code
-{
-  "id":"premium_weekly",
-  "title":"✨ Unlock your Weekly Horoscope",
-  "subtitle":"All access for {PRICE}",
-  "target":"premium",
-  "premium_required": true
-}
-18.5 Analytics
-Emit paywall_shown { region, currency, price_minor }
-
-Emit purchase_initiated / purchase_success with currency & price_minor.
-
-18.6 QA Checklist
- Georgia IP → “5 GEL” shown/charged.
-
- EU IP (e.g., DE/FR/IT/ES) → “5 EUR”.
-
- US IP → “5 USD”.
-
- VPN region switch updates price after app restart.
-
- Banners’ {PRICE} replaced correctly everywhere.
-
-python
-Copy code
-
----
-
-## Minimal server code (Django) — put in `payments/pricing.py`
-
-```python
-# payments/pricing.py
-EU_COUNTRIES = {
-    "AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT",
-    "LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE"
-}
-
-def detect_country(request) -> str:
-    # 1) IP geolocation via your middleware or CDN header like Cloudflare CF-IPCountry
-    c = (request.META.get('HTTP_CF_IPCOUNTRY') or '').upper()
-    if len(c) == 2:
-        return c
-    # 2) User profile country (if authenticated)
-    try:
-        if request.user and request.user.profile.country:
-            return request.user.profile.country.upper()
-    except Exception:
-        pass
-    # 3) Device locale region (optional header from client)
-    lc = (request.META.get('HTTP_X_DEVICE_REGION') or '').upper()
-    if len(lc) == 2:
-        return lc
-    # 4) Fallback
-    return "US"
-
-def pricing_for_country(country: str) -> dict:
-    if country == "GE":
-        return dict(region="GE", currency="GEL", symbol="₾", monthly_minor=500, monthly_display="5 GEL")
-    if country == "US":
-        return dict(region="US", currency="USD", symbol="$", monthly_minor=500, monthly_display="5 USD")
-    if country in EU_COUNTRIES:
-        return dict(region=country, currency="EUR", symbol="€", monthly_minor=500, monthly_display="5 EUR")
-    return dict(region=country, currency="USD", symbol="$", monthly_minor=500, monthly_display="5 USD")
-Example view GET /api/v1/payments/products
-python
-Copy code
-# payments/views.py
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from .pricing import detect_country, pricing_for_country
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def products(request):
-    country = detect_country(request)
-    p = pricing_for_country(country)
-    return Response({
-        "plans": [
-            {"id":"sub_monthly","name":"Monthly","pricing": p}
-        ]
-    })
-Minimal client code (Expo) — services/pricing.ts
-ts
-Copy code
-// services/pricing.ts
-export type Pricing = {
-  region: string;
-  currency: 'USD'|'EUR'|'GEL'|string;
-  symbol: string;
-  monthly_minor: number;      // 500 = 5.00
-  monthly_display: string;    // "5 USD"
-};
-
-export async function fetchPricing(): Promise<Pricing> {
-  const res = await fetch('/api/v1/payments/products');
-  if (!res.ok) throw new Error('pricing_fetch_failed');
-  const data = await res.json();
-  const p = data?.plans?.[0]?.pricing;
-  if (!p) throw new Error('pricing_missing');
-  return p as Pricing;
-}
-Replace {PRICE} in banners at render time
-ts
-Copy code
-// BannerCarousel usage
-const text = banner.subtitle?.replace('{PRICE}', pricing.monthly_display);
-Paywall render
-tsx
-Copy code
-<Text style={s.price}>{pricing.monthly_display}</Text>
-Client header (optional) to help server detection
-When initializing the API client, add a region hint header (non-authoritative):
-
-ts
-Copy code
-// services/api.ts
-import * as Localization from 'expo-localization';
-
-export const defaultHeaders = async () => {
-  const region = Localization.region ?? '';
-  return {
-    'Content-Type': 'application/json',
-    'X-Device-Region': region,   // e.g., 'GE', 'US', 'DE'
-  };
-};
-Acceptance additions (you can append to docs/ACCEPTANCE.md)
-markdown
-Copy code
-## Paywall & Pricing
-- [ ] API returns pricing object with { region, currency, monthly_display }.
-- [ ] Georgia → shows “5 GEL”; EU → “5 EUR”; US → “5 USD”.
-- [ ] Banners replace {PRICE} dynamically with monthly_display.
-- [ ] Analytics include currency & price_minor on paywall and purchase events.
-Notes
-Server detection by IP is the source of truth; client’s locale only hints.
-
-Prices are stored and charged in the server-selected currency (Flitt session creation should use pricing.currency + monthly_minor).
-
-If you need additional regions later, extend EU_COUNTRIES and pricing_for_country() only. No client changes needed.
-
-This keeps it scalable, clean, and deterministic—and your UI copy stays simple: just print monthly_display.
+```

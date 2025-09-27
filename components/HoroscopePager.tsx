@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Pressable, Dimensions } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import { Colors, Layout, Typography, Spacing } from '../constants/theme';
 import { useSubscriptionStore } from '../store/subscription';
@@ -46,11 +46,21 @@ export function HoroscopePager({ data, onReadMore, onPaywallNeeded, onPagerSwipe
   const pagerRef = useRef<PagerView>(null);
   const { isPremium } = useSubscriptionStore();
 
+  // Get screen dimensions for responsive design
+  const { width: screenWidth } = Dimensions.get('window');
+  const isSmallScreen = screenWidth < 375; // iPhone SE and similar
+  const isLargeScreen = screenWidth > 414; // iPhone Pro Max and similar
+
+  // Calculate responsive sizes
+  const responsivePagerHeight = isSmallScreen ? 320 : isLargeScreen ? 420 : 380;
+  const responsiveCardHeight = isSmallScreen ? 280 : isLargeScreen ? 420 : 350;
+  const responsiveMaxCardHeight = isSmallScreen ? 500 : isLargeScreen ? 650 : 600;
+
   const timeframeLabels = {
     today: 'Today',
     weekly: 'This Week',
     monthly: 'This Month',
-    yearly: 'This Year'
+    yearly: 'This Year',
   };
 
   const handleReadMore = (pageIndex: number, timeframe: string) => {
@@ -78,11 +88,12 @@ export function HoroscopePager({ data, onReadMore, onPaywallNeeded, onPagerSwipe
     }
   };
 
-  const handlePageSelected = (e: any) => {
+  const handlePageSelected = (e: { nativeEvent: { position: number } }) => {
     const position = e.nativeEvent.position;
     setCurrentPage(position);
 
-    if (position > 0) { // Not Today tab
+    if (position > 0) {
+      // Not Today tab
       const timeframe = data[position]?.timeframe;
       onPagerSwiped?.(timeframe);
     }
@@ -98,28 +109,30 @@ export function HoroscopePager({ data, onReadMore, onPaywallNeeded, onPagerSwipe
     return (
       <View key={item.timeframe} style={styles.page}>
         <Pressable
-          style={styles.card}
+          style={[
+            styles.card,
+            isExpanded
+              ? {
+                  minHeight: responsiveMaxCardHeight,
+                }
+              : {
+                  minHeight: responsiveCardHeight,
+                  maxHeight: responsiveCardHeight + 50,
+                },
+          ]}
           onPress={() => handlePagePress(item.timeframe)}
           disabled={isToday}
         >
           {/* Header */}
-          <Text style={[
-            styles.timeframeTitle,
-            isPremiumContent && !canAccess && { color: Colors.secondaryBlue }
-          ]}>
+          <Text style={[styles.timeframeTitle, isPremiumContent && !canAccess && { color: Colors.secondaryBlue }]}>
             {timeframeLabels[item.timeframe]}
-            {isPremiumContent && !isPremium() && (
-              <Text style={styles.premiumBadge}> Premium</Text>
-            )}
+            {isPremiumContent && !isPremium() && <Text style={styles.premiumBadge}> Premium</Text>}
           </Text>
 
           {/* Content Container */}
           <View style={styles.contentContainer}>
             <Text
-              style={[
-                styles.contentText,
-                !isToday && !canAccess && styles.premiumText
-              ]}
+              style={[styles.contentText, !isToday && !canAccess && styles.premiumText]}
               numberOfLines={isExpanded ? undefined : 4}
             >
               {content}
@@ -129,28 +142,24 @@ export function HoroscopePager({ data, onReadMore, onPaywallNeeded, onPagerSwipe
             {isPremiumContent && !canAccess && (
               <View style={styles.blurOverlay}>
                 <View style={styles.blurMask} />
+                <View style={styles.blurContent}>
+                  <Text style={styles.blurTitle}>Premium Content</Text>
+                  <Text style={styles.blurSubtitle}>Upgrade to unlock exclusive insights</Text>
+                </View>
               </View>
             )}
           </View>
 
           {/* Action Buttons */}
           {canAccess && (
-            <TouchableOpacity
-              style={styles.readMoreButton}
-              onPress={() => handleReadMore(index, item.timeframe)}
-            >
-              <Text style={styles.readMoreText}>
-                {isExpanded ? 'Read Less ▴' : 'Read More ▾'}
-              </Text>
+            <TouchableOpacity style={styles.readMoreButton} onPress={() => handleReadMore(index, item.timeframe)}>
+              <Text style={styles.readMoreText}>{isExpanded ? 'Read Less ▴' : 'Read More ▾'}</Text>
             </TouchableOpacity>
           )}
 
           {/* Premium CTA for gated content */}
           {isPremiumContent && !canAccess && (
-            <TouchableOpacity
-              style={styles.upgradeButton}
-              onPress={() => onPaywallNeeded?.(item.timeframe)}
-            >
+            <TouchableOpacity style={styles.upgradeButton} onPress={() => onPaywallNeeded?.(item.timeframe)}>
               <Text style={styles.upgradeText}>Upgrade to Premium</Text>
             </TouchableOpacity>
           )}
@@ -207,13 +216,19 @@ export function HoroscopePager({ data, onReadMore, onPaywallNeeded, onPagerSwipe
     );
   };
 
+  // Calculate dynamic height based on expansion
+  const hasExpandedPages = expandedPages.size > 0;
+  const dynamicPagerHeight = hasExpandedPages ? responsiveMaxCardHeight + 50 : responsivePagerHeight;
+
   return (
     <View style={styles.container}>
       <PagerView
         ref={pagerRef}
-        style={styles.pager}
+        style={[styles.pager, { height: dynamicPagerHeight }]}
         initialPage={0}
         onPageSelected={handlePageSelected}
+        pageMargin={8}
+        offscreenPageLimit={1}
       >
         {data.map((item, index) => renderPage(item, index))}
       </PagerView>
@@ -223,10 +238,7 @@ export function HoroscopePager({ data, onReadMore, onPaywallNeeded, onPagerSwipe
         {data.map((_, index) => (
           <TouchableOpacity
             key={index}
-            style={[
-              styles.dot,
-              currentPage === index && styles.activeDot
-            ]}
+            style={[styles.dot, currentPage === index && styles.activeDot]}
             onPress={() => pagerRef.current?.setPage(index)}
             accessibilityLabel={`Page ${index + 1} of ${data.length}`}
             accessibilityRole="button"
@@ -242,7 +254,7 @@ const styles = StyleSheet.create({
     marginTop: Layout.sectionSpacing,
   },
   pager: {
-    height: 320,
+    // Height is now dynamic and set inline
   },
   page: {
     paddingHorizontal: 4,
@@ -251,12 +263,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
     borderRadius: Layout.cardRadius,
     padding: Layout.cardPadding,
-    height: 300,
+    // Height is now dynamic and set inline
   },
   timeframeTitle: {
     ...Typography.titleMedium,
     color: Colors.text.primary,
     marginBottom: Spacing.sm,
+    fontSize: 18,
+    fontWeight: '700',
   },
   premiumBadge: {
     color: Colors.primary,
@@ -271,9 +285,11 @@ const styles = StyleSheet.create({
     color: Colors.text.primary,
     lineHeight: 24,
     flex: 1,
+    fontSize: 15,
   },
   premiumText: {
-    opacity: 0.8,
+    opacity: 0.3,
+    fontSize: 15,
   },
   blurOverlay: {
     position: 'absolute',
@@ -283,22 +299,70 @@ const styles = StyleSheet.create({
     bottom: 0,
     borderRadius: 8,
     overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   blurMask: {
-    flex: 1,
-    backgroundColor: 'rgba(13, 11, 26, 0.8)',
-    backdropFilter: 'blur(8px)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(13, 11, 26, 0.85)',
+    borderRadius: 8,
+    shadowColor: '#7C4DFF',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 8,
+  },
+  blurContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.lg,
+    zIndex: 10,
+    backgroundColor: 'rgba(124, 77, 255, 0.1)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(124, 77, 255, 0.3)',
+    paddingVertical: Spacing.lg,
+    minHeight: 80,
+  },
+  blurTitle: {
+    ...Typography.titleMedium,
+    color: Colors.primary,
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: Spacing.xs,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  blurSubtitle: {
+    ...Typography.bodySmall,
+    color: Colors.text.primary,
+    fontSize: 14,
+    textAlign: 'center',
+    fontWeight: '500',
   },
   readMoreButton: {
     alignSelf: 'flex-start',
-    paddingVertical: Spacing.xs,
-    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
     marginTop: Spacing.sm,
+    backgroundColor: 'rgba(124, 77, 255, 0.1)',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(124, 77, 255, 0.3)',
+    minWidth: 100,
+    alignItems: 'center',
   },
   readMoreText: {
     ...Typography.labelSmall,
     color: Colors.primary,
     fontWeight: '600',
+    fontSize: 13,
   },
   upgradeButton: {
     position: 'absolute',

@@ -2,52 +2,41 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Layout, Typography, Spacing } from '../constants/theme';
 
-export interface LifeAspect {
-  score: number;
-  text: string;
-}
-
-export interface LifeAspectsData {
-  love: LifeAspect;
-  career: LifeAspect;
-  health: LifeAspect;
+export interface LifeAspectsScores {
+  love: number;
+  career: number;
+  health: number;
 }
 
 interface LifeAspectsProps {
-  data: LifeAspectsData;
+  scores: LifeAspectsScores;
 }
 
 interface AspectItemProps {
   icon: string;
   label: string;
-  aspect: LifeAspect;
+  score: number;
 }
 
 function StarRating({ score }: { score: number }) {
-  // Convert score 0-100 to stars 0-5 (rounded)
-  const stars = Math.round((score / 100) * 5);
+  // Convert score 1-10 to stars 0-5 (rounded)
+  const stars = Math.round((score / 10) * 5);
 
   return (
     <View style={styles.starsContainer}>
       <View style={styles.starsRow}>
-        {[1, 2, 3, 4, 5].map((starNumber) => (
-          <Text
-            key={starNumber}
-            style={[
-              styles.star,
-              { color: starNumber <= stars ? Colors.gold : Colors.iconInactive }
-            ]}
-          >
+        {[1, 2, 3, 4, 5].map(starNumber => (
+          <Text key={starNumber} style={[styles.star, { color: starNumber <= stars ? '#FFD700' : '#5C5C66' }]}>
             ★
           </Text>
         ))}
       </View>
-      <Text style={styles.scoreText}>{stars}/5</Text>
+      <Text style={styles.scoreText}>{score}/10</Text>
     </View>
   );
 }
 
-function AspectItem({ icon, label, aspect }: AspectItemProps) {
+function AspectItem({ icon, label, score }: AspectItemProps) {
   return (
     <View style={styles.aspectColumn}>
       <View style={styles.iconContainer}>
@@ -56,34 +45,27 @@ function AspectItem({ icon, label, aspect }: AspectItemProps) {
 
       <Text style={styles.label}>{label}</Text>
 
-      <StarRating score={aspect.score} />
+      <StarRating score={score} />
     </View>
   );
 }
 
-export function LifeAspects({ data }: LifeAspectsProps) {
+export function LifeAspects({ scores }: LifeAspectsProps) {
+  // Defensive check to prevent crashes
+  if (!scores || typeof scores !== 'object') {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Life Aspects</Text>
 
       <View style={styles.aspectsGrid}>
-        <AspectItem
-          icon="💖"
-          label="Love"
-          aspect={data.love}
-        />
+        <AspectItem icon="💖" label="Love" score={scores.love || 0} />
 
-        <AspectItem
-          icon="💼"
-          label="Career"
-          aspect={data.career}
-        />
+        <AspectItem icon="💼" label="Career" score={scores.career || 0} />
 
-        <AspectItem
-          icon="💪"
-          label="Health"
-          aspect={data.health}
-        />
+        <AspectItem icon="💪" label="Health" score={scores.health || 0} />
       </View>
     </View>
   );
@@ -97,6 +79,8 @@ const styles = StyleSheet.create({
     ...Typography.titleMedium,
     color: Colors.text.primary,
     marginBottom: Spacing.md,
+    fontSize: 18,
+    fontWeight: '700',
   },
   aspectsGrid: {
     flexDirection: 'row',
@@ -122,9 +106,11 @@ const styles = StyleSheet.create({
   },
   label: {
     ...Typography.labelSmall,
-    color: Colors.text.secondary,
+    color: Colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '600',
   },
   starsContainer: {
     alignItems: 'center',
@@ -135,12 +121,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   star: {
-    fontSize: 16,
+    fontSize: 18,
     marginHorizontal: 1,
   },
   scoreText: {
     ...Typography.labelSmall,
-    color: Colors.text.secondary,
-    fontSize: 12,
+    color: Colors.text.primary,
+    fontSize: 13,
+    fontWeight: '600',
   },
 });
