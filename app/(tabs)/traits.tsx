@@ -31,7 +31,7 @@ export default function TraitsScreen() {
       <SafeAreaProvider>
         <View style={styles.container}>
           <StatusBar style="light" />
-          <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+          <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
             <View style={styles.loadingContent}>
               <Text style={styles.title}>Traits</Text>
               <Text style={styles.loadingSubtitle}>Loading...</Text>
@@ -46,7 +46,7 @@ export default function TraitsScreen() {
     <SafeAreaProvider>
       <View style={styles.container}>
         <StatusBar style="light" />
-        <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+        <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
           <ScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.displayLarge,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 28,
     fontWeight: '700',
     marginBottom: Spacing.md,
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
   },
   signName: {
     ...Typography.labelSmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 11,
   },
   selectedSignName: {
@@ -235,14 +235,14 @@ const styles = StyleSheet.create({
   },
   signTitle: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 2,
   },
   dateRange: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     marginBottom: Spacing.xs,
   },
   signMeta: {
@@ -251,12 +251,12 @@ const styles = StyleSheet.create({
   },
   metaText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 12,
   },
   description: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     lineHeight: 22,
   },
   section: {
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 18,
     fontWeight: '600',
     marginBottom: Spacing.md,
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   },
   listText: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     flex: 1,
     lineHeight: 20,
     marginLeft: Spacing.sm,
@@ -324,12 +324,12 @@ const styles = StyleSheet.create({
   },
   luckyLabel: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontWeight: '500',
   },
   luckyValue: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     textAlign: 'right',
     flex: 1,
     marginLeft: Spacing.md,
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
   },
   loadingSubtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     marginTop: 16,
   },
 });

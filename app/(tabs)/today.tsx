@@ -16,71 +16,103 @@ import { track } from '../../services/analytics';
 // Font clamping utility as provided by user
 export const clampFont = (w: number, max = 48, min = 36) => Math.max(min, Math.min(max, Math.round(w / 10)));
 
-// Mock data for horoscope with all required structures
-const mockHoroscopeData: HoroscopeData[] = [
-  {
-    timeframe: 'today' as const,
-    preview:
-      'Today brings powerful energy for new beginnings, Aries. Your natural leadership shines as opportunities emerge in unexpected places. Trust your instincts when making important decisions, especially around midday. A conversation with someone from your past could open doors you thought were closed.',
-    full: "The stars align magnificently for you today, Aries, as Mars energizes your sector of personal transformation. This is a day of powerful beginnings, where your natural pioneering spirit can truly flourish. The morning hours bring clarity to a situation that has been clouding your judgment for weeks. Trust the fire within you – it's guiding you toward exactly where you need to be. Professional matters take an exciting turn as your innovative ideas catch the attention of influential people. Don't be surprised if you're offered a leadership role or asked to spearhead a new project. Your enthusiasm is contagious today, inspiring others to follow your lead. In matters of the heart, Venus whispers secrets of deep attraction. If you're single, pay attention to subtle signs from someone in your social circle. For those in relationships, this is an ideal time to plan something adventurous together. Your partner craves the same excitement you do. Financially, be bold but wise. A calculated risk could pay off handsomely, but make sure you've done your research first. Lucky encounters happen near water or in places associated with learning. Trust your gut feelings today – they're more accurate than usual.",
-    lucky: {
-      number: 7,
-      color: 'Crimson Red',
-      mood: 'Confident',
-    },
-  },
-  {
-    timeframe: 'weekly' as const,
-    preview:
-      'This week focuses on building lasting foundations while embracing necessary changes. Monday and Tuesday highlight career advancement opportunities, while the weekend brings romantic possibilities. Your ruling planet Mars energizes your ambition sector.',
-    full: "This is a transformative week for Aries, marked by significant shifts in your personal and professional landscape. Monday kicks off with Mercury in your communication sector, bringing clarity to conversations you've been avoiding. Tuesday's energy is perfect for making bold career moves - don't hesitate to pitch that innovative idea or apply for that dream position. Mid-week brings a gentle reminder to balance ambition with self-care. Wednesday and Thursday favor introspection and strategic planning. The weekend promises romantic developments, whether you're single or partnered. Venus dances through your relationship sector, highlighting the importance of authentic connection over superficial attractions. This is also an excellent time for creative projects and artistic endeavors. Pay attention to your dreams this week - they contain valuable guidance. Financial opportunities may arise through networking or collaborative ventures. Trust your instincts about new partnerships, both business and personal.",
-    highlights: {
-      bestDays: ['Monday', 'Tuesday', 'Saturday'],
-      challenges: ['Wednesday - avoid rushed decisions'],
-      opportunities: ['Career advancement', 'Romantic connections', 'Creative breakthroughs'],
-      advice: 'Lead with authenticity and trust your innovative ideas',
-    },
-  },
-  {
-    timeframe: 'monthly' as const,
-    preview:
-      'March opens with transformative energy that will reshape your perspective on personal goals. The new moon on the 13th brings fresh opportunities in your career sector, while Venus retrograde from the 22nd asks you to revisit past relationships.',
-    full: "March 2024 is a pivotal month for Aries, beginning with the powerful Spring Equinox that marks your birthday season and new astrological year. The first week brings a surge of creative energy and entrepreneurial spirit. The New Moon on March 13th falls in your career sector, opening doors you thought were permanently closed. This is your moment to step into leadership roles and showcase your unique vision. The middle of the month brings relationship revelations as Venus begins her retrograde journey on March 22nd. Past lovers or unresolved romantic situations may resurface, not necessarily for reunion, but for healing and closure. Mercury's influence in your financial sector suggests important money decisions around March 18-20th. Trust your instincts about investments and spending. The final week of March sets the stage for April's dynamic energy. Health and fitness routines established now will serve you well through the spring season. Your natural Aries magnetism is at an all-time high this month - use it wisely to attract the opportunities and people who align with your authentic self.",
-    themes: {
-      primary: 'New Beginnings & Leadership',
-      secondary: 'Relationship Healing & Closure',
-      energy: 'High momentum with periods of reflection',
-      focus: ['Career advancement', 'Personal growth', 'Financial planning', 'Health optimization'],
-    },
-  },
-  {
-    timeframe: 'yearly' as const,
-    preview:
-      "2024 is your year of authentic self-expression and bold leadership. Jupiter's presence in your expansion sector until May supports major life upgrades, while Saturn teaches valuable lessons about long-term commitment and responsibility.",
-    full: "2024 represents a landmark year for Aries, characterized by unprecedented growth and self-discovery. Jupiter's beneficial influence in your expansion sector through May brings opportunities for higher education, international ventures, and spiritual awakening. This is the year to think bigger and bolder than ever before. Saturn's lessons in your commitment sector teach you the value of consistency and long-term planning. The challenges you face in the first quarter will become your greatest strengths by year's end. Summer brings a powerful eclipse series that reshapes your approach to relationships and partnerships. August's planetary alignments suggest a significant career breakthrough or public recognition for your efforts. The autumn season favors financial growth and investment opportunities. Your natural leadership abilities are highlighted throughout the year, with multiple chances to guide others and make a lasting impact. Health and vitality are strong, but pay attention to stress management during peak activity periods. By December, you'll look back on 2024 as the year you truly came into your power and established yourself as a force to be reckoned with in your chosen field.",
-    majorEvents: {
-      spring: 'Career breakthrough and new opportunities',
-      summer: 'Relationship transformations and partnerships',
-      autumn: 'Financial growth and investment success',
-      winter: 'Recognition and establishment of authority',
-    },
-  },
-];
+// Import real horoscope data
+const horoscopeData = require('../../content/horoscopes.json');
 
-const mockLifeAspects: LifeAspectsData = {
-  love: {
-    score: 87,
-    text: 'Your heart is open to deep, meaningful connections today. Single? Look for someone who matches your intellectual curiosity.',
-  },
-  career: {
-    score: 74,
-    text: 'Professional opportunities align perfectly with your ambitions. A leadership role may be offered soon.',
-  },
-  health: {
-    score: 91,
-    text: 'Your energy flows freely, supporting both body and mind. Perfect day for starting a new fitness routine.',
-  },
+// Function to generate real horoscope data for a user's sign
+const generateHoroscopeData = (userSign: string): HoroscopeData[] => {
+  const dailyData = horoscopeData.daily[userSign];
+
+  if (!dailyData) {
+    // Fallback to aries if sign not found
+    const fallbackData = horoscopeData.daily.aries;
+    return [
+      {
+        timeframe: 'today' as const,
+        preview: fallbackData.preview,
+        full: fallbackData.full,
+        lucky: {
+          number: fallbackData.lucky.number,
+          color: fallbackData.lucky.color,
+          mood: fallbackData.lucky.mood,
+        },
+      },
+      {
+        timeframe: 'weekly' as const,
+        preview: 'This week brings new opportunities and challenges. Focus on your goals and trust your instincts.',
+        full: 'This week offers a blend of opportunities and growth experiences. Your natural traits will guide you through any challenges that arise.',
+      },
+      {
+        timeframe: 'monthly' as const,
+        preview: 'This month focuses on personal development and relationship growth.',
+        full: 'This month brings significant opportunities for personal and professional development. Trust the process.',
+      },
+      {
+        timeframe: 'yearly' as const,
+        preview: 'This year marks a period of transformation and authentic self-expression.',
+        full: 'This year brings profound transformation and the opportunity to express your authentic self.',
+      },
+    ];
+  }
+
+  return [
+    {
+      timeframe: 'today' as const,
+      preview: dailyData.preview,
+      full: dailyData.full,
+      lucky: {
+        number: dailyData.lucky.number,
+        color: dailyData.lucky.color,
+        mood: dailyData.lucky.mood,
+      },
+    },
+    {
+      timeframe: 'weekly' as const,
+      preview: 'This week brings new opportunities aligned with your sign\'s energy. Focus on your natural strengths.',
+      full: 'This week the cosmos highlights your unique qualities and presents opportunities that align with your natural energy patterns.',
+    },
+    {
+      timeframe: 'monthly' as const,
+      preview: 'This month focuses on growth and development in areas most important to your sign.',
+      full: 'This month brings significant developments in the life areas that matter most to your zodiac sign.',
+    },
+    {
+      timeframe: 'yearly' as const,
+      preview: 'This year marks a significant period of growth and achievement for your sign.',
+      full: 'This year the planetary alignments create powerful opportunities for growth and achievement in your life.',
+    },
+  ];
 };
+
+// Function to generate real life aspects based on user's sign
+const generateLifeAspects = (userSign: string): LifeAspectsData => {
+  const dailyData = horoscopeData.daily[userSign];
+
+  if (!dailyData || !dailyData.scores) {
+    // Fallback scores
+    return {
+      love: { score: 75, text: 'Your relationships are highlighted today with positive energy.' },
+      career: { score: 80, text: 'Professional opportunities align with your goals.' },
+      health: { score: 85, text: 'Energy levels are high and vitality is strong.' },
+    };
+  }
+
+  return {
+    love: {
+      score: dailyData.scores.love * 10, // Convert to percentage
+      text: 'Your relationships are highlighted today with positive energy.'
+    },
+    career: {
+      score: dailyData.scores.career * 10,
+      text: 'Professional opportunities align with your goals.'
+    },
+    health: {
+      score: dailyData.scores.health * 10,
+      text: 'Energy levels are high and vitality is strong.'
+    },
+  };
+};
+
 
 function getTimeBasedGreeting(): string {
   const hour = new Date().getHours();
@@ -110,6 +142,10 @@ export default function TodayScreen() {
   const userSign = getUserSign() || 'aries';
   const signData = ZODIAC_SIGNS[userSign];
   const accentColor = signData.accent;
+
+  // Generate real data based on user's sign
+  const realHoroscopeData = generateHoroscopeData(userSign);
+  const realLifeAspects = generateLifeAspects(userSign);
 
   const banners = getDefaultBanners();
 
@@ -214,7 +250,7 @@ export default function TodayScreen() {
 
             {/* Horoscope Pager */}
             <HoroscopePager
-              data={mockHoroscopeData}
+              data={realHoroscopeData}
               onReadMore={handleReadMore}
               onPaywallNeeded={handlePaywallNeeded}
               onPagerSwiped={handlePagerSwiped}
@@ -223,9 +259,9 @@ export default function TodayScreen() {
             {/* Life Aspects */}
             <LifeAspects
               scores={{
-                love: mockLifeAspects.love.score,
-                career: mockLifeAspects.career.score,
-                health: mockLifeAspects.health.score,
+                love: realLifeAspects.love.score,
+                career: realLifeAspects.career.score,
+                health: realLifeAspects.health.score,
               }}
             />
 

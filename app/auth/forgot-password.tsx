@@ -38,7 +38,7 @@ export default function ForgotPasswordScreen() {
       <SafeAreaProvider>
         <View style={styles.container}>
           <StatusBar style="light" />
-          <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+          <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
             <View style={styles.content}>
               <View style={styles.header}>
                 <Text style={styles.title}>Check Your Email</Text>
@@ -66,7 +66,7 @@ export default function ForgotPasswordScreen() {
     <SafeAreaProvider>
       <View style={styles.container}>
         <StatusBar style="light" />
-        <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+        <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
           <KeyboardAvoidingView style={styles.keyboardView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <View style={styles.content}>
               <View style={styles.header}>
@@ -84,7 +84,7 @@ export default function ForgotPasswordScreen() {
                     value={email}
                     onChangeText={setEmail}
                     placeholder="Enter your email"
-                    placeholderTextColor={Colors.text.secondary}
+                    placeholderTextColor={Colors.textSec}
                     keyboardType="email-address"
                     autoCapitalize="none"
                     autoCorrect={false}
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.displayLarge,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 28,
     fontWeight: '700',
     marginBottom: Spacing.sm,
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 16,
     textAlign: 'center',
     lineHeight: 22,
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     ...Typography.labelMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 14,
     fontWeight: '500',
   },
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     borderRadius: Layout.cardRadius,
     padding: Layout.cardPadding,
     fontSize: 16,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     borderWidth: 1,
     borderColor: Colors.border,
   },
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   },
   emailSentText: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 14,
     textAlign: 'center',
     lineHeight: 20,

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
-import { Colors, Spacing, Radius } from '../constants/theme';
+import { Colors, Spacing, Radius, Typography } from '../constants/theme';
 
 interface BottomNavProps {
   state: any;
@@ -177,7 +177,8 @@ const styles = StyleSheet.create({
     borderRadius: Radius.pill,
   },
   tabLabel: {
-    ...Typography.labelSmall,
+    fontSize: 12,
+    lineHeight: 16,
     fontWeight: '600',
     zIndex: 1,
     textAlign: 'center',
@@ -207,7 +208,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   centerLabel: {
-    ...Typography.labelSmall,
+    fontSize: 12,
+    lineHeight: 16,
     fontWeight: '600',
     marginTop: 16,
     textAlign: 'center',

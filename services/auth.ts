@@ -1,6 +1,7 @@
 // Authentication service
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { apiRequest } from './api';
+import { User, SubscriptionStatus } from '../types/api';
 
 export interface LoginCredentials {
   email: string;
@@ -17,22 +18,8 @@ export interface RegisterData {
   marketing_consent?: boolean;
 }
 
-export interface AuthUser {
-  id: string;
-  email: string;
-  name: string;
-  birth_date?: string;
-  birth_time?: string;
-  birth_place?: string;
-  sign?: string;
-  is_premium: boolean;
-  created_at: string;
-  last_login?: string;
-  onboarded?: boolean;
-}
-
 export interface AuthResponse {
-  user: AuthUser;
+  user: User;
   token: string;
   refresh_token: string;
 }
@@ -44,7 +31,7 @@ const USER_DATA_KEY = 'user_data';
 class AuthService {
   private token: string | null = null;
   private refreshToken: string | null = null;
-  private currentUser: AuthUser | null = null;
+  private currentUser: User | null = null;
 
   // Initialize auth state from storage
   async init() {
@@ -168,7 +155,7 @@ class AuthService {
   }
 
   // Update user profile
-  async updateProfile(updates: Partial<AuthUser>): Promise<AuthUser> {
+  async updateProfile(updates: Partial<User>): Promise<User> {
     try {
       const response = await apiRequest('/auth/profile', {
         method: 'PUT',
@@ -178,9 +165,13 @@ class AuthService {
         body: JSON.stringify(updates),
       });
 
-      this.currentUser = response.user;
-      await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(this.currentUser));
-      return this.currentUser;
+      if (response.user) {
+        this.currentUser = response.user;
+        await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(response.user));
+        return response.user;
+      } else {
+        throw new Error('No user data in response');
+      }
     } catch (error) {
       console.error('Profile update error:', error);
       throw new Error('Failed to update profile. Please try again.');
@@ -227,9 +218,13 @@ class AuthService {
         body: JSON.stringify({ refresh_token: this.refreshToken }),
       });
 
-      this.token = response.token;
-      await AsyncStorage.setItem(AUTH_TOKEN_KEY, this.token);
-      return this.token;
+      if (response.token) {
+        this.token = response.token;
+        await AsyncStorage.setItem(AUTH_TOKEN_KEY, response.token);
+        return response.token;
+      } else {
+        throw new Error('No token in refresh response');
+      }
     } catch (error) {
       console.error('Token refresh error:', error);
       await this.logout();
@@ -280,7 +275,7 @@ class AuthService {
 
     await Promise.all([
       AsyncStorage.setItem(AUTH_TOKEN_KEY, this.token),
-      AsyncStorage.setItem(REFRESH_TOKEN_KEY, this.refreshToken),
+      this.refreshToken ? AsyncStorage.setItem(REFRESH_TOKEN_KEY, this.refreshToken) : AsyncStorage.removeItem(REFRESH_TOKEN_KEY),
       AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(this.currentUser)),
     ]);
   }
@@ -290,7 +285,7 @@ class AuthService {
     return !!this.token && !!this.currentUser;
   }
 
-  get user(): AuthUser | null {
+  get user(): User | null {
     return this.currentUser;
   }
 

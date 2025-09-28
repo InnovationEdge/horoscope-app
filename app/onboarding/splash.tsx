@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, StatusBar } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
 import Animated, {
   useSharedValue,
   withTiming,
@@ -53,7 +54,7 @@ export default function Splash() {
       <StatusBar style="light" />
 
       <LinearGradient
-        colors={[Colors.bg.top, Colors.bg.bottom]}
+        colors={[Colors.bgTop, Colors.bgBot]}
         style={styles.gradient}
       >
         {/* Hero Logo Section - Matching Paywall Design */}
@@ -85,7 +86,7 @@ export default function Splash() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.bg.top,
+    backgroundColor: Colors.bgTop,
   },
   gradient: {
     flex: 1,
@@ -117,14 +118,14 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     ...Typography.displayLarge,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     textAlign: 'center',
     marginBottom: Spacing.sm,
     fontWeight: '700',
   },
   heroSubtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     textAlign: 'center',
     paddingHorizontal: Spacing.md,
     lineHeight: 22,
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 60,
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     textAlign: 'center',
     fontStyle: 'italic',
   },

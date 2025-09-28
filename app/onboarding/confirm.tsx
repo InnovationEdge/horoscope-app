@@ -81,7 +81,7 @@ export default function Confirm() {
         <StatusBar style="light" />
         <ProgressBarTop currentStep={5} totalSteps={5} />
 
-        <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+        <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
           <View style={styles.content}>
             {/* Hero Image */}
             <View style={styles.imageContainer}>
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.greeting,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 24,
     fontWeight: '700',
     textAlign: 'center',
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 16,
     textAlign: 'center',
     lineHeight: 24,
@@ -225,12 +225,12 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 14,
   },
   summaryValue: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 16,
     fontWeight: '600',
     textTransform: 'capitalize',
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     ...Typography.labelMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 16,
     fontWeight: '600',
   },

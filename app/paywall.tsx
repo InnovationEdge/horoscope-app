@@ -173,7 +173,7 @@ export default function PaywallScreen() {
       <StatusBar style="light" />
 
       <LinearGradient
-        colors={[Colors.bg.top, Colors.bg.bottom]}
+        colors={[Colors.bgTop, Colors.bgBot]}
         style={styles.gradient}
       >
         {/* Header */}
@@ -293,7 +293,7 @@ export default function PaywallScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.bg.top,
+    backgroundColor: Colors.bgTop,
   },
   gradient: {
     flex: 1,
@@ -317,13 +317,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   closeIcon: {
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 16,
     fontWeight: '600',
   },
   headerTitle: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
   },
   content: {
     flex: 1,
@@ -348,13 +348,13 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     ...Typography.displayLarge,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
   heroSubtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     textAlign: 'center',
     paddingHorizontal: Spacing.md,
   },
@@ -378,19 +378,19 @@ const styles = StyleSheet.create({
   },
   featureTitle: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     marginBottom: 2,
   },
   featureDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
   },
   plansContainer: {
     marginBottom: Spacing.xl,
   },
   plansTitle: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     textAlign: 'center',
     marginBottom: Spacing.lg,
   },
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
   },
   popularText: {
     ...Typography.labelSmall,
-    color: Colors.bg.top,
+    color: Colors.bgTop,
     fontWeight: '600',
   },
   planHeader: {
@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
   },
   planName: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     marginBottom: 4,
   },
   planPrice: {
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
   },
   planPeriod: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
   },
   planSavings: {
     ...Typography.labelSmall,
@@ -490,13 +490,13 @@ const styles = StyleSheet.create({
   },
   footerText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
   footerSmall: {
     ...Typography.labelSmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     textAlign: 'center',
     paddingHorizontal: Spacing.lg,
     lineHeight: 16,

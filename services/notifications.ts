@@ -34,6 +34,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -149,7 +151,8 @@ class NotificationService {
 
       const [hour, minute] = this.settings.time.split(':').map(Number);
 
-      const trigger = {
+      const trigger: Notifications.CalendarTriggerInput = {
+        type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
         hour,
         minute,
         repeats: true,

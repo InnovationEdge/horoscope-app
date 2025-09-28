@@ -45,7 +45,21 @@ export default function LoginScreen() {
       };
 
       const response = await authService.login(credentials);
-      setUser(response.user);
+
+      // Map AuthUser to User format
+      const user = {
+        id: response.user.id,
+        email: response.user.email,
+        name: response.user.name,
+        birth_date: response.user.birth_date,
+        birth_time: response.user.birth_time,
+        birth_place: response.user.birth_place,
+        sign: response.user.sign as any, // Will be properly typed when user completes onboarding
+        subscription_status: response.user.is_premium ? 'premium' : 'free' as any,
+        onboarded: response.user.onboarded
+      };
+
+      setUser(user);
 
       // Navigate to main app
       router.replace('/(tabs)/today');
@@ -72,7 +86,7 @@ export default function LoginScreen() {
     <SafeAreaProvider>
       <View style={styles.container}>
         <StatusBar style="light" />
-        <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+        <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
           <KeyboardAvoidingView style={styles.keyboardView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <ScrollView
               contentContainerStyle={styles.scrollContent}
@@ -94,7 +108,7 @@ export default function LoginScreen() {
                     value={email}
                     onChangeText={setEmail}
                     placeholder="Enter your email"
-                    placeholderTextColor={Colors.text.secondary}
+                    placeholderTextColor={Colors.textSec}
                     keyboardType="email-address"
                     autoCapitalize="none"
                     autoCorrect={false}
@@ -110,7 +124,7 @@ export default function LoginScreen() {
                       value={password}
                       onChangeText={setPassword}
                       placeholder="Enter your password"
-                      placeholderTextColor={Colors.text.secondary}
+                      placeholderTextColor={Colors.textSec}
                       secureTextEntry={!showPassword}
                       autoCapitalize="none"
                       autoCorrect={false}
@@ -151,7 +165,7 @@ export default function LoginScreen() {
                     </Pressable>
                     <Pressable style={styles.socialButton} onPress={() => handleSocialLogin('apple')}>
                       <View style={styles.socialButtonContent}>
-                        <AppleIcon size={20} color={Colors.text.primary} />
+                        <AppleIcon size={20} color={Colors.textPri} />
                         <Text style={styles.socialButtonText}>Apple</Text>
                       </View>
                     </Pressable>
@@ -197,7 +211,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.displayLarge,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 32,
     fontWeight: '700',
     marginBottom: Spacing.sm,
@@ -205,7 +219,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 16,
     textAlign: 'center',
   },
@@ -217,7 +231,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     ...Typography.labelMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 14,
     fontWeight: '500',
   },
@@ -226,7 +240,7 @@ const styles = StyleSheet.create({
     borderRadius: Layout.cardRadius,
     padding: Layout.cardPadding,
     fontSize: 16,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     borderWidth: 1,
     borderColor: Colors.border,
   },
@@ -288,7 +302,7 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     marginHorizontal: Spacing.md,
     fontSize: 12,
   },
@@ -312,7 +326,7 @@ const styles = StyleSheet.create({
   },
   socialButtonText: {
     ...Typography.labelMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 14,
     fontWeight: '500',
   },
@@ -324,7 +338,7 @@ const styles = StyleSheet.create({
   },
   registerText: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 14,
   },
   registerLink: {

@@ -166,7 +166,7 @@ export default function AnalyticsDashboard() {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <LinearGradient
-        colors={[Colors.bg.top, Colors.bg.bottom]}
+        colors={[Colors.bgTop, Colors.bgBot]}
         style={styles.gradient}
       >
         <Text style={styles.title}>Analytics Dashboard</Text>
@@ -318,17 +318,17 @@ export default function AnalyticsDashboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.bg.top,
+    backgroundColor: Colors.bgTop,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.bg.top,
+    backgroundColor: Colors.bgTop,
   },
   loadingText: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
   },
   gradient: {
     padding: Spacing.lg,
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.displayLarge,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     marginBottom: Spacing.md,
   },
   statRow: {
@@ -361,12 +361,12 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     flex: 1,
   },
   statValue: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontWeight: '600',
   },
   settingRow: {
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
   },
   settingLabel: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     flex: 1,
   },
   actionButton: {

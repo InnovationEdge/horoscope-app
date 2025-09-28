@@ -38,7 +38,7 @@ export default function ProfileScreen() {
     <SafeAreaProvider>
       <View style={styles.container}>
         <StatusBar style="light" />
-        <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+        <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
           <ScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
@@ -158,14 +158,14 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.displayLarge,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 28,
     fontWeight: '700',
     marginBottom: Spacing.xs,
   },
   subtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     textAlign: 'center',
   },
   userCard: {
@@ -194,20 +194,20 @@ const styles = StyleSheet.create({
   },
   userName: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 2,
   },
   userSign: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 16,
     marginBottom: 2,
   },
   userDate: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 14,
   },
   editButton: {
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 18,
     fontWeight: '600',
     marginBottom: Spacing.md,
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 12,
     textAlign: 'center',
   },
@@ -269,14 +269,14 @@ const styles = StyleSheet.create({
   },
   subscriptionStatus: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 16,
     fontWeight: '600',
     marginBottom: Spacing.sm,
   },
   subscriptionDescription: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: Spacing.lg,
@@ -311,17 +311,17 @@ const styles = StyleSheet.create({
   },
   settingText: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 16,
   },
   settingValue: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 14,
   },
   settingArrow: {
     ...Typography.titleMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 18,
   },
   bottomSpacing: {

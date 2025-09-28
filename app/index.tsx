@@ -28,25 +28,16 @@ export default function IndexScreen() {
 
   const checkAuthStatus = useCallback(async () => {
     try {
-      // Start splash animations
-      opacity.value = withTiming(1, { duration: 800 });
-      scale.value = withTiming(1, { duration: 800 });
-      textOpacity.value = withDelay(400, withTiming(1, { duration: 600 }));
+      // Simple fade in animation
+      opacity.value = withTiming(1, { duration: 500 });
+      scale.value = withTiming(1, { duration: 500 });
+      textOpacity.value = withTiming(1, { duration: 300 });
+      shimmerOpacity.value = withTiming(1, { duration: 300 });
 
-      // Start shimmer effect
-      shimmerOpacity.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 1000 }),
-          withTiming(0.5, { duration: 1000 })
-        ),
-        -1,
-        true
-      );
-
-      // Show splash for at least 2.5 seconds for branding
+      // Show splash briefly while checking auth
       const [authResult] = await Promise.all([
         authService.init(),
-        new Promise(resolve => setTimeout(resolve, 2500))
+        new Promise(resolve => setTimeout(resolve, 1000))
       ]);
 
       if (authService.isAuthenticated && authService.user) {
@@ -59,30 +50,26 @@ export default function IndexScreen() {
 
         setUser(userForStore);
 
-        // Fade out animation before navigation
-        opacity.value = withTiming(0, { duration: 400 });
+        // Quick fade and navigate
+        opacity.value = withTiming(0, { duration: 200 });
         setTimeout(() => {
-          // Check if user has completed onboarding
           if (userForStore.onboarded) {
             router.replace('/(tabs)/today');
           } else {
             router.replace('/onboarding/signin');
           }
-        }, 400);
+        }, 200);
       } else {
-        // Fade out animation before navigation
-        opacity.value = withTiming(0, { duration: 400 });
+        // Quick fade and navigate
+        opacity.value = withTiming(0, { duration: 200 });
         setTimeout(() => {
           router.replace('/onboarding/signin');
-        }, 400);
+        }, 200);
       }
     } catch (error) {
       console.error('Auth check failed:', error);
-      // Fade out animation before navigation on error
-      opacity.value = withTiming(0, { duration: 400 });
-      setTimeout(() => {
-        router.replace('/onboarding/signin');
-      }, 400);
+      // Quick navigate on error
+      router.replace('/onboarding/signin');
     } finally {
       setTimeout(() => setIsLoading(false), 400);
     }
@@ -155,13 +142,80 @@ export default function IndexScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.bgTop,
   },
-  gradient: {
+  backgroundImage: {
     flex: 1,
+    width: '100%',
+    height: '100%',
   },
-  loadingContainer: {
+  overlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: Spacing.lg,
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    maxWidth: 300,
+  },
+  brandContainer: {
+    alignItems: 'center',
+    marginBottom: Spacing.xxxl,
+  },
+  logoContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(124, 77, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.lg,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  logoText: {
+    fontSize: 32,
+    textAlign: 'center',
+  },
+  brandTitle: {
+    ...Typography.displayLarge,
+    color: Colors.textPri,
+    fontSize: 32,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  brandSubtitle: {
+    ...Typography.bodyMedium,
+    color: Colors.textSec,
+    fontSize: 16,
+    textAlign: 'center',
+    lineHeight: 22,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  loadingSection: {
+    alignItems: 'center',
+  },
+  loadingDots: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: Colors.primary,
   },
 });

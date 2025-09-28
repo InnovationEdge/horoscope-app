@@ -21,76 +21,22 @@ interface BannerCarouselProps {
   onBannerPress: (item: Banner) => void;
 }
 
+// Import real banner data
+const bannerData = require('../content/banners.json');
+
 export function getDefaultBanners(): Banner[] {
-  // This would be loaded from content/banners.json
-  return [
-    {
-      id: 'premium_weekly',
-      title: '✨ Unlock your Weekly Horoscope',
-      subtitle: 'Deeper guidance awaits for {PRICE}',
-      bullets: ['See career highlights', 'Navigate relationships', 'Make smarter moves'],
-      target: 'premium',
-      premium_required: true,
-      theme: 'premium',
-      gradient: ['#1a1a2e', '#16213e'],
-      accentColor: '#FFD700',
-    },
-    {
-      id: 'compat_leo',
-      title: "💖 Who's your best match?",
-      subtitle: 'Try compatibility with Leo',
-      bullets: ['Instant chemistry score', 'Love, career, friendship', 'Actionable tips'],
-      target: 'compat:leo',
-      premium_required: false,
-      theme: 'love',
-      gradient: ['#2c1810', '#3d2914'],
-      accentColor: '#FF6B6B',
-    },
-    {
-      id: 'druid_intro',
-      title: '🌳 Your Druid Sign',
-      subtitle: 'Ancient wisdom, modern insight',
-      bullets: ['Personality sketch', 'Hidden strengths', 'Life themes'],
-      target: 'druid',
-      premium_required: false,
-      theme: 'nature',
-      gradient: ['#0d2818', '#1a3d2e'],
-      accentColor: '#27AE60',
-    },
-    {
-      id: 'chinese_new_year',
-      title: '🐉 Your Chinese Zodiac',
-      subtitle: 'Discover your animal spirit',
-      bullets: ['12-year cycle wisdom', 'Personality traits', 'Fortune insights'],
-      target: 'chinese',
-      premium_required: false,
-      theme: 'mystic',
-      gradient: ['#2d1b2e', '#3d2741'],
-      accentColor: '#E74C3C',
-    },
-    {
-      id: 'energy_boost',
-      title: "⚡ Today's Energy Boost",
-      subtitle: 'Harness cosmic power for success',
-      bullets: ['Peak energy hours', 'Lucky directions', 'Power colors'],
-      target: 'today',
-      premium_required: false,
-      theme: 'energy',
-      gradient: ['#2e1a0d', '#3d2914'],
-      accentColor: '#F39C12',
-    },
-    {
-      id: 'wisdom_ancient',
-      title: '🔮 Ancient Wisdom Oracle',
-      subtitle: 'Unlock secrets of the stars',
-      bullets: ['Sacred knowledge', 'Hidden meanings', 'Mystical insights'],
-      target: 'traits',
-      premium_required: false,
-      theme: 'wisdom',
-      gradient: ['#1a0d2e', '#2d1a3d'],
-      accentColor: '#9B59B6',
-    },
-  ];
+  // Load real banners from content/banners.json
+  return bannerData.items.map((banner: any) => ({
+    id: banner.id,
+    title: banner.title,
+    subtitle: banner.subtitle,
+    bullets: banner.bullets || [],
+    target: banner.target,
+    premium_required: banner.premium_required,
+    theme: banner.premium_required ? 'premium' : 'nature',
+    gradient: banner.premium_required ? ['#1a1a2e', '#16213e'] : ['#0d2818', '#1a3d2e'],
+    accentColor: banner.premium_required ? '#FFD700' : '#27AE60',
+  }));
 }
 
 export function BannerCarousel({ banners, onBannerPress }: BannerCarouselProps) {
@@ -156,7 +102,7 @@ export function BannerCarousel({ banners, onBannerPress }: BannerCarouselProps) 
             accessibilityRole="button"
           >
             <LinearGradient
-              colors={item.gradient || ['#667eea', '#764ba2']}
+              colors={(item.gradient && item.gradient.length >= 2) ? (item.gradient as [string, string, ...string[]]) : ['#667eea', '#764ba2']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.card}

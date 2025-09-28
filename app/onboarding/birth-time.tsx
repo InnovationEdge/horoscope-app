@@ -11,6 +11,7 @@ import { track } from '../../services/analytics';
 import { useUserStore } from '../../store/user';
 
 export default function BirthTime() {
+  // Default to noon for better astrological accuracy when unknown
   const [selectedTime, setSelectedTime] = useState(new Date(2000, 0, 1, 12, 0));
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [dontRemember, setDontRemember] = useState(false);
@@ -64,7 +65,7 @@ export default function BirthTime() {
         <StatusBar style="light" />
         <ProgressBarTop currentStep={3} totalSteps={5} />
 
-        <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+        <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
           <View style={styles.content}>
             {/* Hero Section */}
             <View style={styles.imageContainer}>
@@ -97,7 +98,7 @@ export default function BirthTime() {
                   value={dontRemember}
                   onValueChange={handleDontRememberToggle}
                   trackColor={{ false: Colors.outline, true: Colors.primary }}
-                  thumbColor={dontRemember ? Colors.surface : Colors.text.secondary}
+                  thumbColor={dontRemember ? Colors.surface : Colors.textSec}
                 />
               </View>
               {dontRemember && <Text style={styles.toggleSubtext}>We'll use 12:00 PM as default</Text>}
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     ...Typography.displayLarge,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 28,
     fontWeight: '700',
     textAlign: 'center',
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
   },
   heroSubtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 16,
     textAlign: 'center',
     marginBottom: Spacing.lg,
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.greeting,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 24,
     fontWeight: '700',
     textAlign: 'center',
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 16,
     textAlign: 'center',
     lineHeight: 24,
@@ -238,13 +239,13 @@ const styles = StyleSheet.create({
   },
   toggleText: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 16,
     fontWeight: '500',
   },
   toggleSubtext: {
     ...Typography.labelSmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 12,
     marginTop: Spacing.sm,
     textAlign: 'center',
@@ -270,12 +271,12 @@ const styles = StyleSheet.create({
   },
   timeText: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 18,
     fontWeight: '600',
   },
   timeTextDisabled: {
-    color: Colors.text.secondary,
+    color: Colors.textSec,
   },
   timeIcon: {
     fontSize: 24,
@@ -308,7 +309,7 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     ...Typography.labelMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 16,
     fontWeight: '600',
   },

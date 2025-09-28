@@ -96,7 +96,9 @@ export function HoroscopePager({ data, onReadMore, onPaywallNeeded, onPagerSwipe
     if (position > 0) {
       // Not Today tab
       const timeframe = data[position]?.timeframe;
-      onPagerSwiped?.(timeframe);
+      if (timeframe) {
+        onPagerSwiped?.(timeframe);
+      }
     }
   };
 
@@ -271,7 +273,7 @@ const styles = StyleSheet.create({
   },
   timeframeTitle: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     marginBottom: Spacing.sm,
     fontSize: 18,
     fontWeight: '700',
@@ -286,7 +288,7 @@ const styles = StyleSheet.create({
   },
   contentText: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     lineHeight: 24,
     flex: 1,
     fontSize: 15,
@@ -345,7 +347,7 @@ const styles = StyleSheet.create({
   },
   blurSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 14,
     textAlign: 'center',
     fontWeight: '500',
@@ -405,12 +407,12 @@ const styles = StyleSheet.create({
   },
   luckyLabel: {
     ...Typography.labelSmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     marginBottom: 4,
   },
   luckyValue: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontWeight: '600',
   },
   highlights: {
@@ -427,7 +429,7 @@ const styles = StyleSheet.create({
   },
   highlightText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
   },
   themes: {
     marginTop: Spacing.md,
@@ -443,7 +445,7 @@ const styles = StyleSheet.create({
   },
   themeText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
   },
   majorEvents: {
     marginTop: Spacing.md,
@@ -459,7 +461,7 @@ const styles = StyleSheet.create({
   },
   eventText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
   },
   pagination: {
     flexDirection: 'row',

@@ -51,12 +51,12 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.labelMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     marginBottom: 2,
   },
   sectionContent: {
     ...Typography.bodySmall,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     lineHeight: 18,
   },
 });

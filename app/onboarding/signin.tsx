@@ -9,63 +9,144 @@ import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { Colors, Layout, Typography, Spacing } from '../../constants/theme';
 import { ProgressBarTop } from '../../components/ProgressBarTop';
 import { track } from '../../services/analytics';
+import { authService } from '../../services/auth';
+import { useUserStore } from '../../store/user';
+import type { ZodiacSign } from '../../constants/signs';
 
 export default function SignIn() {
   const fadeAnim = useSharedValue(0);
   const slideAnim = useSharedValue(50);
-  const vibrateScale = useSharedValue(1);
 
-  // Classical authentication state
+  // Authentication state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const { setUser } = useUserStore();
 
   useEffect(() => {
     track('onboarding_step_viewed', { step: 'signin' });
 
-    // Smooth entrance animations
-    fadeAnim.value = withTiming(1, { duration: 800 });
-    slideAnim.value = withSpring(0, { damping: 15, stiffness: 300 });
-
-    // Vibration effect for Salamene Splash - live effect
-    vibrateScale.value = withRepeat(
-      withTiming(1.05, { duration: 2000 }),
-      -1,
-      true
-    );
-  }, [fadeAnim, slideAnim, vibrateScale]);
+    // Simple entrance animations
+    fadeAnim.value = withTiming(1, { duration: 600 });
+    slideAnim.value = withTiming(0, { duration: 500 });
+  }, [fadeAnim, slideAnim]);
 
   const handleGoogleAuth = async () => {
     track('auth_initiated', { provider: 'google' });
-    // TODO: Implement Google authentication
-    // For now, continue to next step
-    track('auth_completed', { provider: 'google' });
-    router.push('/onboarding/birth-date');
+    try {
+      // Create demo user for Google auth
+      const demoUser = {
+        id: 'google_' + Date.now(),
+        email: 'demo@google.com',
+        name: 'Google User',
+        sign: 'leo' as ZodiacSign,
+        subscription_status: 'free' as const,
+        onboarded: false,
+        birth_date: '1990-08-15',
+        birth_time: '12:00',
+      };
+      setUser(demoUser);
+      track('auth_completed', { provider: 'google' });
+      router.push('/onboarding/birth-date');
+    } catch (error) {
+      console.error('Google auth error:', error);
+    }
   };
 
   const handleAppleAuth = async () => {
     track('auth_initiated', { provider: 'apple' });
-    // TODO: Implement Apple authentication
-    // For now, continue to next step
-    track('auth_completed', { provider: 'apple' });
-    router.push('/onboarding/birth-date');
+    try {
+      // Create demo user for Apple auth
+      const demoUser = {
+        id: 'apple_' + Date.now(),
+        email: 'demo@apple.com',
+        name: 'Apple User',
+        sign: 'scorpio' as ZodiacSign,
+        subscription_status: 'free' as const,
+        onboarded: false,
+        birth_date: '1985-11-10',
+        birth_time: '14:30',
+      };
+      setUser(demoUser);
+      track('auth_completed', { provider: 'apple' });
+      router.push('/onboarding/birth-date');
+    } catch (error) {
+      console.error('Apple auth error:', error);
+    }
   };
 
   const handleContinueAsGuest = () => {
     track('auth_completed', { provider: 'guest' });
+    // Create a demo guest user with sample data
+    const guestUser = {
+      id: 'guest_' + Date.now(),
+      email: 'guest@example.com',
+      name: 'Guest User',
+      sign: 'virgo' as ZodiacSign,
+      subscription_status: 'free' as const,
+      onboarded: false,
+      birth_date: '1992-09-15',
+      birth_time: '10:30',
+    };
+    setUser(guestUser);
     router.push('/onboarding/birth-date');
   };
 
   const handleClassicalAuth = async () => {
     if (!email || !password) {
-      return; // Simple validation
+      setError('Please enter both email and password');
+      return;
     }
 
-    track('auth_initiated', { provider: 'email' });
-    // TODO: Implement email/password authentication
-    // For now, continue to next step
-    track('auth_completed', { provider: 'email' });
-    router.push('/onboarding/birth-date');
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      track('auth_initiated', { provider: 'email' });
+
+      // Try login first, if it fails, automatically register
+      try {
+        const response = await authService.login({ email, password });
+        setUser(response.user);
+
+        track('auth_completed', { provider: 'email', action: 'login' });
+
+        // Check if user has completed onboarding
+        if (response.user.onboarded) {
+          router.replace('/(tabs)/today');
+        } else {
+          router.push('/onboarding/birth-date');
+        }
+      } catch (loginError) {
+        // If login fails, try to register
+        try {
+          const response = await authService.register({
+            email,
+            password,
+            name: email.split('@')[0] || 'User',
+          });
+          setUser(response.user);
+
+          track('auth_completed', { provider: 'email', action: 'register' });
+          router.push('/onboarding/birth-date');
+        } catch (registerError) {
+          throw registerError;
+        }
+      }
+    } catch (error) {
+      console.error('Auth error:', error);
+      setError(error instanceof Error ? error.message : 'Authentication failed');
+      track('auth_failed', { provider: 'email', error: error instanceof Error ? error.message : 'Unknown error' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const contentAnimatedStyle = useAnimatedStyle(() => ({
@@ -73,9 +154,6 @@ export default function SignIn() {
     transform: [{ translateY: slideAnim.value }],
   }));
 
-  const backgroundAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: vibrateScale.value }],
-  }));
 
   return (
     <SafeAreaProvider>
@@ -83,8 +161,8 @@ export default function SignIn() {
         <StatusBar style="light" />
         <ProgressBarTop currentStep={1} totalSteps={5} />
 
-        {/* Full Scale Salamene Splash Background with Live Vibration */}
-        <Animated.View style={[styles.backgroundContainer, backgroundAnimatedStyle]}>
+        {/* Salamene Splash Background */}
+        <View style={styles.backgroundContainer}>
           <ImageBackground
             source={require('../../assets/onboarding/salamene-splash.png')}
             style={styles.backgroundImage}
@@ -106,22 +184,8 @@ export default function SignIn() {
 
                 {/* Authentication Methods */}
                 <View style={styles.authContainer}>
-                  {/* Classical Email/Password Authentication - Primary */}
+                  {/* Email/Password Authentication */}
                   <View style={styles.classicalAuthContainer}>
-                    <View style={styles.authToggle}>
-                      <Pressable
-                        style={[styles.toggleButton, isLogin && styles.activeToggle]}
-                        onPress={() => setIsLogin(true)}
-                      >
-                        <Text style={[styles.toggleText, isLogin && styles.activeToggleText]}>Sign In</Text>
-                      </Pressable>
-                      <Pressable
-                        style={[styles.toggleButton, !isLogin && styles.activeToggle]}
-                        onPress={() => setIsLogin(false)}
-                      >
-                        <Text style={[styles.toggleText, !isLogin && styles.activeToggleText]}>Sign Up</Text>
-                      </Pressable>
-                    </View>
 
                     <TextInput
                       style={styles.input}
@@ -140,16 +204,22 @@ export default function SignIn() {
                       value={password}
                       onChangeText={setPassword}
                       secureTextEntry
+                      editable={!isLoading}
                     />
 
+                    {error ? (
+                      <Text style={styles.errorText}>{error}</Text>
+                    ) : null}
+
                     <Pressable
-                      style={styles.primaryAuthButton}
+                      style={[styles.primaryAuthButton, isLoading && styles.primaryAuthButtonDisabled]}
                       onPress={handleClassicalAuth}
-                      accessibilityLabel={isLogin ? "Sign In" : "Sign Up"}
+                      disabled={isLoading}
+                      accessibilityLabel="Continue with Email"
                       accessibilityRole="button"
                     >
                       <Text style={styles.primaryAuthButtonText}>
-                        {isLogin ? 'Sign In' : 'Sign Up'}
+                        {isLoading ? 'Please wait...' : 'Continue with Email'}
                       </Text>
                     </Pressable>
                   </View>
@@ -207,7 +277,7 @@ export default function SignIn() {
               </Animated.View>
             </LinearGradient>
           </ImageBackground>
-        </Animated.View>
+        </View>
       </View>
     </SafeAreaProvider>
   );
@@ -243,7 +313,7 @@ const styles = StyleSheet.create({
   },
   brandTitle: {
     ...Typography.displayLarge,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 32,
     fontWeight: '700',
     textAlign: 'center',
@@ -254,7 +324,7 @@ const styles = StyleSheet.create({
   },
   brandSubtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 16,
     textAlign: 'center',
     lineHeight: 22,
@@ -293,7 +363,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   activeToggleText: {
-    color: Colors.text.primary,
+    color: Colors.textPri,
   },
   input: {
     height: 56,
@@ -303,7 +373,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.2)',
     paddingHorizontal: Spacing.lg,
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 16,
   },
   primaryAuthButton: {
@@ -320,7 +390,7 @@ const styles = StyleSheet.create({
   },
   primaryAuthButtonText: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -369,7 +439,7 @@ const styles = StyleSheet.create({
   },
   guestButtonText: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -394,5 +464,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
     lineHeight: 16,
+  },
+  primaryAuthButtonDisabled: {
+    opacity: 0.6,
+  },
+  errorText: {
+    color: '#FF6B6B',
+    fontSize: 14,
+    textAlign: 'center',
+    marginVertical: 8,
+    fontWeight: '500',
   },
 });

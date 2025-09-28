@@ -42,7 +42,7 @@ export default function BirthPlace() {
         <StatusBar style="light" />
         <ProgressBarTop currentStep={4} totalSteps={5} />
 
-        <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+        <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
           <View style={styles.content}>
             {/* Hero Image */}
             <View style={styles.imageContainer}>
@@ -74,7 +74,7 @@ export default function BirthPlace() {
                 value={birthPlace}
                 onChangeText={setBirthPlace}
                 placeholder="City, Country"
-                placeholderTextColor={Colors.text.secondary}
+                placeholderTextColor={Colors.textSec}
                 autoCorrect={false}
                 autoCapitalize="words"
                 returnKeyType="done"
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.greeting,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 24,
     fontWeight: '700',
     textAlign: 'center',
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 16,
     textAlign: 'center',
     lineHeight: 24,
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     padding: Layout.cardPadding,
     borderWidth: 1,
     borderColor: Colors.outline,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 16,
     fontWeight: '500',
     textAlign: 'center',
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     ...Typography.labelMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   },
   tertiaryButtonText: {
     ...Typography.labelMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 16,
     fontWeight: '500',
   },

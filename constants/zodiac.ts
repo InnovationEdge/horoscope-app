@@ -167,11 +167,12 @@ export const getZodiacByDate = (month: number, day: number): ZodiacSign | undefi
     const [endMonth, endDay] = range.end;
 
     if (startMonth === endMonth) {
-      if (month === startMonth && day >= startDay && day <= endDay) {
+      if (month === startMonth && startDay !== undefined && endDay !== undefined && day >= startDay && day <= endDay) {
         return getZodiacByName(range.sign);
       }
     } else {
-      if ((month === startMonth && day >= startDay) || (month === endMonth && day <= endDay)) {
+      if (startDay !== undefined && endDay !== undefined &&
+          ((month === startMonth && day >= startDay) || (month === endMonth && day <= endDay))) {
         return getZodiacByName(range.sign);
       }
     }

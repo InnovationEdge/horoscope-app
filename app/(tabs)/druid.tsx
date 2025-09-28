@@ -224,14 +224,14 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.displayLarge,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 28,
     fontWeight: '700',
     marginBottom: Spacing.xs,
   },
   subtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     textAlign: 'center',
   },
   modeToggle: {
@@ -253,12 +253,12 @@ const styles = StyleSheet.create({
   },
   modeButtonText: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 14,
     fontWeight: '500',
   },
   activeModeButtonText: {
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontWeight: '600',
   },
   signCard: {
@@ -288,19 +288,19 @@ const styles = StyleSheet.create({
   },
   signTitle: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 2,
   },
   dateRange: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     marginBottom: Spacing.xs,
   },
   element: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 12,
   },
   contentCard: {
@@ -311,14 +311,14 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 18,
     fontWeight: '600',
     marginBottom: Spacing.md,
   },
   description: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     lineHeight: 22,
   },
   infoCard: {
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     lineHeight: 20,
   },
   bottomSpacing: {
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
   },
   loadingSubtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     marginTop: 16,
   },
 });

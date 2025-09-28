@@ -106,9 +106,9 @@ export default function CompatibilityScreen() {
                       style={[styles.signButton, rightSign === sign && styles.selectedSignButton]}
                       onPress={() => handleSignChange(sign)}
                     >
-                      <Text style={styles.signEmoji}>{ZODIAC_SIGNS[sign].emoji}</Text>
+                      <Text style={styles.signEmoji}>{ZODIAC_SIGNS[sign as ZodiacSign].emoji}</Text>
                       <Text style={[styles.signButtonName, rightSign === sign && styles.selectedSignButtonName]}>
-                        {ZODIAC_SIGNS[sign].name}
+                        {ZODIAC_SIGNS[sign as ZodiacSign].name}
                       </Text>
                     </Pressable>
                   ))}

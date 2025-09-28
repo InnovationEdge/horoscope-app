@@ -1,12 +1,45 @@
-// Required theme tokens
-export const Spacing = { h: 16, cardPad: 20, block: 16, topHero: 32 } as const;
-export const Radius  = { card: 24, chip: 12, pill: 16, fab: 32 } as const;
-export const Sizes   = { heroMin: 36, heroMax: 48, title: 16, body: 14, label: 11, dot: 8, star: 20 } as const;
-export const Colors  = {bgTop: '#0D0B1A', bgBot: '#161325', surface: '#1E1B2E',
-  textPri: 'rgba(255,255,255,0.87)', textSec: 'rgba(255,255,255,0.60)',
-  accent: '#7C4DFF', blue: '#4F7BFF', line: '#2F2B3F',
-  inactive: '#8E8E93', gold: '#F5A623', pill: '#2A2440', dotInactive: '#5C5C66',
-  premiumChip: '#EADDFF'
+// Required theme tokens (new structure)
+export const Spacing = {
+  h: 16, cardPad: 20, block: 16, topHero: 32,
+  // Legacy spacing for compatibility
+  xs: 4, sm: 6, md: 8, lg: 12, xl: 16, xxl: 20, xxxl: 24
+} as const;
+
+export const Radius = { card: 24, chip: 12, pill: 16, fab: 32 } as const;
+export const Sizes = { heroMin: 36, heroMax: 48, title: 16, body: 14, label: 11, dot: 8, star: 20 } as const;
+
+// Comprehensive Colors object (both old and new structure)
+export const Colors = {
+  // New structure
+  bgTop: '#0D0B1A',
+  bgBot: '#161325',
+  surface: '#1E1B2E',
+  textPri: 'rgba(255,255,255,0.87)',
+  textSec: 'rgba(255,255,255,0.60)',
+  accent: '#7C4DFF',
+  blue: '#4F7BFF',
+  line: '#2F2B3F',
+  inactive: '#8E8E93',
+  gold: '#F5A623',
+  pill: '#2A2440',
+  dotInactive: '#5C5C66',
+  premiumChip: '#EADDFF',
+
+  // Legacy structure for backward compatibility
+  bg: {
+    top: '#0D0B1A',
+    bottom: '#161325',
+  },
+  text: {
+    primary: 'rgba(255,255,255,0.87)',
+    secondary: 'rgba(255,255,255,0.60)',
+  },
+  primary: '#7C4DFF',
+  secondaryBlue: '#4F7BFF',
+  outline: '#2F2B3F',
+  border: '#2F2B3F',
+  iconInactive: '#8E8E93',
+  activePill: '#2A2440',
 } as const;
 
 export const Typography = {
@@ -86,7 +119,6 @@ export const Layout = {
   inputRadius: 12, // input field radius
   buttonRadius: 12, // button radius
 };
-
 
 export const Shadows = {
   card: {

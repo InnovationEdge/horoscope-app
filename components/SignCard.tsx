@@ -72,13 +72,13 @@ const styles = StyleSheet.create({
   },
   signName: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 18,
     fontWeight: '700',
   },
   dateRange: {
     ...Typography.labelSmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 14,
     fontWeight: '500',
     marginTop: 4,

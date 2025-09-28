@@ -6,25 +6,25 @@ export const predictionsService = {
     const params: Record<string, string> = { sign };
     if (date) params.date = date;
 
-    return apiClient.get<PredictionDaily>('/predictions/daily', params);
+    return apiClient.get('/predictions/daily') as Promise<PredictionDaily>;
   },
 
   async getWeekly(sign: ZodiacSign): Promise<PredictionExtended> {
-    return apiClient.get<PredictionExtended>('/predictions/weekly', { sign });
+    return apiClient.get('/predictions/weekly') as Promise<PredictionExtended>;
   },
 
   async getMonthly(sign: ZodiacSign, month?: string): Promise<PredictionExtended> {
     const params: Record<string, string> = { sign };
     if (month) params.month = month;
 
-    return apiClient.get<PredictionExtended>('/predictions/monthly', params);
+    return apiClient.get('/predictions/monthly') as Promise<PredictionExtended>;
   },
 
   async getYearly(sign: ZodiacSign, year?: string): Promise<PredictionExtended> {
     const params: Record<string, string> = { sign };
     if (year) params.year = year;
 
-    return apiClient.get<PredictionExtended>('/predictions/yearly', params);
+    return apiClient.get('/predictions/yearly') as Promise<PredictionExtended>;
   },
 
   async getPrediction(timeframe: Timeframe, sign: ZodiacSign, date?: string) {

@@ -74,10 +74,10 @@ class HoroscopeService {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      const monthlyData = this.horoscopeCache.monthly[sign];
+      const monthlyData = (this.horoscopeCache as any).monthly?.[sign];
       if (!monthlyData) {
         // Fallback to daily data with modified content for monthly
-        const dailyData = this.horoscopeCache.daily[sign];
+        const dailyData = (this.horoscopeCache as any).daily?.[sign];
         return {
           preview: `This month holds significant potential for ${sign}. ${dailyData.preview}`,
           full: `Month ahead for ${sign}: The cosmic energies this month amplify your natural traits. ${dailyData.full} These themes will persist throughout the month, creating lasting positive changes in your life.`,

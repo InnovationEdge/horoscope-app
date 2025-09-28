@@ -102,7 +102,7 @@ export default function RegisterScreen() {
     <SafeAreaProvider>
       <View style={styles.container}>
         <StatusBar style="light" />
-        <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+        <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
           <KeyboardAvoidingView style={styles.keyboardView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <ScrollView
               contentContainerStyle={styles.scrollContent}
@@ -122,7 +122,7 @@ export default function RegisterScreen() {
                     value={formData.name}
                     onChangeText={text => setFormData(prev => ({ ...prev, name: text }))}
                     placeholder="Enter your full name"
-                    placeholderTextColor={Colors.text.secondary}
+                    placeholderTextColor={Colors.textSec}
                     autoCapitalize="words"
                     editable={!isLoading}
                   />
@@ -135,7 +135,7 @@ export default function RegisterScreen() {
                     value={formData.email}
                     onChangeText={text => setFormData(prev => ({ ...prev, email: text }))}
                     placeholder="Enter your email"
-                    placeholderTextColor={Colors.text.secondary}
+                    placeholderTextColor={Colors.textSec}
                     keyboardType="email-address"
                     autoCapitalize="none"
                     autoCorrect={false}
@@ -151,7 +151,7 @@ export default function RegisterScreen() {
                       value={formData.password}
                       onChangeText={text => setFormData(prev => ({ ...prev, password: text }))}
                       placeholder="Enter password"
-                      placeholderTextColor={Colors.text.secondary}
+                      placeholderTextColor={Colors.textSec}
                       secureTextEntry={!showPassword}
                       editable={!isLoading}
                     />
@@ -169,7 +169,7 @@ export default function RegisterScreen() {
                       value={formData.confirmPassword}
                       onChangeText={text => setFormData(prev => ({ ...prev, confirmPassword: text }))}
                       placeholder="Confirm password"
-                      placeholderTextColor={Colors.text.secondary}
+                      placeholderTextColor={Colors.textSec}
                       secureTextEntry={!showConfirmPassword}
                       editable={!isLoading}
                     />
@@ -189,7 +189,7 @@ export default function RegisterScreen() {
                     value={formData.birth_date}
                     onChangeText={text => setFormData(prev => ({ ...prev, birth_date: text }))}
                     placeholder="YYYY-MM-DD"
-                    placeholderTextColor={Colors.text.secondary}
+                    placeholderTextColor={Colors.textSec}
                     editable={!isLoading}
                   />
                 </View>
@@ -201,7 +201,7 @@ export default function RegisterScreen() {
                     value={formData.birth_time}
                     onChangeText={text => setFormData(prev => ({ ...prev, birth_time: text }))}
                     placeholder="HH:MM"
-                    placeholderTextColor={Colors.text.secondary}
+                    placeholderTextColor={Colors.textSec}
                     editable={!isLoading}
                   />
                 </View>
@@ -213,7 +213,7 @@ export default function RegisterScreen() {
                     value={formData.birth_place}
                     onChangeText={text => setFormData(prev => ({ ...prev, birth_place: text }))}
                     placeholder="City, Country"
-                    placeholderTextColor={Colors.text.secondary}
+                    placeholderTextColor={Colors.textSec}
                     editable={!isLoading}
                   />
                 </View>
@@ -223,7 +223,7 @@ export default function RegisterScreen() {
                     value={formData.marketing_consent}
                     onValueChange={value => setFormData(prev => ({ ...prev, marketing_consent: value }))}
                     trackColor={{ false: Colors.outline, true: Colors.primary }}
-                    thumbColor={formData.marketing_consent ? Colors.surface : Colors.text.secondary}
+                    thumbColor={formData.marketing_consent ? Colors.surface : Colors.textSec}
                   />
                   <Text style={styles.checkboxText}>I agree to receive marketing communications</Text>
                 </View>
@@ -270,14 +270,14 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.greeting,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 28,
     fontWeight: '700',
     marginBottom: Spacing.xs,
   },
   subtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     textAlign: 'center',
   },
   form: {
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     ...Typography.labelMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     marginBottom: Spacing.sm,
     fontWeight: '500',
   },
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     borderRadius: Layout.inputRadius,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     borderWidth: 1,
     borderColor: Colors.outline,
   },
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
   },
   checkboxText: {
     ...Typography.labelSmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     marginLeft: Spacing.md,
     flex: 1,
   },

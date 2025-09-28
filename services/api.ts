@@ -1,6 +1,6 @@
 // services/api.ts
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AuthUser } from '../types/api';
+import { AuthUser, User, SubscriptionStatus } from '../types/api';
 import { getZodiacSign } from '../utils/zodiac';
 
 // Auth related types for the mock API
@@ -20,8 +20,9 @@ interface RegisterData {
 }
 
 interface AuthResponse {
-  user: AuthUser;
+  user: User;
   token: string;
+  refresh_token: string;
 }
 
 export const defaultHeaders = async () => {
@@ -41,7 +42,12 @@ const USE_MOCK_API = !process.env.EXPO_PUBLIC_API_URL;
 const MOCK_USERS_KEY = 'mock_users_db';
 
 class MockUserDatabase {
-  private users: AuthUser[] = [];
+  private users: User[] = [];
+
+  constructor() {
+    // Reset users on app start for development
+    this.users = [];
+  }
 
   async init() {
     try {
@@ -62,19 +68,19 @@ class MockUserDatabase {
     }
   }
 
-  findUserByEmail(email: string): AuthUser | undefined {
+  findUserByEmail(email: string): User | undefined {
     return this.users.find(user => user.email?.toLowerCase() === email.toLowerCase());
   }
 
-  async createUser(data: RegisterData): Promise<AuthUser> {
+  async createUser(data: RegisterData): Promise<User> {
     const existingUser = this.findUserByEmail(data.email);
     if (existingUser) {
       throw new Error('User already exists with this email');
     }
 
-    const zodiacSign = data.birth_date ? getZodiacSign(new Date(data.birth_date)) : undefined;
+    const zodiacSign = data.birth_date ? getZodiacSign(new Date(data.birth_date)) : 'aries';
 
-    const newUser: AuthUser = {
+    const newUser: User = {
       id: `user_${Date.now()}_${Math.random().toString(36).slice(2)}`,
       email: data.email.toLowerCase(),
       name: data.name,
@@ -82,9 +88,8 @@ class MockUserDatabase {
       birth_time: data.birth_time,
       birth_place: data.birth_place,
       sign: zodiacSign,
-      is_premium: false,
-      created_at: new Date().toISOString(),
-      last_login: new Date().toISOString(),
+      subscription_status: 'free' as SubscriptionStatus,
+      onboarded: false,
     };
 
     this.users.push(newUser);
@@ -92,13 +97,22 @@ class MockUserDatabase {
     return newUser;
   }
 
-  async updateUser(id: string, updates: Partial<AuthUser>): Promise<AuthUser> {
+  async updateUser(id: string, updates: Partial<User>): Promise<User> {
     const userIndex = this.users.findIndex(user => user.id === id);
     if (userIndex === -1) {
       throw new Error('User not found');
     }
 
-    this.users[userIndex] = { ...this.users[userIndex], ...updates };
+    const currentUser = this.users[userIndex];
+    if (!currentUser) {
+      throw new Error('User not found');
+    }
+    const updatedUser: User = {
+      ...currentUser,
+      ...updates,
+      id: currentUser.id
+    };
+    this.users[userIndex] = updatedUser;
     await this.saveUsers();
     return this.users[userIndex];
   }
@@ -130,12 +144,12 @@ const mockEndpoints = {
       throw new Error('Password must be at least 6 characters');
     }
 
-    // Update last login
-    await mockDB.updateUser(user.id, { last_login: new Date().toISOString() });
+    // User login completed
 
     return {
       user,
       token: `mock_token_${user.id}_${Date.now()}`,
+      refresh_token: `mock_refresh_${user.id}_${Date.now()}`,
     };
   },
 
@@ -147,6 +161,7 @@ const mockEndpoints = {
     return {
       user,
       token: `mock_token_${user.id}_${Date.now()}`,
+      refresh_token: `mock_refresh_${user.id}_${Date.now()}`,
     };
   },
 
@@ -175,6 +190,115 @@ const mockEndpoints = {
   '/auth/logout': async (): Promise<{ message: string }> => {
     await new Promise(resolve => setTimeout(resolve, 200));
     return { message: 'Logged out successfully' };
+  },
+
+  // Pricing endpoints
+  '/payments/products/': async (): Promise<any> => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return {
+      region: 'US',
+      currency: 'USD',
+      symbol: '$',
+      weekly_display: '$2.99',
+      monthly_display: '$9.99',
+      yearly_display: '$59.99',
+      plans: [
+        {
+          id: 'weekly',
+          name: 'Weekly',
+          price: 2.99,
+          price_minor: 299,
+          currency: 'USD',
+          period: 'week',
+          display_price: '$2.99',
+          features: ['7-day access', 'All premium features'],
+        },
+        {
+          id: 'monthly',
+          name: 'Monthly',
+          price: 9.99,
+          price_minor: 999,
+          currency: 'USD',
+          period: 'month',
+          display_price: '$9.99',
+          popular: true,
+          features: ['30-day access', 'All premium features', 'Most popular'],
+        },
+        {
+          id: 'yearly',
+          name: 'Yearly',
+          price: 59.99,
+          price_minor: 5999,
+          currency: 'USD',
+          period: 'year',
+          display_price: '$59.99',
+          savings: 'Save 50%',
+          features: ['365-day access', 'All premium features', 'Best value'],
+        },
+      ],
+    };
+  },
+
+  '/payments/create-session/': async (body: any): Promise<any> => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return {
+      session_id: `mock_session_${Date.now()}`,
+      checkout_url: 'https://mock-payment.com/checkout',
+      success: true,
+    };
+  },
+
+  '/payments/verify-purchase/': async (body: any): Promise<any> => {
+    await new Promise(resolve => setTimeout(resolve, 400));
+    return {
+      success: true,
+      subscription: {
+        id: 'mock_subscription',
+        status: 'active',
+        plan: 'monthly',
+      },
+    };
+  },
+
+  '/payments/restore-purchases/': async (): Promise<any> => {
+    await new Promise(resolve => setTimeout(resolve, 600));
+    return {
+      restored: true,
+      subscriptions: [],
+    };
+  },
+
+  // User endpoints
+  '/users/me': async (body: any): Promise<User> => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // For GET requests, return current user
+    if (!body || Object.keys(body).length === 0) {
+      // Mock returning a default user - in real app this would come from auth token
+      return {
+        id: 'mock_user_id',
+        email: 'demo@example.com',
+        name: 'Demo User',
+        sign: 'leo',
+        subscription_status: 'free',
+        onboarded: true,
+      };
+    }
+
+    // For PUT requests, update and return user
+    const updatedUser: User = {
+      id: body.id || 'mock_user_id',
+      email: body.email || 'demo@example.com',
+      name: body.name,
+      birth_date: body.birth_date,
+      birth_time: body.birth_time,
+      birth_place: body.birth_place,
+      sign: body.sign || 'leo',
+      subscription_status: body.subscription_status || 'free',
+      onboarded: body.onboarded !== undefined ? body.onboarded : true,
+    };
+
+    return updatedUser;
   },
 };
 
