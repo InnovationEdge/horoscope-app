@@ -41,20 +41,30 @@ export const useUserStore = create<UserState>()(
 
       updateUser: async updates => {
         const { user } = get();
-        if (!user) return;
+        if (!user) {
+          console.log('updateUser: No user found in store');
+          return;
+        }
+
+        console.log('updateUser: Current user:', user);
+        console.log('updateUser: Updates to apply:', updates);
 
         set({ isLoading: true });
 
         try {
           const updatedUser = (await apiRequest('/users/me', {
             method: 'PUT',
-            body: JSON.stringify(updates),
+            body: JSON.stringify({ ...user, ...updates }),
           })) as User;
+
+          console.log('updateUser: Updated user from API:', updatedUser);
+
           set({
             user: updatedUser,
             isLoading: false,
           });
         } catch (error) {
+          console.error('updateUser: Error updating user:', error);
           set({ isLoading: false });
           throw error;
         }

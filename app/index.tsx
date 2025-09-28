@@ -41,19 +41,13 @@ export default function IndexScreen() {
       ]);
 
       if (authService.isAuthenticated && authService.user) {
-        const authUser = authService.user;
-        const userForStore = {
-          ...authUser,
-          sign: (authUser.sign || 'aries') as ZodiacSign,
-          subscription_status: authUser.is_premium ? ('premium' as const) : ('free' as const),
-        };
-
-        setUser(userForStore);
+        console.log('Found authenticated user:', authService.user);
+        setUser(authService.user);
 
         // Quick fade and navigate
         opacity.value = withTiming(0, { duration: 200 });
         setTimeout(() => {
-          if (userForStore.onboarded) {
+          if (authService.user?.onboarded) {
             router.replace('/(tabs)/today');
           } else {
             router.replace('/onboarding/signin');

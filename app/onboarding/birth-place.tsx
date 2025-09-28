@@ -73,7 +73,7 @@ export default function BirthPlace() {
                 style={styles.input}
                 value={birthPlace}
                 onChangeText={setBirthPlace}
-                placeholder="City, Country"
+                placeholder="🌍 City, Country"
                 placeholderTextColor={Colors.textSec}
                 autoCorrect={false}
                 autoCapitalize="words"

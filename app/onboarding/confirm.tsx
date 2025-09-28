@@ -19,13 +19,19 @@ export default function Confirm() {
   }, []);
 
   const computeZodiacData = () => {
-    if (!user?.birth_date) return null;
+    console.log('Computing zodiac data for user:', user);
+    if (!user?.birth_date) {
+      console.log('No birth_date found for user:', user?.birth_date);
+      return null;
+    }
 
     const birthDate = new Date(user.birth_date);
+    console.log('Birth date parsed:', birthDate);
     const zodiacSign = getZodiacSign(birthDate);
     const druidSign = getDruidSign(birthDate);
     const chineseAnimal = getChineseAnimal(birthDate.getFullYear());
 
+    console.log('Computed signs:', { zodiacSign, druidSign, chineseAnimal });
     return {
       sign: zodiacSign,
       druidSign,
@@ -34,12 +40,17 @@ export default function Confirm() {
   };
 
   const handleConfirm = async () => {
-    if (!user) return;
+    if (!user) {
+      console.error('No user found during onboarding completion');
+      return;
+    }
 
+    console.log('Starting onboarding completion for user:', user.id);
     setIsLoading(true);
 
     try {
       const zodiacData = computeZodiacData();
+      console.log('Computed zodiac data:', zodiacData);
 
       if (zodiacData) {
         // Update user with computed zodiac data and mark onboarding as complete
@@ -51,6 +62,7 @@ export default function Confirm() {
           onboarded: true,
         };
 
+        console.log('Updating user with:', updatedUser);
         setUser(updatedUser);
 
         track('onboarding_completed', {
@@ -59,11 +71,18 @@ export default function Confirm() {
           has_birth_place: !!user.birth_place,
         });
 
+        console.log('Navigating to main app...');
         // Navigate to main app
+        router.replace('/(tabs)/today');
+      } else {
+        console.error('No zodiac data computed');
+        // Still navigate even if zodiac data is missing
         router.replace('/(tabs)/today');
       }
     } catch (error) {
       console.error('Error completing onboarding:', error);
+      // Navigate anyway to prevent user from getting stuck
+      router.replace('/(tabs)/today');
     } finally {
       setIsLoading(false);
     }

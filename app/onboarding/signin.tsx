@@ -79,17 +79,16 @@ export default function SignIn() {
 
   const handleContinueAsGuest = () => {
     track('auth_completed', { provider: 'guest' });
-    // Create a demo guest user with sample data
+    // Create a minimal guest user that needs to complete onboarding
     const guestUser = {
       id: 'guest_' + Date.now(),
       email: 'guest@example.com',
       name: 'Guest User',
-      sign: 'virgo' as ZodiacSign,
+      sign: 'aries' as ZodiacSign, // Will be updated based on birth date
       subscription_status: 'free' as const,
-      onboarded: false,
-      birth_date: '1992-09-15',
-      birth_time: '10:30',
+      onboarded: false, // Important: User must complete onboarding
     };
+    console.log('Created guest user:', guestUser);
     setUser(guestUser);
     router.push('/onboarding/birth-date');
   };
@@ -263,12 +262,6 @@ export default function SignIn() {
                   </Pressable>
                 </View>
 
-                {/* Progress Dots */}
-                <View style={styles.dotsContainer}>
-                  <View style={[styles.dot, styles.activeDot]} />
-                  <View style={styles.dot} />
-                  <View style={styles.dot} />
-                </View>
 
                 {/* Footer */}
                 <Text style={styles.footerText}>

@@ -272,33 +272,34 @@ const mockEndpoints = {
   '/users/me': async (body: any): Promise<User> => {
     await new Promise(resolve => setTimeout(resolve, 300));
 
-    // For GET requests, return current user
-    if (!body || Object.keys(body).length === 0) {
-      // Mock returning a default user - in real app this would come from auth token
-      return {
-        id: 'mock_user_id',
-        email: 'demo@example.com',
-        name: 'Demo User',
-        sign: 'leo',
-        subscription_status: 'free',
-        onboarded: true,
+    // This endpoint is primarily for updating user data during onboarding
+    if (body && Object.keys(body).length > 0) {
+      // For PUT requests, update and return user
+      const updatedUser: User = {
+        id: body.id || 'mock_user_id',
+        email: body.email || 'demo@example.com',
+        name: body.name || 'Demo User',
+        birth_date: body.birth_date,
+        birth_time: body.birth_time,
+        birth_place: body.birth_place,
+        sign: body.sign || 'aries',
+        subscription_status: body.subscription_status || 'free',
+        onboarded: body.onboarded !== undefined ? body.onboarded : false,
       };
+
+      console.log('Mock API updated user:', updatedUser);
+      return updatedUser;
     }
 
-    // For PUT requests, update and return user
-    const updatedUser: User = {
-      id: body.id || 'mock_user_id',
-      email: body.email || 'demo@example.com',
-      name: body.name,
-      birth_date: body.birth_date,
-      birth_time: body.birth_time,
-      birth_place: body.birth_place,
-      sign: body.sign || 'leo',
-      subscription_status: body.subscription_status || 'free',
-      onboarded: body.onboarded !== undefined ? body.onboarded : true,
+    // For GET requests, shouldn't happen in this flow but return minimal user
+    return {
+      id: 'mock_user_id',
+      email: 'demo@example.com',
+      name: 'Demo User',
+      sign: 'aries',
+      subscription_status: 'free',
+      onboarded: false,
     };
-
-    return updatedUser;
   },
 };
 
