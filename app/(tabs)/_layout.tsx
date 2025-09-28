@@ -1,19 +1,20 @@
 import React from 'react';
-import { Stack } from 'expo-router';
+import { Tabs } from 'expo-router';
+import { BottomNav } from '../../components/BottomNav';
 
 export default function TabLayout() {
   return (
-    <Stack
+    <Tabs
       screenOptions={{
         headerShown: false,
       }}
+      tabBar={(props) => <BottomNav {...props} />}
     >
-      <Stack.Screen name="index" />
-      <Stack.Screen name="test" />
-      <Stack.Screen name="today" />
-      <Stack.Screen name="traits" />
-      <Stack.Screen name="compat" />
-      <Stack.Screen name="druid" />
-    </Stack>
+      <Tabs.Screen name="today" />
+      <Tabs.Screen name="traits" />
+      <Tabs.Screen name="compat" />
+      <Tabs.Screen name="druid" />
+      <Tabs.Screen name="profile" />
+    </Tabs>
   );
 }

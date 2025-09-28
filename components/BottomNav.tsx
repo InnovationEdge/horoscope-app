@@ -1,17 +1,20 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
-import { Colors, Layout, Typography, Spacing } from '../constants/theme';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import { Colors, Spacing, Radius } from '../constants/theme';
 
 interface BottomNavProps {
-  activeTab: string;
-  onTabPress: (tab: string) => void;
+  state: any;
+  descriptors: any;
+  navigation: any;
 }
 
-export function BottomNav({ activeTab, onTabPress }: BottomNavProps) {
+export function BottomNav({ state, navigation }: BottomNavProps) {
   const insets = useSafeAreaInsets();
   const fabScale = useSharedValue(1);
+  const pillOpacity = useSharedValue(1);
+  const pillScale = useSharedValue(1);
 
   // Get screen dimensions for responsive design
   const { width: screenWidth } = Dimensions.get('window');
@@ -26,14 +29,20 @@ export function BottomNav({ activeTab, onTabPress }: BottomNavProps) {
     { id: 'profile', label: 'Profile' },
   ];
 
+  const activeTab = state?.routes?.[state?.index]?.name || 'today';
+
   // Use exact specs from DESIGN_REVIEW.md (64dp FAB, 80dp nav height)
-  const responsiveFabSize = Layout.fabSize; // 64dp
-  const responsiveNavHeight = Layout.navbarHeight; // 80dp
+  const responsiveFabSize = 64; // 64dp
+  const responsiveNavHeight = 80; // 80dp
   const responsiveFontSize = isSmallScreen ? 10 : isLargeScreen ? 13 : 12;
-  const responsiveIconSize = isSmallScreen ? 28 : isLargeScreen ? 36 : 32;
 
   const centerFabAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: fabScale.value }],
+  }));
+
+  const pillAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: pillOpacity.value,
+    transform: [{ scale: pillScale.value }],
   }));
 
   return (
@@ -65,18 +74,18 @@ export function BottomNav({ activeTab, onTabPress }: BottomNavProps) {
                     onPressOut={() => {
                       fabScale.value = withSpring(1, { damping: 15, stiffness: 400 });
                     }}
-                    onPress={() => onTabPress(tab.id)}
+                    onPress={() => navigation?.navigate?.(tab.id)}
                     accessibilityLabel="Compatibility"
                     accessibilityRole="button"
                   >
-                    <Text style={[styles.centerIcon, { fontSize: responsiveIconSize }]}>🫰🏼</Text>
+                    <Text style={[styles.centerIcon, { fontSize: 32 }]}>🫰🏼</Text>
                   </Pressable>
                 </Animated.View>
                 <Text
                   style={[
                     styles.centerLabel,
                     {
-                      color: isActive ? Colors.primary : Colors.iconInactive,
+                      color: isActive ? Colors.accent : Colors.inactive,
                       fontSize: responsiveFontSize,
                     },
                   ]}
@@ -92,36 +101,31 @@ export function BottomNav({ activeTab, onTabPress }: BottomNavProps) {
             <TouchableOpacity
               key={tab.id}
               style={styles.sideTab}
-              onPress={() => onTabPress(tab.id)}
+              onPress={() => navigation?.navigate?.(tab.id)}
               accessibilityLabel={tab.label}
               accessibilityRole="tab"
               accessibilityState={{ selected: isActive }}
               activeOpacity={0.7}
             >
               {/* Active pill background */}
-              <Animated.View
-                style={[
-                  styles.activePill,
-                  useAnimatedStyle(() => ({
-                    opacity: withTiming(isActive ? 1 : 0, { duration: 200 }),
-                    transform: [{ scale: withSpring(isActive ? 1 : 0.8, { damping: 15, stiffness: 200 }) }],
-                  })),
-                ]}
-              />
+              {isActive && (
+                <Animated.View
+                  style={[styles.activePill, pillAnimatedStyle]}
+                />
+              )}
 
               {/* Tab label */}
-              <Animated.Text
+              <Text
                 style={[
                   styles.tabLabel,
                   { fontSize: responsiveFontSize },
                   {
-                    color: isActive ? Colors.primary : Colors.iconInactive,
-                    transform: [{ scale: withSpring(isActive ? 1.05 : 1, { damping: 15, stiffness: 300 }) }],
+                    color: isActive ? Colors.accent : Colors.inactive,
                   },
                 ]}
               >
                 {tab.label}
-              </Animated.Text>
+              </Text>
             </TouchableOpacity>
           );
         })}
@@ -137,6 +141,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: Colors.surface,
+    pointerEvents: 'box-none',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.3,
@@ -144,14 +149,16 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   hairline: {
-    height: Layout.dividerHeight,
-    backgroundColor: Colors.outline,
+    height: 1,
+    backgroundColor: Colors.line,
   },
   tabBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: Spacing.h,
     justifyContent: 'space-between',
+    height: 80,
+    pointerEvents: 'auto',
   },
   sideTab: {
     flex: 1,
@@ -160,14 +167,14 @@ const styles = StyleSheet.create({
     position: 'relative',
     height: '100%',
     minHeight: 48,
-    paddingVertical: Spacing.sm,
+    paddingVertical: 6,
   },
   activePill: {
     position: 'absolute',
-    width: Layout.activePillWidth, // 56dp
-    height: Layout.activePillHeight, // 32dp
-    backgroundColor: Colors.activePill,
-    borderRadius: Layout.activePillHeight / 2, // 16dp
+    width: 56,
+    height: 32,
+    backgroundColor: Colors.pill,
+    borderRadius: Radius.pill,
   },
   tabLabel: {
     ...Typography.labelSmall,
@@ -183,11 +190,11 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   centerFab: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    top: Layout.fabElevation, // -16dp from theme
+    top: -16,
     elevation: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
@@ -205,6 +212,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
     textAlign: 'center',
     position: 'absolute',
-    bottom: Spacing.sm,
+    bottom: 6,
   },
 });

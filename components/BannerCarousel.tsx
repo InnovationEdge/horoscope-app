@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors, Layout, Typography, Spacing } from '../constants/theme';
+import { Colors, Layout, Spacing, Sizes, Radius } from '../constants/theme';
 import { fetchPricing, Pricing } from '../services/pricing';
 
 interface Banner {
@@ -205,14 +205,13 @@ export function BannerCarousel({ banners, onBannerPress }: BannerCarouselProps) 
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: Layout.sectionSpacing,
+    marginTop: Spacing.block,
   },
   sectionTitle: {
-    ...Typography.titleMedium,
-    color: Colors.text.primary,
-    marginBottom: Spacing.md,
+    fontSize: Sizes.title,
+    color: Colors.textPri,
+    marginBottom: 8,
     paddingHorizontal: 4,
-    fontSize: 18,
     fontWeight: '700',
   },
   scrollContainer: {
@@ -221,7 +220,7 @@ const styles = StyleSheet.create({
   bannerCard: {
     height: 120, // Fixed height as per spec
     marginRight: 16,
-    borderRadius: Layout.cardRadius,
+    borderRadius: Radius.card,
     overflow: 'hidden',
     elevation: 8,
     shadowColor: '#000',
@@ -247,9 +246,8 @@ const styles = StyleSheet.create({
     paddingRight: 60, // Space for premium badge
   },
   bannerTitle: {
-    ...Typography.titleMedium,
+    fontSize: Sizes.title,
     marginBottom: 4,
-    fontSize: 16,
     fontWeight: '700',
   },
   whiteText: {
@@ -260,10 +258,9 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   bannerSubtitle: {
-    ...Typography.bodyMedium,
+    fontSize: Sizes.body,
     lineHeight: 20,
     marginBottom: 8,
-    fontSize: 14,
   },
   whiteSubtitle: {
     color: 'rgba(255, 255, 255, 0.98)',
@@ -277,8 +274,7 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
   },
   bulletText: {
-    ...Typography.bodySmall,
-    fontSize: 12,
+    fontSize: Sizes.label,
     lineHeight: 18,
     marginBottom: 3,
     paddingLeft: 8,
@@ -307,25 +303,24 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   premiumText: {
-    ...Typography.labelSmall,
-    color: Colors.primary,
     fontSize: 10,
+    color: Colors.accent,
     fontWeight: '600',
   },
   pagination: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: Spacing.md,
+    paddingTop: 8,
   },
   paginationDot: {
-    width: Layout.dotSize,
-    height: Layout.dotSize,
-    borderRadius: Layout.dotSize / 2,
+    width: Sizes.dot,
+    height: Sizes.dot,
+    borderRadius: Sizes.dot / 2,
     backgroundColor: Colors.dotInactive,
-    marginHorizontal: Layout.dotSpacing / 2,
+    marginHorizontal: 6,
   },
   activeDot: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.accent,
   },
 });

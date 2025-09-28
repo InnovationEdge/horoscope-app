@@ -4,8 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Colors, Layout, Typography, Spacing } from '../../constants/theme';
-import { BottomNav } from '../../components/BottomNav';
-import { router, useSegments, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useUserStore } from '../../store/user';
 
 // Import content data
@@ -57,8 +56,6 @@ const calculateChineseAnimal = (birthYear: number): string => {
 };
 
 export default function DruidScreen() {
-  const segments = useSegments();
-  const currentTab = segments[1] || 'druid';
   const { mode } = useLocalSearchParams();
   const { user } = useUserStore();
 
@@ -77,13 +74,6 @@ export default function DruidScreen() {
       ? druidData.find((item: { sign: string }) => item.sign === userDruidSign)
       : chineseData.find((item: { animal: string }) => item.animal === userChineseAnimal);
 
-  const handleTabPress = (tab: string) => {
-    if (tab === 'compat') {
-      router.push('/(tabs)/compat' as any);
-    } else {
-      router.push(`/(tabs)/${tab}` as any);
-    }
-  };
 
   const handleModeChange = (newMode: 'druid' | 'chinese') => {
     setActiveMode(newMode);
@@ -94,14 +84,13 @@ export default function DruidScreen() {
       <SafeAreaProvider>
         <View style={styles.container}>
           <StatusBar style="light" />
-          <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+          <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
             <View style={styles.loadingContent}>
               <Text style={styles.title}>Ancient Wisdom</Text>
               <Text style={styles.loadingSubtitle}>Loading...</Text>
             </View>
           </LinearGradient>
-          <BottomNav activeTab={currentTab} onTabPress={handleTabPress} />
-        </View>
+                  </View>
       </SafeAreaProvider>
     );
   }
@@ -110,7 +99,7 @@ export default function DruidScreen() {
     <SafeAreaProvider>
       <View style={styles.container}>
         <StatusBar style="light" />
-        <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+        <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
           <ScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
@@ -185,8 +174,7 @@ export default function DruidScreen() {
           </ScrollView>
         </LinearGradient>
 
-        <BottomNav activeTab={currentTab} onTabPress={handleTabPress} />
-      </View>
+              </View>
     </SafeAreaProvider>
   );
 }

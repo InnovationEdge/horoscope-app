@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors, Layout, Typography, Spacing } from '../constants/theme';
+import { Colors, Layout, Spacing, Sizes, Radius } from '../constants/theme';
 
 export interface LifeAspectsScores {
   love: number;
@@ -41,7 +41,7 @@ function StarRating({ score }: { score: number }) {
     <View style={styles.starsContainer}>
       <View style={styles.starsRow}>
         {[1, 2, 3, 4, 5].map(starNumber => (
-          <Text key={starNumber} style={[styles.star, { color: starNumber <= stars ? '#FFD700' : '#5C5C66' }]}>
+          <Text key={starNumber} style={[styles.star, { color: starNumber <= stars ? Colors.gold : Colors.inactive }]}>
             ★
           </Text>
         ))}
@@ -88,22 +88,20 @@ export function LifeAspects({ scores }: LifeAspectsProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: Layout.sectionSpacing,
+    marginTop: Spacing.block,
   },
   sectionTitle: {
-    ...Typography.titleMedium,
-    color: Colors.text.primary,
-    marginBottom: Spacing.md,
-    fontSize: 18,
+    fontSize: Sizes.title,
+    color: Colors.textPri,
+    marginBottom: 8,
     fontWeight: '700',
   },
   aspectsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: Spacing.sm,
     backgroundColor: Colors.surface,
-    borderRadius: Layout.cardRadius,
-    padding: Layout.cardPadding,
+    borderRadius: Radius.card,
+    padding: Spacing.cardPad,
   },
   aspectColumn: {
     flex: 1,
@@ -114,35 +112,33 @@ const styles = StyleSheet.create({
     height: Layout.aspectIconSize,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: Spacing.sm,
+    marginBottom: 6,
   },
   icon: {
     fontSize: Layout.aspectEmojiSize,
   },
   label: {
-    ...Typography.labelSmall,
-    color: Colors.text.primary,
-    marginBottom: Spacing.sm,
+    fontSize: Sizes.body,
+    color: Colors.textPri,
+    marginBottom: 6,
     textAlign: 'center',
-    fontSize: 14,
     fontWeight: '600',
   },
   starsContainer: {
     alignItems: 'center',
-    marginTop: Spacing.xs,
+    marginTop: 4,
   },
   starsRow: {
     flexDirection: 'row',
     marginBottom: 4,
   },
   star: {
-    fontSize: 18,
+    fontSize: Sizes.star,
     marginHorizontal: 1,
   },
   scoreText: {
-    ...Typography.labelSmall,
-    color: Colors.text.primary,
-    fontSize: 13,
+    fontSize: Sizes.label,
+    color: Colors.textPri,
     fontWeight: '600',
   },
 });

@@ -164,7 +164,7 @@ export function HoroscopePager({ data, onReadMore, onPaywallNeeded, onPagerSwipe
           {/* Premium CTA for gated content */}
           {isPremiumContent && !canAccess && (
             <TouchableOpacity style={styles.upgradeButton} onPress={() => onPaywallNeeded?.(item.timeframe)}>
-              <Text style={styles.upgradeText}>Upgrade to Premium</Text>
+              <Text style={styles.upgradeButtonText}>Upgrade to Premium</Text>
             </TouchableOpacity>
           )}
 
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.primary,
   },
-  upgradeText: {
+  upgradeButtonText: {
     ...Typography.labelSmall,
     color: Colors.primary,
     fontWeight: '600',
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.outline,
+    borderTopColor: Colors.line,
   },
   luckyItem: {
     flex: 1,
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.outline,
+    borderTopColor: Colors.line,
   },
   highlightTitle: {
     ...Typography.labelSmall,
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.outline,
+    borderTopColor: Colors.line,
   },
   themeTitle: {
     ...Typography.labelSmall,
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.outline,
+    borderTopColor: Colors.line,
   },
   eventTitle: {
     ...Typography.labelSmall,

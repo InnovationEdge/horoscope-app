@@ -3,18 +3,15 @@ import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Colors, Layout, Typography, Spacing } from '../../constants/theme';
+import { Colors, Layout, Typography, Spacing, Sizes, Radius } from '../../constants/theme';
 import { ZODIAC_SIGNS, ZodiacSign } from '../../constants/signs';
-import { BottomNav } from '../../components/BottomNav';
-import { router, useSegments, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useUserStore } from '../../store/user';
 
 // Import compatibility data
 const compatibilityData = require('../../content/compatibility.json');
 
 export default function CompatibilityScreen() {
-  const segments = useSegments();
-  const currentTab = segments[1] || 'compat';
   const { with: paramWith } = useLocalSearchParams();
   const { user } = useUserStore();
 
@@ -23,13 +20,6 @@ export default function CompatibilityScreen() {
   const [rightSign, setRightSign] = useState((paramWith as string) || 'taurus');
   const [showDetails, setShowDetails] = useState(false);
 
-  const handleTabPress = (tab: string) => {
-    if (tab === 'compat') {
-      router.push('/(tabs)/compat' as any);
-    } else {
-      router.push(`/(tabs)/${tab}` as any);
-    }
-  };
 
   const handleSignChange = (sign: string) => {
     setRightSign(sign);
@@ -50,13 +40,12 @@ export default function CompatibilityScreen() {
       <SafeAreaProvider>
         <View style={styles.container}>
           <StatusBar style="light" />
-          <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+          <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
             <View style={styles.loadingContent}>
               <Text style={styles.title}>Compatibility</Text>
               <Text style={styles.loadingSubtitle}>Loading...</Text>
             </View>
           </LinearGradient>
-          <BottomNav activeTab={currentTab} onTabPress={handleTabPress} />
         </View>
       </SafeAreaProvider>
     );
@@ -66,7 +55,7 @@ export default function CompatibilityScreen() {
     <SafeAreaProvider>
       <View style={styles.container}>
         <StatusBar style="light" />
-        <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+        <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
           <ScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
@@ -192,7 +181,6 @@ export default function CompatibilityScreen() {
           </ScrollView>
         </LinearGradient>
 
-        <BottomNav activeTab={currentTab} onTabPress={handleTabPress} />
       </View>
     </SafeAreaProvider>
   );
@@ -209,29 +197,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: Layout.screenPadding,
+    paddingHorizontal: Spacing.h,
     paddingTop: 60,
   },
   header: {
-    marginBottom: Layout.sectionSpacing,
+    marginBottom: Spacing.block,
     alignItems: 'center',
   },
   title: {
-    ...Typography.displayLarge,
-    color: Colors.text.primary,
     fontSize: 28,
+    color: Colors.textPri,
     fontWeight: '700',
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   subtitle: {
-    ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    fontSize: Sizes.body,
+    color: Colors.textSec,
     textAlign: 'center',
   },
   comparisonCard: {
     backgroundColor: Colors.surface,
-    borderRadius: Layout.cardRadius,
-    padding: Layout.cardPadding,
+    borderRadius: Radius.card,
+    padding: Spacing.cardPad,
     marginBottom: Layout.sectionSpacing,
     flexDirection: 'row',
     alignItems: 'center',
@@ -254,14 +241,14 @@ const styles = StyleSheet.create({
   },
   signName: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 2,
   },
   signLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 11,
   },
   vsContainer: {
@@ -270,14 +257,14 @@ const styles = StyleSheet.create({
   },
   vsText: {
     ...Typography.titleMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 14,
     fontWeight: '500',
     marginBottom: 4,
   },
   overallScore: {
     ...Typography.titleMedium,
-    color: Colors.primary,
+    color: Colors.accent,
     fontSize: 20,
     fontWeight: '700',
   },
@@ -286,7 +273,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 18,
     fontWeight: '600',
     marginBottom: Spacing.md,
@@ -304,9 +291,9 @@ const styles = StyleSheet.create({
     minWidth: 70,
   },
   selectedSignButton: {
-    backgroundColor: Colors.primary + '20',
+    backgroundColor: Colors.accent + '20',
     borderWidth: 1,
-    borderColor: Colors.primary,
+    borderColor: Colors.accent,
   },
   signEmoji: {
     fontSize: 24,
@@ -314,22 +301,22 @@ const styles = StyleSheet.create({
   },
   signButtonName: {
     ...Typography.labelSmall,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     fontSize: 11,
   },
   selectedSignButtonName: {
-    color: Colors.primary,
+    color: Colors.accent,
     fontWeight: '600',
   },
   scoresCard: {
     backgroundColor: Colors.surface,
-    borderRadius: Layout.cardRadius,
-    padding: Layout.cardPadding,
+    borderRadius: Radius.card,
+    padding: Spacing.cardPad,
     marginBottom: Layout.sectionSpacing,
   },
   cardTitle: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 18,
     fontWeight: '600',
     marginBottom: Spacing.md,
@@ -344,7 +331,7 @@ const styles = StyleSheet.create({
   },
   scoreLabel: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 14,
     fontWeight: '500',
     width: 100,
@@ -352,18 +339,18 @@ const styles = StyleSheet.create({
   scoreBar: {
     flex: 1,
     height: 8,
-    backgroundColor: Colors.outline,
+    backgroundColor: Colors.line,
     borderRadius: 4,
     overflow: 'hidden',
   },
   scoreProgress: {
     height: '100%',
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.accent,
     borderRadius: 4,
   },
   scoreValue: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 14,
     fontWeight: '600',
     width: 40,
@@ -371,19 +358,19 @@ const styles = StyleSheet.create({
   },
   analysisCard: {
     backgroundColor: Colors.surface,
-    borderRadius: Layout.cardRadius,
-    padding: Layout.cardPadding,
+    borderRadius: Radius.card,
+    padding: Spacing.cardPad,
     marginBottom: Layout.sectionSpacing,
   },
   preview: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     lineHeight: 22,
     marginBottom: Spacing.md,
   },
   detailed: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     lineHeight: 22,
     marginBottom: Spacing.lg,
   },
@@ -391,14 +378,14 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.primary + '20',
+    backgroundColor: Colors.accent + '20',
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: Colors.primary + '40',
+    borderColor: Colors.accent + '40',
   },
   readMoreText: {
     ...Typography.labelSmall,
-    color: Colors.primary,
+    color: Colors.accent,
     fontSize: 12,
     fontWeight: '500',
   },
@@ -407,7 +394,7 @@ const styles = StyleSheet.create({
   },
   tipsTitle: {
     ...Typography.titleMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     fontSize: 16,
     fontWeight: '600',
     marginBottom: Spacing.md,
@@ -422,7 +409,7 @@ const styles = StyleSheet.create({
   },
   tipBullet: {
     ...Typography.titleMedium,
-    color: Colors.primary,
+    color: Colors.accent,
     fontSize: 16,
     fontWeight: '600',
     width: 20,
@@ -430,7 +417,7 @@ const styles = StyleSheet.create({
   },
   tipText: {
     ...Typography.bodyMedium,
-    color: Colors.text.primary,
+    color: Colors.textPri,
     flex: 1,
     lineHeight: 20,
     marginLeft: Spacing.sm,
@@ -446,7 +433,7 @@ const styles = StyleSheet.create({
   },
   loadingSubtitle: {
     ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    color: Colors.textSec,
     marginTop: 16,
   },
 });

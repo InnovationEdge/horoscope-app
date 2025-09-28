@@ -5,23 +5,13 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Colors, Layout, Typography, Spacing } from '../../constants/theme';
 import { ZODIAC_SIGNS } from '../../constants/signs';
-import { BottomNav } from '../../components/BottomNav';
-import { router, useSegments } from 'expo-router';
+import { router } from 'expo-router';
 import { useUserStore } from '../../store/user';
 import { authService } from '../../services/auth';
 
 export default function ProfileScreen() {
-  const segments = useSegments();
-  const currentTab = segments[1] || 'profile';
   const { user } = useUserStore();
 
-  const handleTabPress = (tab: string) => {
-    if (tab === 'compat') {
-      router.push('/(tabs)/compat');
-    } else {
-      router.push(`/(tabs)/${tab}` as never);
-    }
-  };
 
   const handleEditProfile = () => {
     // Navigate to profile editing
@@ -143,8 +133,6 @@ export default function ProfileScreen() {
             <View style={styles.bottomSpacing} />
           </ScrollView>
         </LinearGradient>
-
-        <BottomNav activeTab={currentTab} onTabPress={handleTabPress} />
       </View>
     </SafeAreaProvider>
   );

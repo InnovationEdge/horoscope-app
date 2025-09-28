@@ -5,16 +5,13 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Colors, Layout, Typography, Spacing } from '../../constants/theme';
 import { ZODIAC_SIGNS, ZodiacSign } from '../../constants/signs';
-import { BottomNav } from '../../components/BottomNav';
-import { router, useSegments, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useUserStore } from '../../store/user';
 
 // Import characteristics data
 const characteristicsData = require('../../content/characteristics.json');
 
 export default function TraitsScreen() {
-  const segments = useSegments();
-  const currentTab = segments[1] || 'traits';
   const { sign: paramSign } = useLocalSearchParams();
   const { user } = useUserStore();
 
@@ -24,13 +21,6 @@ export default function TraitsScreen() {
   const signData = ZODIAC_SIGNS[selectedSign as ZodiacSign];
   const characteristics = characteristicsData.signs[selectedSign as ZodiacSign];
 
-  const handleTabPress = (tab: string) => {
-    if (tab === 'compat') {
-      router.push('/(tabs)/compat' as any);
-    } else {
-      router.push(`/(tabs)/${tab}` as any);
-    }
-  };
 
   const handleSignChange = (sign: string) => {
     setSelectedSign(sign as ZodiacSign);
@@ -47,7 +37,6 @@ export default function TraitsScreen() {
               <Text style={styles.loadingSubtitle}>Loading...</Text>
             </View>
           </LinearGradient>
-          <BottomNav activeTab={currentTab} onTabPress={handleTabPress} />
         </View>
       </SafeAreaProvider>
     );
@@ -147,11 +136,11 @@ export default function TraitsScreen() {
               <View style={styles.luckyContainer}>
                 <View style={styles.luckyItem}>
                   <Text style={styles.luckyLabel}>Numbers</Text>
-                  <Text style={styles.luckyValue}>{characteristics.luckyNumbers.join(', ')}</Text>
+                  <Text style={styles.luckyValue}>{characteristics.luckyNumbers?.join(', ') || 'N/A'}</Text>
                 </View>
                 <View style={styles.luckyItem}>
                   <Text style={styles.luckyLabel}>Colors</Text>
-                  <Text style={styles.luckyValue}>{characteristics.luckyColors.join(', ')}</Text>
+                  <Text style={styles.luckyValue}>{characteristics.luckyColors?.join(', ') || 'N/A'}</Text>
                 </View>
               </View>
             </View>
@@ -160,8 +149,6 @@ export default function TraitsScreen() {
             <View style={styles.bottomSpacing} />
           </ScrollView>
         </LinearGradient>
-
-        <BottomNav activeTab={currentTab} onTabPress={handleTabPress} />
       </View>
     </SafeAreaProvider>
   );

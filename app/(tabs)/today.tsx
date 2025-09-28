@@ -3,15 +3,14 @@ import { ScrollView, View, Text, StyleSheet, useWindowDimensions } from 'react-n
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Colors, Layout, Typography, Spacing } from '../../constants/theme';
+import { Colors, Spacing, Sizes, Radius } from '../../constants/theme';
 import { ZODIAC_SIGNS } from '../../constants/signs';
 import { HoroscopePager, HoroscopeData } from '../../components/HoroscopePager';
 import { LifeAspects, LifeAspectsData } from '../../components/LifeAspects';
 import { BannerCarousel, getDefaultBanners } from '../../components/BannerCarousel';
-import { BottomNav } from '../../components/BottomNav';
 import { useSubscriptionStore } from '../../store/subscription';
 import { useUserStore } from '../../store/user';
-import { router, useSegments } from 'expo-router';
+import { router } from 'expo-router';
 import { track } from '../../services/analytics';
 
 // Font clamping utility as provided by user
@@ -104,8 +103,6 @@ export default function TodayScreen() {
   const [greeting, setGreeting] = useState(getTimeBasedGreeting());
   const [currentDate, setCurrentDate] = useState(getCurrentDate());
   const { width } = useWindowDimensions();
-  const segments = useSegments();
-  const currentTab = segments[1] || 'today';
 
   const { isPremium } = useSubscriptionStore();
   const { getUserSign } = useUserStore();
@@ -169,21 +166,12 @@ export default function TodayScreen() {
     }
   };
 
-  const handleTabPress = (tab: string) => {
-    track('tab_selected', { tab });
-
-    if (tab === 'compat') {
-      router.push('/(tabs)/compat' as any);
-    } else {
-      router.push(`/(tabs)/${tab}` as any);
-    }
-  };
 
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
         <StatusBar style="light" />
-        <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
+        <LinearGradient colors={[Colors.bgTop, Colors.bgBot]} style={styles.gradient}>
           <ScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
@@ -249,8 +237,6 @@ export default function TodayScreen() {
           </ScrollView>
         </LinearGradient>
 
-        {/* Bottom Navigation */}
-        <BottomNav activeTab={currentTab} onTabPress={handleTabPress} />
       </View>
     </SafeAreaProvider>
   );
@@ -267,36 +253,35 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: Layout.screenPadding,
+    paddingHorizontal: Spacing.h,
     paddingTop: 60, // Account for status bar
   },
   greetingSection: {
-    marginBottom: Layout.sectionSpacing,
+    marginBottom: Spacing.block,
   },
   greeting: {
-    ...Typography.displayLarge,
-    color: Colors.text.primary,
-    marginBottom: Spacing.xs,
+    color: Colors.textPri,
+    marginBottom: 4,
     fontWeight: '300',
   },
   date: {
-    ...Typography.bodyMedium,
-    color: Colors.text.secondary,
+    fontSize: Sizes.body,
+    color: Colors.textSec,
   },
   signCard: {
     backgroundColor: Colors.surface,
-    borderRadius: Layout.cardRadius,
-    padding: Layout.cardPadding,
+    borderRadius: Radius.card,
+    padding: Spacing.cardPad,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Layout.sectionSpacing,
-    height: Layout.signCardHeight,
+    marginBottom: Spacing.block,
+    height: 88,
     borderWidth: 1,
   },
   avatarContainer: {
-    width: Layout.avatarSize,
-    height: Layout.avatarSize,
-    borderRadius: Layout.avatarSize / 2,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -304,35 +289,33 @@ const styles = StyleSheet.create({
     fontSize: 32,
   },
   signInfo: {
-    marginLeft: Spacing.md,
+    marginLeft: 8,
     flex: 1,
   },
   signName: {
-    ...Typography.titleMedium,
-    color: Colors.text.primary,
-    fontSize: 16,
+    fontSize: Sizes.title,
+    color: Colors.textPri,
   },
   signDateRange: {
-    ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    fontSize: 12,
+    color: Colors.textSec,
     marginTop: 2,
   },
   premiumChip: {
     backgroundColor: Colors.premiumChip,
     paddingHorizontal: 12,
     paddingVertical: 4,
-    borderRadius: 12,
-    height: Layout.premiumChipHeight,
+    borderRadius: Radius.chip,
+    height: 24,
     justifyContent: 'center',
     alignItems: 'center',
   },
   premiumChipText: {
-    ...Typography.labelSmall,
-    color: Colors.primary,
-    fontSize: 11,
+    fontSize: Sizes.label,
+    color: Colors.accent,
     fontWeight: '600',
   },
   bottomSpacing: {
-    height: Layout.navbarHeight + 40, // Extra spacing for comfortable scrolling
+    height: 120, // Extra spacing for comfortable scrolling
   },
 });

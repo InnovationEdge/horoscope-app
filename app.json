@@ -1,30 +1,30 @@
 {
   "expo": {
-    "name": "Daily Horoscope",
-    "slug": "daily-horoscope-app",
+    "name": "Salamene Horoscope",
+    "slug": "salamene-horoscope",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#1a1a2e"
+      "backgroundColor": "#0D0B1A"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.horoscope.dailyapp"
+      "bundleIdentifier": "com.salamene.horoscope"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#1a1a2e"
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#0D0B1A"
       },
-      "package": "com.horoscope.dailyapp",
+      "package": "com.salamene.horoscope",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
@@ -45,6 +45,7 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "scheme": "salamene-horoscope"
   }
 }

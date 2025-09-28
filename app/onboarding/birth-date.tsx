@@ -60,13 +60,14 @@ export default function BirthDate() {
 
         <LinearGradient colors={[Colors.bg.top, Colors.bg.bottom]} style={styles.gradient}>
           <View style={styles.content}>
-            {/* Hero Image */}
+            {/* Hero Section */}
             <View style={styles.imageContainer}>
-              <Image
-                source={require('../../assets/onboarding/birth.png')}
-                style={styles.heroImage}
-                resizeMode="contain"
-              />
+              <View style={styles.heroIconContainer}>
+                <Text style={styles.heroIcon}>🌟</Text>
+                <Text style={styles.heroIconSmall}>📅</Text>
+              </View>
+              <Text style={styles.heroTitle}>Birth Date</Text>
+              <Text style={styles.heroSubtitle}>When were you born?</Text>
             </View>
 
             {/* Progress Dots */}
@@ -136,9 +137,37 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
     alignItems: 'center',
   },
-  heroImage: {
-    width: 200,
-    height: 160,
+  heroIconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.md,
+    position: 'relative',
+  },
+  heroIcon: {
+    fontSize: 64,
+    textAlign: 'center',
+  },
+  heroIconSmall: {
+    fontSize: 32,
+    position: 'absolute',
+    bottom: 0,
+    right: -10,
+  },
+  heroTitle: {
+    ...Typography.displayLarge,
+    color: Colors.text.primary,
+    fontSize: 28,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
+  },
+  heroSubtitle: {
+    ...Typography.bodyMedium,
+    color: Colors.text.secondary,
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: Spacing.lg,
   },
   dotsContainer: {
     flexDirection: 'row',

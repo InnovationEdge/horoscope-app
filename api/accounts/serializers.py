@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from .models import UserProfile, SocialAccount
 
 User = get_user_model()
 
@@ -97,3 +98,98 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
         # Chinese zodiac starts from 1924 as rat year
         return animals[(year - 1924) % 12]
+
+
+class SocialAuthSerializer(serializers.Serializer):
+    """Serializer for social authentication"""
+    provider = serializers.ChoiceField(
+        choices=['google', 'apple', 'facebook'],
+        required=True
+    )
+    access_token = serializers.CharField(required=True, max_length=1000)
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    """Serializer for extended user profile"""
+
+    class Meta:
+        model = UserProfile
+        fields = [
+            'timezone', 'language', 'country', 'total_readings',
+            'last_horoscope_read', 'favorite_signs', 'premium_trial_used'
+        ]
+        read_only_fields = ['total_readings', 'last_horoscope_read', 'premium_trial_used']
+
+
+class CompleteUserSerializer(serializers.ModelSerializer):
+    """Complete user serializer with profile data"""
+    profile = UserProfileSerializer(read_only=True)
+    social_accounts = serializers.SerializerMethodField()
+    subscription_status = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'id', 'username', 'email', 'name', 'onboarded',
+            'sign', 'birth_date', 'birth_time', 'birth_place',
+            'druid_sign', 'chinese_animal',
+            'is_premium', 'subscription_status', 'subscription_expires_at',
+            'notifications_enabled', 'theme_preference',
+            'profile', 'social_accounts',
+            'date_joined', 'last_login'
+        ]
+        read_only_fields = [
+            'id', 'username', 'date_joined', 'last_login',
+            'is_premium', 'subscription_status', 'subscription_expires_at'
+        ]
+
+    def get_social_accounts(self, obj):
+        """Get list of connected social accounts"""
+        return [
+            {
+                'provider': account.provider,
+                'provider_email': account.provider_email,
+                'connected_at': account.created_at
+            }
+            for account in obj.social_accounts.all()
+        ]
+
+    def to_representation(self, instance):
+        """Custom representation"""
+        ret = super().to_representation(instance)
+        ret['id'] = f"u_{instance.id}"
+        ret['is_premium'] = instance.is_premium_active
+
+        # Format dates
+        if instance.subscription_expires_at:
+            ret['subscription_expires_at'] = instance.subscription_expires_at.isoformat()
+        if instance.birth_date:
+            ret['birth_date'] = instance.birth_date.isoformat()
+        if instance.birth_time:
+            ret['birth_time'] = instance.birth_time.isoformat()
+
+        return ret
+
+
+class OnboardingSerializer(serializers.ModelSerializer):
+    """Serializer for onboarding flow"""
+
+    class Meta:
+        model = User
+        fields = [
+            'name', 'birth_date', 'birth_time', 'birth_place', 'sign'
+        ]
+
+    def update(self, instance, validated_data):
+        """Complete onboarding and calculate astrological signs"""
+        instance = super().update(instance, validated_data)
+
+        # Mark as onboarded
+        instance.onboarded = True
+
+        # Calculate astrological signs if birth_date provided
+        if instance.birth_date:
+            instance.calculate_astrological_signs()
+
+        instance.save()
+        return instance

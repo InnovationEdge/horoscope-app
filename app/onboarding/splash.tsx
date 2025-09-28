@@ -1,33 +1,83 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Platform, StatusBar } from 'react-native';
-import Animated, { useSharedValue, withTiming, useAnimatedStyle } from 'react-native-reanimated';
+import { View, Text, StyleSheet, StatusBar } from 'react-native';
+import { Image } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import Animated, {
+  useSharedValue,
+  withTiming,
+  useAnimatedStyle,
+  withSpring,
+  withRepeat
+} from 'react-native-reanimated';
 import { router } from 'expo-router';
+import { Colors, Typography, Spacing } from '../../constants/theme';
 
 export default function Splash() {
   const opacity = useSharedValue(0);
+  const scale = useSharedValue(0.8);
+  const shimmerOpacity = useSharedValue(0.5);
 
   useEffect(() => {
-    opacity.value = withTiming(1, { duration: 600 });
+    // Start logo entrance animations
+    opacity.value = withTiming(1, { duration: 800 });
+    scale.value = withSpring(1, { damping: 15, stiffness: 300 });
+
+    // Start shimmer animation matching paywall design
+    shimmerOpacity.value = withRepeat(
+      withTiming(1, { duration: 1500 }),
+      -1,
+      true
+    );
+
     const t = setTimeout(() => {
       router.replace('/onboarding/signin');
-    }, 2500);
+    }, 3000);
     return () => clearTimeout(t);
-  }, [opacity]);
+  }, []);
 
-  const fade = useAnimatedStyle(() => ({ opacity: opacity.value }));
+  const logoAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }],
+  }));
+
+  const textAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  const shimmerStyle = useAnimatedStyle(() => ({
+    opacity: shimmerOpacity.value,
+  }));
 
   return (
-    <View style={styles.container} accessibilityLabel="Salamene Onboarding Splash">
-      <StatusBar barStyle="light-content" />
-      {/* Optional image if provided later */}
-      <Animated.View style={[styles.hero, fade]}>
-        <View style={styles.imagePlaceholder}>
-          <Text style={styles.placeholderText}>✨</Text>
-        </View>
-        <Text style={styles.brand}>Salamene Onboarding</Text>
-        <Text style={styles.subtitle}>Astrology that actually feels premium</Text>
-      </Animated.View>
-      <Text style={styles.hint}>Preparing your stars&</Text>
+    <View style={styles.container} accessibilityLabel="Salamene Horoscope Splash">
+      <StatusBar style="light" />
+
+      <LinearGradient
+        colors={[Colors.bg.top, Colors.bg.bottom]}
+        style={styles.gradient}
+      >
+        {/* Hero Logo Section - Matching Paywall Design */}
+        <Animated.View style={[styles.logoContainer, shimmerStyle, logoAnimatedStyle]}>
+          <Image
+            source={require('../../assets/app-logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </Animated.View>
+
+        {/* Text Content - Premium Typography */}
+        <Animated.View style={[styles.textContainer, textAnimatedStyle]}>
+          <Text style={styles.heroTitle}>Salamene Horoscope</Text>
+          <Text style={styles.heroSubtitle}>
+            Unlock the full power of your cosmic destiny
+          </Text>
+        </Animated.View>
+
+        {/* Loading Hint */}
+        <Animated.Text style={[styles.loadingHint, textAnimatedStyle]}>
+          Preparing your celestial insights...
+        </Animated.Text>
+      </LinearGradient>
     </View>
   );
 }
@@ -35,42 +85,56 @@ export default function Splash() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0D0B1A',
+    backgroundColor: Colors.bg.top,
+  },
+  gradient: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 24,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0,
+    paddingHorizontal: Spacing.lg,
   },
-  hero: { alignItems: 'center', justifyContent: 'center' },
-  imagePlaceholder: {
-    width: 220,
-    height: 180,
-    marginBottom: 24,
-    backgroundColor: 'rgba(124, 77, 255, 0.1)',
-    borderRadius: 16,
+  logoContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(124, 77, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: Spacing.lg,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
   },
-  placeholderText: {
-    fontSize: 48,
-    color: '#7C4DFF',
+  logo: {
+    width: 60,
+    height: 60,
   },
-  brand: {
-    color: 'rgba(255,255,255,0.95)',
-    fontSize: 28,
-    fontWeight: '700',
-    letterSpacing: 0.4,
+  textContainer: {
+    alignItems: 'center',
+    marginBottom: Spacing.xl,
   },
-  subtitle: {
-    marginTop: 8,
-    color: 'rgba(255,255,255,0.70)',
-    fontSize: 14,
+  heroTitle: {
+    ...Typography.displayLarge,
+    color: Colors.text.primary,
     textAlign: 'center',
+    marginBottom: Spacing.sm,
+    fontWeight: '700',
   },
-  hint: {
+  heroSubtitle: {
+    ...Typography.bodyMedium,
+    color: Colors.text.secondary,
+    textAlign: 'center',
+    paddingHorizontal: Spacing.md,
+    lineHeight: 22,
+  },
+  loadingHint: {
     position: 'absolute',
-    bottom: 48,
-    color: 'rgba(255,255,255,0.60)',
-    fontSize: 12,
+    bottom: 60,
+    ...Typography.bodySmall,
+    color: Colors.text.secondary,
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
 });
